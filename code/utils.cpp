@@ -18,13 +18,23 @@ namespace TEAM_15DUCK_UTILL
 	}
 	void LineMake(HDC hdc, int startX, int startY, int endX, int endY)
 	{
-		MoveToEx(hdc, startX, startY, NULL);
-		LineTo(hdc, endX, endY);
+		float posX = startX - CAMERA->getPosX();
+		float posY = startY - CAMERA->getPosY();
+		float posX2 = endX - CAMERA->getPosX();
+		float posY2 = endY - CAMERA->getPosY();
+
+		MoveToEx(hdc, posX, posY, NULL);
+		LineTo(hdc, posX2, posY2);
 	}
 	void LineMake(HDC hdc, POINTF start, POINTF end)
 	{
-		MoveToEx(hdc, start.x, start.y, NULL);
-		LineTo(hdc, end.x, end.y);
+		float posX = start.x - CAMERA->getPosX();
+		float posY = start.y - CAMERA->getPosY();
+		float posX2 = end.x - CAMERA->getPosX();
+		float posY2 = end.y - CAMERA->getPosY();
+
+		MoveToEx(hdc, posX, posY, NULL);
+		LineTo(hdc, posX2, posY2);
 	}
 	RECT RectMake(int x, int y, int width, int height)
 	{
@@ -38,15 +48,28 @@ namespace TEAM_15DUCK_UTILL
 	}
 	void RectangleMake(HDC hdc, int x, int y, int width, int height)
 	{
-		Rectangle(hdc, x, y, x + width, y + height);
+		float left = x - CAMERA->getPosX();
+		float top = y - CAMERA->getPosY();
+		float right = x + width - CAMERA->getPosX();
+		float bottom = y + height - CAMERA->getPosY();
+		Rectangle(hdc, left, top, right, bottom);
 	}
 	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height)
 	{
-		Rectangle(hdc, x - (width / 2), y - (height / 2), x + (width / 2), y + (height / 2));
+		float left = x - (width / 2) - CAMERA->getPosX();
+		float top = y - (height / 2) - CAMERA->getPosY();
+		float right = x + (width / 2) - CAMERA->getPosX();
+		float bottom = y + (height / 2) - CAMERA->getPosY();
+		Rectangle(hdc, left, top, right, bottom);
 	}
 	void Rectangle(HDC hdc, RECT & rc)
 	{
-		Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
+		float left	 = rc.left - CAMERA->getPosX();
+		float top	 = rc.top - CAMERA->getPosY();
+		float right	 = rc.right - CAMERA->getPosX();
+		float bottom = rc.bottom - CAMERA->getPosY();
+
+		Rectangle(hdc, left, top, right, bottom);
 	}
 	ELLIPSE EllipseMake(float x, float y, float r)
 	{
@@ -58,11 +81,19 @@ namespace TEAM_15DUCK_UTILL
 	}
 	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height)
 	{
-		Ellipse(hdc, x - (width / 2), y - (height / 2), x + (width / 2), y + (height / 2));
+		float left = x - (width / 2) - CAMERA->getPosX();
+		float top = y - (height / 2) - CAMERA->getPosY();
+		float right = x + (width / 2) - CAMERA->getPosX();
+		float bottom = y + (height / 2) - CAMERA->getPosY();
+		Ellipse(hdc, left, top, right, bottom);
 	}
 	void EllipseRender(HDC hdc, ELLIPSE & e)
 	{
-		Ellipse(hdc, e.p.x - e.r, e.p.y - e.r, e.p.x + e.r, e.p.y + e.r);
+		float left = e.p.x - e.r - CAMERA->getPosX();
+		float top = e.p.y - e.r - CAMERA->getPosY();
+		float right = e.p.x + e.r - CAMERA->getPosX();
+		float bottom = e.p.y + e.r - CAMERA->getPosY();
+		Ellipse(hdc, left, top, right, bottom);
 	}
 	float RadToDeg(float angle)
 	{
