@@ -138,9 +138,6 @@
     <ClInclude Include="timer.h">
       <Filter>2DFrameWork\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="commonMacroFunction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="randomFunction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -197,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="objectScene.h">
       <Filter>PlayGround\object</Filter>
+    </ClInclude>
+    <ClInclude Include="chiyeongTestScene.h">
+      <Filter>PlayGround\scene\testScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +298,9 @@
     </ClCompile>
     <ClCompile Include="objectScene.cpp">
       <Filter>PlayGround\object</Filter>
+    </ClCompile>
+    <ClCompile Include="chiyeongTestScene.cpp">
+      <Filter>PlayGround\scene\testScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

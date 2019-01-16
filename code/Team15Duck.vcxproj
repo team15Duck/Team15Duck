@@ -150,7 +150,7 @@
     <ClInclude Include="backBuffer.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="camera.h" />
-    <ClInclude Include="commonMacroFunction.h" />
+    <ClInclude Include="chiyeongTestScene.h" />
     <ClInclude Include="dataBase.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="effectManager.h" />
@@ -190,6 +190,7 @@
     <ClCompile Include="backBuffer.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="chiyeongTestScene.cpp" />
     <ClCompile Include="dataBase.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="effectManager.cpp" />
