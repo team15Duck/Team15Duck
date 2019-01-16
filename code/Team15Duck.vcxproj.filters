@@ -55,14 +55,32 @@
     <Filter Include="PlayGround\camera">
       <UniqueIdentifier>{b09b0c0c-9cc8-460e-bbec-fb05317a181c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PlayGround\testScene">
-      <UniqueIdentifier>{11e9acc6-854e-4136-a56a-5dda105633e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PlayGround\player">
       <UniqueIdentifier>{18084a64-1d05-488a-b3ac-5aeeb5ed8983}</UniqueIdentifier>
     </Filter>
     <Filter Include="2DFrameWork\backBuffer">
       <UniqueIdentifier>{48fd607b-4a3c-4d92-a511-b307f7b42cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\item">
+      <UniqueIdentifier>{f19a6e44-a262-4cd4-97ae-d7d190404e1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\ui">
+      <UniqueIdentifier>{1ad259df-cefa-43a1-8c42-c7e78594b24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\scene">
+      <UniqueIdentifier>{eca56cf2-3e7a-4475-bb93-39a9a92444c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\scene\testScene">
+      <UniqueIdentifier>{11e9acc6-854e-4136-a56a-5dda105633e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\scene\startScene">
+      <UniqueIdentifier>{c036fc73-190b-4cbf-a968-b0b0e324a74f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\scene\stage1Scene">
+      <UniqueIdentifier>{5e8e12d5-0558-43cb-a64d-0846fba9ac92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayGround\object">
+      <UniqueIdentifier>{aa321772-dd9f-4e2b-bec9-9a87645bcc88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,13 +169,34 @@
       <Filter>PlayGround\camera</Filter>
     </ClInclude>
     <ClInclude Include="testScene.h">
-      <Filter>PlayGround\testScene</Filter>
+      <Filter>PlayGround\scene\testScene</Filter>
     </ClInclude>
     <ClInclude Include="backBuffer.h">
       <Filter>2DFrameWork\backBuffer</Filter>
     </ClInclude>
     <ClInclude Include="playerBase.h">
       <Filter>PlayGround\player</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
+      <Filter>PlayGround\item</Filter>
+    </ClInclude>
+    <ClInclude Include="itemManager.h">
+      <Filter>PlayGround\item</Filter>
+    </ClInclude>
+    <ClInclude Include="mainUI.h">
+      <Filter>PlayGround\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="stage1Scene.h">
+      <Filter>PlayGround\scene\stage1Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="startScene.h">
+      <Filter>PlayGround\scene\startScene</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>PlayGround\object</Filter>
+    </ClInclude>
+    <ClInclude Include="objectScene.h">
+      <Filter>PlayGround\object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -231,13 +270,34 @@
       <Filter>PlayGround\camera</Filter>
     </ClCompile>
     <ClCompile Include="testScene.cpp">
-      <Filter>PlayGround\testScene</Filter>
+      <Filter>PlayGround\scene\testScene</Filter>
     </ClCompile>
     <ClCompile Include="backBuffer.cpp">
       <Filter>2DFrameWork\backBuffer</Filter>
     </ClCompile>
     <ClCompile Include="playerBase.cpp">
       <Filter>PlayGround\player</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>PlayGround\item</Filter>
+    </ClCompile>
+    <ClCompile Include="itemManager.cpp">
+      <Filter>PlayGround\item</Filter>
+    </ClCompile>
+    <ClCompile Include="mainUI.cpp">
+      <Filter>PlayGround\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="stage1Scene.cpp">
+      <Filter>PlayGround\scene\stage1Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="startScene.cpp">
+      <Filter>PlayGround\scene\startScene</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>PlayGround\object</Filter>
+    </ClCompile>
+    <ClCompile Include="objectScene.cpp">
+      <Filter>PlayGround\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
