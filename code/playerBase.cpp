@@ -13,6 +13,7 @@ playerBase::~playerBase()
 
 HRESULT playerBase::init()
 {
+	
 	return S_OK;
 }
 
@@ -24,8 +25,10 @@ void playerBase::update()
 {
 }
 
-void playerBase::render()
+void playerBase::render(HDC cameraDC)
 {
+	
+
 }
 
 void playerBase::keyUpdate()
@@ -38,6 +41,14 @@ void playerBase::keyUpdate()
 
 void playerBase::keyPressMove()
 {
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	{
+		_x -= _speed;
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+	{
+		_x += _speed;
+	}
 }
 
 void playerBase::keyPressSpace()
@@ -57,5 +68,25 @@ void playerBase::keyPressS()
 }
 
 void playerBase::keyPressCtrl()
+{
+}
+
+void playerBase::keyPressTab()
+{
+}
+
+void playerBase::pixelHorizenWallCollision()
+{
+}
+
+void playerBase::rectBrokenWallCollision()
+{
+}
+
+void playerBase::pixelTopWallCollision()
+{
+}
+
+void playerBase::pixelBottomCollision()
 {
 }

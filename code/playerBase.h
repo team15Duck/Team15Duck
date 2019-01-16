@@ -58,19 +58,20 @@ class playerBase
 protected:
 
 
-	float _x;						//좌표
-	float _y;						//좌표
-	float _saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
+	float		_x;						//좌표
+	float		_y;						//좌표
+	float		_saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
 
 
-	float _speed;
+	float		_speed;
 
-	bool _isFall;
-	bool _isAlive;
-	bool _deathMotion;
+	bool		_isFall;
+	bool		_isAlive;
+	bool		_deathMotion;
 
-	int _currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
+	int			_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	
+	RECT		_playerRect;
 
 
 
@@ -81,7 +82,7 @@ public:
 	virtual HRESULT init() = 0;
 	virtual void release() = 0;
 	virtual void update() = 0;
-	virtual void render() = 0;
+	virtual void render(HDC cameraDC) = 0;
 
 	//key업데이트에는 사용되는함수 전부 넣어서 작동되게하고
 	//자식에게는 만들지 말것.
@@ -94,26 +95,24 @@ public:
 	virtual void keyPressE();
 	virtual void keyPressS();
 	virtual void keyPressCtrl();
+	virtual void keyPressTab();
+	
+
+
+	//좌우체크
+	virtual void pixelHorizenWallCollision(); // << 픽셀 벽 충돌 
+	virtual void rectBrokenWallCollision(); // << 렉트 부숴지는 벽 충돌 
+	//위에벽체크(천장) << 오버라이드 받아서 나만 쓰기 
+	virtual void pixelTopWallCollision(); // 픽셀 천장 충돌 
+	//바닥체크
+	virtual void pixelBottomCollision(); // << 바닥 픽셀 충돌 
+
+
+
 
 	//처맞는함수
 
 	//살았니 죽었니 죽는중이니?
-
-	//이동
-
-	//좌우체크
-
-	//위에벽체크
-
-	//바닥체크
-
-
-
-
-
-
-
-
 
 
 

@@ -166,6 +166,9 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="objectScene.h" />
     <ClInclude Include="playerBase.h" />
+    <ClInclude Include="player_Baleog.h" />
+    <ClInclude Include="player_Eric.h" />
+    <ClInclude Include="player_Olaf.h" />
     <ClInclude Include="playGround.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="randomFunction.h" />
@@ -206,6 +209,9 @@
     <ClCompile Include="object.cpp" />
     <ClCompile Include="objectScene.cpp" />
     <ClCompile Include="playerBase.cpp" />
+    <ClCompile Include="player_Baleog.cpp" />
+    <ClCompile Include="player_Eric.cpp" />
+    <ClCompile Include="player_Olaf.cpp" />
     <ClCompile Include="playGround.cpp" />
     <ClCompile Include="progressBar.cpp" />
     <ClCompile Include="sceneManager.cpp" />
