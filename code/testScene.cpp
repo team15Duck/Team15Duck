@@ -35,11 +35,15 @@ HRESULT testScene::init()
 	_olaf->setPixelDataLink(_pixelMap);
 	_baleog->setPixelDataLink(_pixelMap);
 
+	_itemManager = new itemManager;
+	_itemManager->init();
+
 	return S_OK;
 }
 
 void testScene::release()
 {
+	_itemManager->release();
 }
 
 void testScene::update()
@@ -73,5 +77,7 @@ void testScene::render()
 	_baleog->render(CAMERA->getMemDC());
 	_olaf->render(CAMERA->getMemDC());
 	_eric->render(CAMERA->getMemDC());
+
+	_itemManager->render();
 	//------------------------------------------------------------------------------
 }

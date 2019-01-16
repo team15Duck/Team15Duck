@@ -1,5 +1,6 @@
 #pragma once
 #include "gameNode.h"
+#include "itemManager.h"
 
 #define STAGE1_MAPSIZEX 2048
 #define STAGE1_MAPSIZEY 1528
@@ -17,6 +18,8 @@ private:
 	player_Baleog*	_baleog;
 	player_Olaf*	_olaf;
 	player_Eric*	_eric;
+
+	itemManager* _itemManager;
 public:
 	testScene();
 	~testScene();
