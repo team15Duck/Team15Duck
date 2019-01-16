@@ -20,7 +20,7 @@ HRESULT testScene::init()
 
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
 
-	CAMERA->setMaxMapSize(2048, 1728);
+	CAMERA->setMaxMapSize(2048, 1528 + 128);
 	CAMERA->setPosY(1100);
 	
 	_baleog = new player_Baleog;
