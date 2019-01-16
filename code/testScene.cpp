@@ -33,6 +33,7 @@ HRESULT testScene::init()
 	_eric->init();
 
 	_olaf->setPixelDataLink(_pixelMap);
+	_baleog->setPixelDataLink(_pixelMap);
 
 	return S_OK;
 }

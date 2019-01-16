@@ -20,8 +20,8 @@ HRESULT player_Baleog::init()
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 
 	//rectÀÇ ¹ÙÅÒÀÌ proveBottom
-	_proveBottom = (float)_playerRect.bottom + 5;
-	_pixelData = IMAGEMANAGER->findImage("testMapPixelMap");
+	_proveBottom = _playerRect.bottom + 5;
+	
 
 	return S_OK;
 }
@@ -33,8 +33,8 @@ void player_Baleog::release()
 void player_Baleog::update()
 {
 	pixelBottomCollision();
-	_proveBottom = _playerRect.bottom + 5;
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
+	_proveBottom = _playerRect.bottom + 5;
 }
 
 void player_Baleog::render()
@@ -81,7 +81,7 @@ void player_Baleog::pixelBottomCollision()
 
 		if (r == 255 && g == 0 && b == 255)
 		{
-			_y = i - (_playerRect.bottom - _playerRect.top) / 2;
+			_y = i - 40;
 			break;
 		}
 	}
