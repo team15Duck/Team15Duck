@@ -1,6 +1,9 @@
 #pragma once
 #include "gameNode.h"
 
+#define STAGE1_MAPSIZEX 2048
+#define STAGE1_MAPSIZEY 1528
+
 class player_Baleog;
 class player_Olaf;
 class player_Eric;

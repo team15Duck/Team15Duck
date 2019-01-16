@@ -30,11 +30,7 @@ HRESULT mainUI::init()
 	_isItemMove = false;
 	_blinkedCount = 0;
 	
-	item* it[4];
-	POINTF p = PointFMake(10, 10);
-	it[0]->init("itemSelect", p, 1);
-
-	setEricItemInfo(it);
+	
 
 
 
