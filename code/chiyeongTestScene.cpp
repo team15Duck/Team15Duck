@@ -13,7 +13,7 @@ chiyeongTestScene::~chiyeongTestScene()
 
 HRESULT chiyeongTestScene::init()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void chiyeongTestScene::release()
