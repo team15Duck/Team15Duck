@@ -44,7 +44,7 @@ void player_Baleog::render()
 
 void player_Baleog::render(HDC cameraDC)
 {
-	Rectangle(cameraDC, _playerRect);
+	RectangleBrush(cameraDC, _playerRect, RGB(255,0,0));
 }
 
 void player_Baleog::keyPressSpace()

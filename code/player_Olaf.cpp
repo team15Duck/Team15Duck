@@ -16,7 +16,6 @@ HRESULT player_Olaf::init()
 	initOlaf();
 
 	_proveBottom = _y + (_playerRect.bottom - _playerRect.top) / 2;
-	//_pixelData = IMAGEMANAGER->findImage("textMapPixelMap");
 
 	return S_OK;
 }
@@ -68,7 +67,7 @@ void player_Olaf::rectBrokenWallCollision()
 
 void player_Olaf::pixelBottomCollision()
 {
-	for (int i = _proveBottom - 5; i < _proveBottom + 10; ++i)
+	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 
@@ -78,7 +77,7 @@ void player_Olaf::pixelBottomCollision()
 
 		if (r == 255 && g == 0 && b == 255)
 		{
-			_y = i - 40;
+			_y = i - 35;
 			break;
 		}
 	}

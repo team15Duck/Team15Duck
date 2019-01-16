@@ -163,13 +163,6 @@ void player_Eric::keyPressS()
 {
 }
 
-void player_Eric::keyPressCtrl()
-{
-}
-
-void player_Eric::keyPressTab()
-{
-}
 
 void player_Eric::pixelHorizenWallCollision()
 {
@@ -185,7 +178,7 @@ void player_Eric::pixelTopWallCollision()
 
 void player_Eric::pixelBottomCollision()
 {
-	for (int i = _proveBottom - 5; i < _proveBottom + 10; ++i)
+	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 
@@ -195,7 +188,7 @@ void player_Eric::pixelBottomCollision()
 
 		if ((r == 255 && g == 0 && b == 255))
 		{
-			_y = i - 40;
+			_y = i - 35;
 			break;
 		}
 	}

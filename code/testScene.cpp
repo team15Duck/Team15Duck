@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "testScene.h"
-#include "player_Baleog.h"
-#include "player_Olaf.h"
-#include "player_Eric.h"
+
 
 testScene::testScene()
 {
@@ -23,18 +21,13 @@ HRESULT testScene::init()
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
 	CAMERA->setPosY(1100);
 	
-	_baleog = new player_Baleog;
-	_baleog->init();
+	_pm = new playerManager;
+	_pm->init();
 
-	_olaf = new player_Olaf;
-	_olaf->init();
+	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setPixelDataLink(_pixelMap);
+	_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setPixelDataLink(_pixelMap);
+	_pm->getVPlayer()[PLAYER_NAME_OLAF]->setPixelDataLink(_pixelMap);
 
-	_eric = new player_Eric;
-	_eric->init();
-
-	_olaf->setPixelDataLink(_pixelMap);
-	_baleog->setPixelDataLink(_pixelMap);
-	_eric->setPixelDataLink(_pixelMap);
 
 	_itemManager = new itemManager;
 	_itemManager->init();
@@ -50,14 +43,16 @@ void testScene::release()
 void testScene::update()
 {
 	CAMERA->update();
-	_baleog->update();
-	_baleog->keyUpdate();
 
-	_olaf->update();
-	_olaf->keyUpdate();
+	_pm->keyPressCtrl();
 
-	_eric->update();
-	_eric->keyUpdate();
+	_pm->update();
+
+	//if (탭을 안눌럿을때)
+	{
+		_pm->keyUpdate();
+	}
+	
 
 }
 
@@ -75,10 +70,8 @@ void testScene::render()
 	//주의사항 : 여태 우리는 getMemDC()에 그려왔습니다
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
-	_baleog->render(CAMERA->getMemDC());
-	_olaf->render(CAMERA->getMemDC());
-	_eric->render(CAMERA->getMemDC());
-
+	
+	_pm->render();
 	_itemManager->render();
 	//------------------------------------------------------------------------------
 }

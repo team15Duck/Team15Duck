@@ -69,13 +69,9 @@ void playerBase::keyPressS()
 {
 }
 
-void playerBase::keyPressCtrl()
-{
-}
 
-void playerBase::keyPressTab()
-{
-}
+
+
 
 void playerBase::pixelHorizenWallCollision()
 {

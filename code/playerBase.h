@@ -6,6 +6,16 @@
 #define START_JUMPP 10.0f
 #define GRAVITY 0.4f
 
+enum PLAYER_NAME
+{
+	PLAYER_NAME_ERIC,
+	PLAYER_NAME_BALEOG,
+	PLAYER_NAME_OLAF,
+
+	PLAYER_NAME_NONE,
+	PLAYER_NAME_COUNT = PLAYER_NAME_NONE
+};
+
 enum PLAYER_STATE
 {
 	//공통
@@ -64,6 +74,9 @@ protected:
 
 	image* _pixelData;
 
+	PLAYER_NAME _name;
+
+
 	float			_x;						//좌표
 	float			_y;						//좌표
 	float			_saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
@@ -103,8 +116,7 @@ public:
 	virtual void keyPressD();
 	virtual void keyPressE();
 	virtual void keyPressS();
-	virtual void keyPressCtrl();
-	virtual void keyPressTab();
+
 
 
 
@@ -129,6 +141,10 @@ public:
 
 
 	//겟셋은 제일밑에 작성하세요
+
+	PLAYER_NAME getPlayerName() { return _name; }
+	
+
 
 	void setPixelDataLink(image* img) { _pixelData = img; }
 };

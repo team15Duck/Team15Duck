@@ -18,9 +18,7 @@ public:
 	virtual void keyPressD()		override;
 	virtual void keyPressE()		override;
 	virtual void keyPressS()		override;
-	virtual void keyPressCtrl()		override;
-	virtual void keyPressTab()		override;
-
+	
 
 
 	//ÁÂ¿ìÃ¼Å©
