@@ -59,6 +59,7 @@ class playerBase
 {
 protected:
 
+	image* _pixelData;
 
 	float		_x;						//谅钎
 	float		_y;						//谅钎
@@ -125,6 +126,6 @@ public:
 
 	//百悸篮 力老关俊 累己窍技夸
 
-
+	void setPixelDataLink(image* img) { _pixelData = img; }
 };
 
