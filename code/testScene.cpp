@@ -15,13 +15,13 @@ testScene::~testScene()
 
 HRESULT testScene::init()
 {
-	IMAGEMANAGER->addImage("testMapData", "image/mapDataImage.bmp", 2000, 1000, false, RGB(255, 0, 255));
-	_pixelMap = IMAGEMANAGER->addImage("testMapPixelMap", "image/pixelMap.bmp", 2000, 1000, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
+	IMAGEMANAGER->addImage("stage1PixelData", "image/stage1PixelData.bmp", 2048, 1528, false, RGB(255, 0, 255));
+	_pixelMap = IMAGEMANAGER->addImage("stage1PixelMap", "image/stage1PixelMap.bmp", 2048, 1528, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
 
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
 
 	CAMERA->setMaxMapSize(2048, 1728);
-	CAMERA->setPosY(1200);
+	CAMERA->setPosY(1100);
 	
 	_baleog = new player_Baleog;
 	_baleog->init();
@@ -31,6 +31,8 @@ HRESULT testScene::init()
 
 	_eric = new player_Eric;
 	_eric->init();
+
+	_olaf->setPixelDataLink(_pixelMap);
 
 	return S_OK;
 }
@@ -55,7 +57,7 @@ void testScene::update()
 
 void testScene::render()
 {
-	IMAGEMANAGER->findImage("testMapData")->render(_pixelMap->getMemDC());
+	IMAGEMANAGER->findImage("stage1PixelData")->render(_pixelMap->getMemDC());
 
 	//--------------------------방패모양을 그릴거면 여기서 그릴것---------------------
 	//pixelMap의 DC에다가 그려줄것 마젠타로 바닥판정해주기
