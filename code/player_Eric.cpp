@@ -34,7 +34,10 @@ void player_Eric::release()
 
 void player_Eric::update()
 {
-	pixelBottomCollision();
+	//if (현재 점프파워 <= 0)
+	{
+		pixelBottomCollision();	
+	}
 	_proveBottom = _playerRect.bottom + 5;
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 }

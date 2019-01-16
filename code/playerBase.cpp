@@ -14,7 +14,10 @@ playerBase::~playerBase()
 HRESULT playerBase::init()
 {
 	_proveBottom = (float)_playerRect.bottom;
-
+	for (int i = 0; i < 4; i++)
+	{
+		_invenItem[i] = nullptr;
+	}
 	return S_OK;
 }
 

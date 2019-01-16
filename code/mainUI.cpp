@@ -19,7 +19,7 @@ HRESULT mainUI::init()
 
 	for (int i = 0; i < 3; i++)
 	{
-		_itemSelect[i].pos = i;
+		_itemSelect[i].name = (PLAYER_NAME)i;
 		_itemSelect[i].invenPos = 0;
 		_itemSelect[i].isRender = true;
 	}
@@ -62,7 +62,7 @@ void mainUI::update()
 			{
 				if (i == _currentMainFrameIndex)
 				{
-					_itemSelect[i].pos = i;
+					_itemSelect[i].name = (PLAYER_NAME)i;
 					_itemSelect[i].invenPos = 0;
 					if (_blinkedCount > 0.5f)
 					{
@@ -82,7 +82,7 @@ void mainUI::render()
 	{
 		if (_itemSelect[i].isRender)
 		{
-			IMAGEMANAGER->findImage("itemSelect")->render(CAMERA->getMemDC(), CAMERA->getPosX() + 158 + _itemSelect[i].pos * 144 + _itemSelect[i].invenPos % 2 * 32,
+			IMAGEMANAGER->findImage("itemSelect")->render(CAMERA->getMemDC(), CAMERA->getPosX() + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32,
 																			  CAMERA->getPosY() + 388 + _itemSelect[i].invenPos / 2 * 32);
 		}
 	}

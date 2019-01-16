@@ -1,9 +1,10 @@
 #pragma once
 #include "item.h"
+#include "playerBase.h"
 
 struct tagItemSelect
 {
-	int pos;			//캐릭터별포지션
+	PLAYER_NAME name;	//캐릭터
 	int invenPos;		//인벤에서의 4가지의 포지션
 	bool isRender;		//렌더해줄거니
 };
@@ -21,7 +22,6 @@ private:
 
 	float _blinkedCount;			//아이템 선택중일때 깜박이기 위한 카운트
 
-	
 	item* _playerItem[3][4];
 	
 public:

@@ -29,5 +29,6 @@ public:
 
 	vector<playerBase*> getVPlayer() { return _vPlayer; }
 
+	
 };
 
