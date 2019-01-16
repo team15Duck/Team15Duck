@@ -1,7 +1,10 @@
 #pragma once
 //알아서 조절하셈
-#define MAX_SPEED 0.5f
-#define MIN_SPEED 0.5f
+#define MAX_SPEED 200.0f
+#define MIN_SPEED 10.0f
+#define ACC_SPEED 200.0f
+#define START_JUMPP 10.0f
+#define GRAVITY 0.4f
 
 enum PLAYER_STATE
 {
@@ -35,7 +38,7 @@ enum PLAYER_STATE
 	PLAYER_JUMP_LEFT,
 	PLAYER_HEAD_BUTT_RIGHT,
 	PLAYER_HEAD_BUTT_LEFT,
-	
+
 	//재원캐릭	칼쓰는거 가로 세로는 랜덤으로 0 , 1 줘서 처리
 	PLAYER_ATTACK_RIGHT,
 	PLAYER_ATTACK_LEFT,
@@ -61,25 +64,23 @@ protected:
 
 	image* _pixelData;
 
-	float		_x;						//좌표
-	float		_y;						//좌표
-	float		_saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
+	float			_x;						//좌표
+	float			_y;						//좌표
+	float			_saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
+	float			_speed;
+	float			_proveTop;                //픽셀충돌 확인용 
+	float			_proveBottom;            //픽셀충돌 확인용 
+	float			_proveLeft;            //픽셀충돌 확인용 
+	float			_proveRight;            //픽셀충돌 확인용 
 
+	bool			_isFall;
+	bool			_isAlive;
+	bool			_deathMotion;
 
-	float		_speed;
+	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
+	PLAYER_STATE	_state;
+	RECT			_playerRect;
 
-	bool		_isFall;
-	bool		_isAlive;
-	bool		_deathMotion;
-
-	int			_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
-	
-	RECT		_playerRect;
-
-	float		_proveTop;					 //충돌(위)
-	float		_proveBottom;				 //충돌(아래)
-	float		_proveLeft;					 //충돌(왼쪽)
-	float		_proveRight;				 //충돌(오른쪽)
 
 
 
@@ -104,7 +105,7 @@ public:
 	virtual void keyPressS();
 	virtual void keyPressCtrl();
 	virtual void keyPressTab();
-	
+
 
 
 	//좌우체크
@@ -131,4 +132,3 @@ public:
 
 	void setPixelDataLink(image* img) { _pixelData = img; }
 };
-

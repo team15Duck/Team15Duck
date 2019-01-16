@@ -66,20 +66,5 @@ void camera::render()
 
 void camera::move()
 {
-	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-	{
-		_pos.x--;
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-	{
-		_pos.x++;
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_UP))
-	{
-		_pos.y--;
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-	{
-		_pos.y++;
-	}
+
 }

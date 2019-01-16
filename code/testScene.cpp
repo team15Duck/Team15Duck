@@ -34,6 +34,7 @@ HRESULT testScene::init()
 
 	_olaf->setPixelDataLink(_pixelMap);
 	_baleog->setPixelDataLink(_pixelMap);
+	_eric->setPixelDataLink(_pixelMap);
 
 	_itemManager = new itemManager;
 	_itemManager->init();
