@@ -71,7 +71,6 @@ protected:
 
 	int _currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	
-	int testnum; // JJ test
 
 
 
