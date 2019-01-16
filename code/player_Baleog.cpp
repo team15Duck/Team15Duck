@@ -14,7 +14,7 @@ player_Baleog::~player_Baleog()
 HRESULT player_Baleog::init()
 {
 	_x = WINSIZEX/2;
-	_y = 713;
+	_y = 1340;
 	_speed = 1.f;
 
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
@@ -58,10 +58,14 @@ void player_Baleog::keyPressD()
 	//활쏘기
 }
 
+void player_Baleog::moveRange()
+{
+}
+
 void player_Baleog::pixelHorizenWallCollision()
 {
 	//양쪽 벽 충돌(픽셀충돌)
-
+	//for(int i = _proveLeft - )
 }
 
 void player_Baleog::rectBrokenWallCollision()
@@ -72,16 +76,16 @@ void player_Baleog::rectBrokenWallCollision()
 void player_Baleog::pixelBottomCollision()
 {
 	//바닥충돌처리(픽셀충돌)
-	for (int i = _proveBottom - 5; i < _proveBottom + 10; ++i)
+	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 		int r = GetRValue(color);
-		int g = GetRValue(color);
-		int b = GetRValue(color);
+		int g = GetGValue(color);
+		int b = GetBValue(color);
 
 		if (r == 255 && g == 0 && b == 255)
 		{
-			_y = i - 40;
+			_y = i - 35;
 			break;
 		}
 	}
