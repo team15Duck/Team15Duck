@@ -96,7 +96,7 @@ namespace TEAM_15DUCK_UTILL
 		Ellipse(hdc, left, top, right, bottom);
 	}
 	float RadToDeg(float angle)
-	{
+	{	
 		return angle * (180.0f / PI);
 	}
 	float DegToRad(float angle)
