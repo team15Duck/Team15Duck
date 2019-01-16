@@ -76,7 +76,10 @@ protected:
 	
 	RECT		_playerRect;
 
-	float		_proveBottom;
+	float		_proveTop;					 //충돌(위)
+	float		_proveBottom;				 //충돌(아래)
+	float		_proveLeft;					 //충돌(왼쪽)
+	float		_proveRight;				 //충돌(오른쪽)
 
 
 

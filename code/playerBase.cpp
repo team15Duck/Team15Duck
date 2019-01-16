@@ -91,17 +91,5 @@ void playerBase::pixelTopWallCollision()
 
 void playerBase::pixelBottomCollision()
 {
-	for (int i = _proveBottom - 70; i < _proveBottom + 70; ++i)
-	{
-		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
-		int r = GetRValue(color);
-		int g = GetRValue(color);
-		int b = GetRValue(color);
 
-		if (r == 255, g == 0, b == 255)
-		{
-			_y = i - (_playerRect.top + (_playerRect.bottom - _playerRect.top) / 2);
-			break;
-		}
-	}
 }
