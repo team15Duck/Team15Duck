@@ -1,5 +1,6 @@
 #pragma once
 
+
 #define PI 3.141592f
 #define PI2 2 * PI
 
@@ -25,113 +26,113 @@ typedef struct tagELLIPSE
 
 namespace TEAM_15DUCK_UTILL
 {
-	inline POINT PointMake(int x, int y);
+	POINT PointMake(int x, int y);
 
-	inline POINTF PointFMake(float x, float y);
+	POINTF PointFMake(float x, float y);
 
-	inline void LineMake(HDC hdc, int startX, int startY, int endX, int endY);
+	void LineMake(HDC hdc, int startX, int startY, int endX, int endY);
 
-	inline void LineMake(HDC hdc, POINTF start, POINTF end);
+	void LineMake(HDC hdc, POINTF start, POINTF end);
 
 
 	//================= 렉트 관련 함수 ========================
 	//    렉트를 만든다(레프트, 탑, 가로크기, 세로크기)
-	inline RECT RectMake(int x, int y, int width, int height);
+	RECT RectMake(int x, int y, int width, int height);
 	//    렉트를 만든다(중점X좌표, 중점Y좌표, 가로크기, 세로크기)
-	inline RECT RectMakeCenter(int x, int y, int width, int height);
+	RECT RectMakeCenter(int x, int y, int width, int height);
 	//================= 사각형 관련 함수 ======================
 	//          사각형 생성함수(뿌려줄DC, left, top, 가로크기, 세로크기
-	inline void RectangleMake(HDC hdc, int x, int y, int width, int height);
+	void RectangleMake(HDC hdc, int x, int y, int width, int height);
 
-	inline void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height);
+	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height);
 
-	inline void Rectangle(HDC hdc, RECT& rc);
+	void Rectangle(HDC hdc, RECT& rc);
 
 	//====================== 동 그 라 미 관련 ===============================
 	//        원 생성함수 (hdc, left, top, 가로크기, 세로크기)
-	inline ELLIPSE EllipseMake(float x, float y, float r);
+	ELLIPSE EllipseMake(float x, float y, float r);
 	//        원 생성함수 (hdc, 센터좌표 X, 센터좌표 Y, 가로크기, 세로크기) //타원가능
-	inline void EllipseCenterRender(HDC hdc, int x, int y, int width, int height);
+	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height);
 	//        원 그림
-	inline void EllipseRender(HDC hdc, ELLIPSE& e);
+	void EllipseRender(HDC hdc, ELLIPSE& e);
 	//라디안 각도를 디그리로
-	inline float RadToDeg(float angle);
+	float RadToDeg(float angle);
 
 	//디그리 각도를 라디안으로
-	inline float DegToRad(float angle);
+	float DegToRad(float angle);
 
 	//거리구하기
 	float getDistance(float x1, float y1, float x2, float y2);
-	inline float getDistance(POINTF& p1, POINTF& p2);
+	float getDistance(POINTF& p1, POINTF& p2);
 	
 	//원충돌했는지
-	inline bool EllipseCollision(ELLIPSE& e1, ELLIPSE& e2);
+	bool EllipseCollision(ELLIPSE& e1, ELLIPSE& e2);
 
 	//중점구하기
-	inline float getCenter(float a, float b);
+	float getCenter(float a, float b);
 
 	//렉트 중점 반환함수
-	inline POINT getRectCenter(RECT& rc);
+	POINT getRectCenter(RECT& rc);
 
 	//렉트 x중점 반환 함수
-	inline float getRectXCenter(RECT& rc);
+	float getRectXCenter(RECT& rc);
 	
 	//렉트 y중점 반환 함수
-	inline float getRectYCenter(RECT& rc);
+	float getRectYCenter(RECT& rc);
 
 	//렉트 width 반환 함수
-	inline float getRectWidth(RECT& rc);
+	float getRectWidth(RECT& rc);
 
 	//렉트 height 반환 함수
-	inline float getRectHeight(RECT& rc);
+	float getRectHeight(RECT& rc);
 
 	//원 점 충돌
-	inline bool PtInEllipse(ELLIPSE& e, POINTF p);
+	bool PtInEllipse(ELLIPSE& e, POINTF p);
 
 	//원 점 충돌
-	inline bool PtInEllipse(ELLIPSE& e, float x, float y);
+	bool PtInEllipse(ELLIPSE& e, float x, float y);
 
 	//디그리 코사인
-	inline float dCosf(float angle);
+	float dCosf(float angle);
 
 	//디그리 사인
-	inline float dSinf(float angle);
+	float dSinf(float angle);
 
 	//원두개 박아서 각도받아오기 아크탄젠트 반환형 라디안
-	inline float getAngle(POINTF p, POINTF target);
+	float getAngle(POINTF p, POINTF target);
 
-	inline float getAngle(float x, float y, float x2, float y2);
+	float getAngle(float x, float y, float x2, float y2);
 
 	//원 두개 박아서 각도받아오기 아크코사인 반환형 라디안
-	inline float getAngle2(POINTF p, POINTF target);
+	float getAngle2(POINTF p, POINTF target);
 
-	inline float getAngle2(float x, float y, float x2, float y2);
+	float getAngle2(float x, float y, float x2, float y2);
 
 	//원두개 박아서 각도받아오기 아크탄젠트 반환형 디그리
-	inline float dGetAngle(POINTF target, POINTF p);
+	float dGetAngle(POINTF target, POINTF p);
 
-	inline float dGetAngle(float x2, float y2, float x, float y);
+	float dGetAngle(float x2, float y2, float x, float y);
 
 	//원 두개 박아서 각도받아오기 아크코사인 반환형 디그리
-	inline float dGetAngle2(POINTF target, POINTF p);
+	float dGetAngle2(POINTF target, POINTF p);
 
-	inline float dGetAngle2(float x2, float y2, float x, float y);
+	float dGetAngle2(float x2, float y2, float x, float y);
 
 	//원 사각형 충돌
-	inline bool RectEllipseCollition(RECT& rc, ELLIPSE& e);
+	bool RectEllipseCollition(RECT& rc, ELLIPSE& e);
 
 	//렉트 색칠
-	inline void RectangleBrush(HDC hdc, RECT& rc, COLORREF color);
+	void RectangleBrush(HDC hdc, RECT& rc, COLORREF color);
 
-	inline void RectangleBrushPen(HDC hdc, RECT& rc, COLORREF color);
+	void RectangleBrushPen(HDC hdc, RECT& rc, COLORREF color);
 
-	inline void RectanglePen(HDC hdc, RECT& rc, COLORREF color);
+	void RectanglePen(HDC hdc, RECT& rc, COLORREF color);
 
 	//원색칠
-	inline void EllipseBrush(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipseBrush(HDC hdc, ELLIPSE& e, COLORREF color);
 
-	inline void EllipseBrushPen(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipseBrushPen(HDC hdc, ELLIPSE& e, COLORREF color);
 
-	inline void EllipsePen(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipsePen(HDC hdc, ELLIPSE& e, COLORREF color);
 
 }

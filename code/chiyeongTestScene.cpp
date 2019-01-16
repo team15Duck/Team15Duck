@@ -13,6 +13,8 @@ chiyeongTestScene::~chiyeongTestScene()
 
 HRESULT chiyeongTestScene::init()
 {
+	_mainUI = new mainUI;
+
 	return S_OK;
 }
 

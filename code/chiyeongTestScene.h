@@ -1,9 +1,12 @@
 #pragma once
 #include "gameNode.h"
+#include "mainUI.h"
 
 class chiyeongTestScene : public gameNode
 {
 private:
+	mainUI* _mainUI;
+
 
 public:
 	chiyeongTestScene();
