@@ -46,6 +46,8 @@ enum PLAYER_STATE
 	//낙하대기이동 쉴드꼈을때 안꼇을때는 bool값으로 스테이트교체할때 판정
 	PLAYER_SHIELD_IDLE_RIGHT,
 	PLAYER_SHIELD_IDLE_LEFT,
+	PLAYER_SHIELD_IDLE_SPECIAL_RIGHT,
+	PLAYER_SHIELD_IDLE_SPECIAL_LEFT,
 	PLAYER_SHIELD_MOVE_RIGHT,
 	PLAYER_SHIELD_MOVE_LEFT,
 	PLAYER_SHIELD_FALL_RIGHT,
@@ -72,6 +74,8 @@ protected:
 	int			_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	
 	RECT		_playerRect;
+
+	float		_proveBottom;
 
 
 
