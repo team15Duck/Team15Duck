@@ -164,7 +164,7 @@
     <ClInclude Include="keyManager.h" />
     <ClInclude Include="mainUI.h" />
     <ClInclude Include="object.h" />
-    <ClInclude Include="objectScene.h" />
+    <ClInclude Include="objectManager.h" />
     <ClInclude Include="playerBase.h" />
     <ClInclude Include="playerManager.h" />
     <ClInclude Include="player_Baleog.h" />
@@ -208,7 +208,7 @@
     <ClCompile Include="keyManager.cpp" />
     <ClCompile Include="mainUI.cpp" />
     <ClCompile Include="object.cpp" />
-    <ClCompile Include="objectScene.cpp" />
+    <ClCompile Include="objectManager.cpp" />
     <ClCompile Include="playerBase.cpp" />
     <ClCompile Include="playerManager.cpp" />
     <ClCompile Include="player_Baleog.cpp" />

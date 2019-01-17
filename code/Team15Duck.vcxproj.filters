@@ -192,9 +192,6 @@
     <ClInclude Include="object.h">
       <Filter>PlayGround\object</Filter>
     </ClInclude>
-    <ClInclude Include="objectScene.h">
-      <Filter>PlayGround\object</Filter>
-    </ClInclude>
     <ClInclude Include="chiyeongTestScene.h">
       <Filter>PlayGround\scene\testScene</Filter>
     </ClInclude>
@@ -209,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="playerManager.h">
       <Filter>PlayGround\player</Filter>
+    </ClInclude>
+    <ClInclude Include="objectManager.h">
+      <Filter>PlayGround\object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -308,9 +308,6 @@
     <ClCompile Include="object.cpp">
       <Filter>PlayGround\object</Filter>
     </ClCompile>
-    <ClCompile Include="objectScene.cpp">
-      <Filter>PlayGround\object</Filter>
-    </ClCompile>
     <ClCompile Include="chiyeongTestScene.cpp">
       <Filter>PlayGround\scene\testScene</Filter>
     </ClCompile>
@@ -325,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="playerManager.cpp">
       <Filter>PlayGround\player</Filter>
+    </ClCompile>
+    <ClCompile Include="objectManager.cpp">
+      <Filter>PlayGround\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
