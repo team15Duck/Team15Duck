@@ -4,7 +4,6 @@ class player_Eric : public playerBase
 {
 private:
 	float _jumpPower;
-	float _gravity;
 
 	bool _isJump;       //점프 체크용
 	bool _isRCollision;	//오른쪽 충돌 체크용 

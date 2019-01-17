@@ -256,7 +256,7 @@ void player_Eric::pixelBottomCollision()
 	//만약에 점프한다면 픽셀충돌하시마씨오 
 	if (_state == PLAYER_JUMP_LEFT || _state == PLAYER_JUMP_RIGHT) return;
 
-	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
+	for (int i = _proveBottom - 30; i < _proveBottom + 4; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 

@@ -4,8 +4,8 @@
 #define MAX_SPEED 200.0f
 #define MIN_SPEED 10.0f
 #define ACC_SPEED 200.0f
-#define START_JUMPP 10.0f
-#define GRAVITY 0.4f
+#define START_JUMPP 200.0f
+#define GRAVITY 250.0f
 
 enum PLAYER_NAME
 {
@@ -82,6 +82,7 @@ protected:
 	float			_y;							//좌표
 	float			_saveY;						//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
 	float			_speed;
+	float			_gravity;
 	float			_proveTop;				    //픽셀충돌 확인용 
 	float			_proveBottom;			    //픽셀충돌 확인용 
 	float			_proveLeft;					//픽셀충돌 확인용 
