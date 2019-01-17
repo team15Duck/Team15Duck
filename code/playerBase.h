@@ -105,7 +105,7 @@ public:
 	virtual HRESULT init() = 0;
 	virtual void release() = 0;
 	virtual void update() = 0;
-	virtual void render(HDC cameraDC) = 0;
+	virtual void render() = 0;
 
 	//key업데이트에는 사용되는함수 전부 넣어서 작동되게하고
 	//자식에게는 만들지 말것.

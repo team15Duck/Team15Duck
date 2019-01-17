@@ -43,7 +43,7 @@ void playerManager::render()
 {
 	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
 	{
-		_vPlayer[i]->render(CAMERA->getMemDC());
+		_vPlayer[i]->render();
 	}
 }
 

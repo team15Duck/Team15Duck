@@ -4,6 +4,8 @@ class player_Baleog : public playerBase
 {
 private:
 	
+	//부서지는 벽 TEST할 임시 RECT
+	RECT	_tempWall;
 
 public:
 	player_Baleog();
@@ -13,7 +15,7 @@ public:
 	void release();
 	void update();
 	void render();
-	void render(HDC cameraDC);
+
 
 
 	//얘네는 공통적으로 작동되는거 이외에 작성하면됨
@@ -21,8 +23,7 @@ public:
 	virtual void keyPressSpace() override;
 	virtual void keyPressD() override;
 
-	//화면밖으로 못나가게 하는 함수
-	void moveRange();
+	
 
 	//좌우체크
 	virtual void pixelHorizenWallCollision() override; // << 픽셀 벽 충돌 

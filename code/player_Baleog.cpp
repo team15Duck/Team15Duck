@@ -13,7 +13,7 @@ player_Baleog::~player_Baleog()
 
 HRESULT player_Baleog::init()
 {
-	_x = WINSIZEX/2 + 100;
+	_x = WINSIZEX/2 + 120;
 	_y = 1350;
 	_speed = 2.f;
 
@@ -24,6 +24,9 @@ HRESULT player_Baleog::init()
 	_proveBottom = _playerRect.bottom + 5;
 	_proveLeft = _playerRect.left + 5;
 	_proveRight = _playerRect.right - 5;
+
+	_tempWall = RectMakeCenter(300, 1325, 50, 100);
+
 
 	return S_OK;
 }
@@ -43,39 +46,48 @@ void player_Baleog::update()
 	_proveRight = _playerRect.right;
 }
 
+
+
 void player_Baleog::render()
 {
-	
-}
-
-void player_Baleog::render(HDC cameraDC)
-{
-	RectangleBrush(cameraDC, _playerRect, RGB(255,0,0));
+	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255,0,0));
+	RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0));
 }
 
 
 
 void player_Baleog::keyPressMove()
 {
-	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))			//왼쪽으로 움직임
 	{
-		_state = PLAYER_MOVE_LEFT;
+		//왼쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
+		if (_playerRect.left <= 0)
+		{
+			_speed = 0;
+		}
+		_state = PLAYER_MOVE_LEFT;					//상태값을 왼쪽 움직임 넣음
 		_x -= _speed;
+		//플레이어가 image
 	}
-	else if(KEYMANAGER->isOnceKeyUp(VK_LEFT))
+	else if(KEYMANAGER->isOnceKeyUp(VK_LEFT))		//왼쪽 움직임에서 손을 떼면
 	{
-		_speed = 2.0f;
-		_state = PLAYER_IDLE_LEFT;
+		_speed = 2.0f;								//스피드 값을 다시 줌(벽에 부딪힌 경우 speed값을 0으로 두었기 때문에 되돌려주는 코드임)
+		_state = PLAYER_IDLE_LEFT;					//상태값은 idle
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 	{
-		_state = PLAYER_MOVE_RIGHT;
+		//오른쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
+		if (_playerRect.right >= _pixelData->GetWidth())
+		{
+			_speed = 0;	
+		}
+		_state = PLAYER_MOVE_RIGHT;					//상태값을 오른쪽 움직임으로 줌.
 		_x += _speed;
 	}
-	else if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+	else if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))		//오른쪽 움직임에서 손을 떼면
 	{
-		_speed = 2.0f;
-		_state = PLAYER_IDLE_RIGHT;
+		_speed = 2.0f;								//스피드값을 다시 줌(벽에 부딪힌 경우 speed 값을 0으로 바꾸었기 때문에 되돌려 줘야함)
+		_state = PLAYER_IDLE_RIGHT;					//상태값은 idle
 	}
 }
 
@@ -90,14 +102,11 @@ void player_Baleog::keyPressD()
 	//활쏘기
 }
 
-void player_Baleog::moveRange()
-{
-}
 
 void player_Baleog::pixelHorizenWallCollision()
 {
 
-	//양쪽 벽 충돌(픽셀충돌)
+	//왼쪽 벽 충돌(픽셀충돌)
 	if (_state == PLAYER_MOVE_LEFT)
 	{
 		for (int i = _proveLeft - 10; i < _proveLeft + 10; ++i)
@@ -109,13 +118,14 @@ void player_Baleog::pixelHorizenWallCollision()
 
 			if (r == 0 && g == 255 && b == 255)
 			{
-				_state = PLAYER_PUSH_WALL_LEFT;
-				_speed = 0.f;
+				_state = PLAYER_PUSH_WALL_LEFT;			//상태값은 벽을 미는 상태(왼쪽)로 줌
+				_speed = 0.f;							//막혀서 더이상 못움직임
 
 				break;
 			}
 		}
 	}
+	//오른쪽 벽 충돌(픽셀충돌)
 	if (_state == PLAYER_MOVE_RIGHT)
 	{
 		for (int i = _playerRect.right - 5; i < _playerRect.right + 5; ++i)
@@ -127,8 +137,8 @@ void player_Baleog::pixelHorizenWallCollision()
 
 			if (r == 0 && g == 255 && b == 255)
 			{
-				_state = PLAYER_PUSH_WALL_RIGHT;
-				_speed = 0.f;
+				_state = PLAYER_PUSH_WALL_RIGHT;		//상태값은 벽을 미는 상태(오른쪽)로 줌
+				_speed = 0.f;							//막혀서 더이상 못움직임
 
 				break;
 			}
