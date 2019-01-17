@@ -9,9 +9,9 @@ enum ITEM_TYPE
 	ITEM_TYPE_KEY_RED,		// 열쇠
 	ITEM_TYPE_KEY_YELLOW,	// 열쇠
 	ITEM_TYPE_KEY_BLUE,		// 열쇠
-	ITEM_TYPE_LOCK_RED,		// 자물쇠
-	ITEM_TYPE_LOCK_YELLOW,	// 자물쇠
-	ITEM_TYPE_LOCK_BLUE,	// 자물쇠
+	ITEM_TYPE_LOCK_RED,		// 자물쇠 OBJECT로 이동될것임.	
+	ITEM_TYPE_LOCK_YELLOW,	// 자물쇠 OBJECT로 이동될것임.
+	ITEM_TYPE_LOCK_BLUE,	// 자물쇠 OBJECT로 이동될것임.
 
 	ITEM_TYPE_NONE,
 	ITEM_TYPE_COUNT = ITEM_TYPE_NONE,
@@ -45,11 +45,7 @@ public:
 	void render();
 
 	ITEM_TYPE getItemType() { return _type;	 }
-	int getItemValue()		{ return _value; }
-	RECT getItemRect()		{ return _rc;	 }
-
-private:
-	// 렉트 생성
-	void MakeRect();
+	int		  getItemValue(){ return _value; }
+	RECT	  getItemRect()	{ return _rc;	 }
 };
 

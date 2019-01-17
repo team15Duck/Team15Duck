@@ -75,6 +75,7 @@ HRESULT item::init(const char* imgName, POINTF position, int itemValue, ITEM_TYP
 		}
 	}
 
+	_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 
 	return S_OK;
 }
@@ -91,9 +92,4 @@ void item::update()
 void item::render()
 {
 	_img->frameRender(CAMERA->getMemDC(), _destX, _destY, _type, 0);
-}
-
-void item::MakeRect()
-{
-	_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 }

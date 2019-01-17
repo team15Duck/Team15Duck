@@ -153,3 +153,34 @@ void itemManager::render()
 		_vFieldItems[ii]->render();
 	}
 }
+
+void itemManager::obtainItem(item* targetItem)
+{
+	// 빈 값이 들어오면 리턴
+	if(!targetItem)
+		return;
+
+	// 190117 진형 : 자물쇠는 object로 이동할것임. 그리고 자물쇠는 필드에서 삭제되는게 아님
+	// 일단 여기서 예외처리 시킴.
+	if(targetItem->getItemType() == ITEM_TYPE_LOCK_BLUE
+	   || targetItem->getItemType() == ITEM_TYPE_LOCK_RED
+	   || targetItem->getItemType() == ITEM_TYPE_LOCK_YELLOW
+	   )
+		return;
+
+	vector<item*>::iterator iter  = _vFieldItems.begin();
+	vector<item*>::iterator end  = _vFieldItems.end();
+	for (iter; end != iter; ++iter)
+	{
+		item* value = (*iter);
+		if (value != targetItem)
+			continue;
+
+		_vFieldItems.erase(iter);
+
+		SAFE_RELEASE(value);
+		SAFE_DELETE(value);
+
+		break;
+	}
+}
