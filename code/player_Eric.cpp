@@ -36,10 +36,25 @@ void player_Eric::release()
 
 void player_Eric::update()
 {
-	//if (현재 점프파워 <= 0)
+
+	pixelBottomCollision();
+	if (_isJump)
 	{
-		pixelBottomCollision();
+		_y -= _jumpPower;
+		_jumpPower -= _gravity;
 	}
+	if (_jumpPower <= 0)
+	{
+		if (_state == PLAYER_JUMP_RIGHT)
+		{
+			_state = PLAYER_FALL_RIGHT;
+		}
+		else if (_state == PLAYER_JUMP_LEFT)
+		{
+			_state = PLAYER_FALL_LEFT;
+		}
+	}
+
 	_proveBottom = _playerRect.bottom + 5;
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 }
@@ -138,11 +153,11 @@ void player_Eric::keyPressMove()
 void player_Eric::keyPressSpace()
 {
 	//예외처리 
-	/*if (!(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT ||
+	if (!(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT ||
 		_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT))
 	{
 		return;
-	}*/
+	}
 	//만약에 스페이스바를 누르면 점프해라
 	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
 	{
@@ -158,22 +173,6 @@ void player_Eric::keyPressSpace()
 		_isJump = true;
 		_jumpPower = 10.0f;
 		_gravity = 0.4f;
-	}
-	if (_isJump)
-	{
-		_y -= _jumpPower;
-		_jumpPower -= _gravity;
-	}
-	if (_jumpPower <= 0)
-	{
-		if (_state == PLAYER_JUMP_RIGHT)
-		{
-			_state = PLAYER_FALL_RIGHT;
-		}
-		else if (_state == PLAYER_JUMP_LEFT)
-		{
-			_state = PLAYER_FALL_LEFT;
-		}
 	}
 }
 
