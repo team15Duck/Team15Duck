@@ -1,4 +1,5 @@
 #pragma once
+//#include "animation.h"
 
 enum OBJECT_TYPE
 {
@@ -36,11 +37,15 @@ private:
 	int _frameX;
 	int _frameY;
 
+	string _objName;		// 오브젝트 이름
+
+	animation* _ani;
+
 public:
 	object();
 	~object();
 
-	HRESULT init(const char* imgName, POINTF position, int itemValue, OBJECT_TYPE type);
+	HRESULT init(const char* objName, const char* imgName, POINTF position, int itemValue, OBJECT_TYPE type);
 	void release();
 	void update();
 	void render();
@@ -48,7 +53,7 @@ public:
 
 	// 작동
 	void active();
-
+	//void endActive();
 
 	// 연결되는 오브젝트 연결
 	void setLinkObject(object* obj) { _linkObj = obj; }

@@ -27,7 +27,7 @@ HRESULT objectManager::init()
 	// lock blue
 	{
 		POINTF pos = { 448, 1162 };
-		lockBlue->init("lock", pos, ITEM_TYPE_KEY_BLUE * 100, OBJECT_TYPE_LOCK_BLUE);
+		lockBlue->init("lockBlue", "lock", pos, ITEM_TYPE_KEY_BLUE * 100, OBJECT_TYPE_LOCK_BLUE);
 
 		_vFieldObjects.push_back(lockBlue);
 	}
@@ -35,7 +35,7 @@ HRESULT objectManager::init()
 	// lock red
 	{
 		POINTF pos = { 1664, 1258 };
-		lockRed->init("lock", pos, ITEM_TYPE_KEY_RED * 100, OBJECT_TYPE_LOCK_RED);
+		lockRed->init("lockRed", "lock", pos, ITEM_TYPE_KEY_RED * 100, OBJECT_TYPE_LOCK_RED);
 
 		_vFieldObjects.push_back(lockRed);
 	}
@@ -43,7 +43,7 @@ HRESULT objectManager::init()
 	// lock yellow
 	{
 		POINTF pos = { 1728, 648 };
-		lockYellow->init("lock", pos, ITEM_TYPE_KEY_YELLOW * 100, OBJECT_TYPE_LOCK_YELLOW);
+		lockYellow->init("lockYellow", "lock", pos, ITEM_TYPE_KEY_YELLOW * 100, OBJECT_TYPE_LOCK_YELLOW);
 
 		_vFieldObjects.push_back(lockYellow);
 	}
@@ -52,7 +52,7 @@ HRESULT objectManager::init()
 	{
 		object* obj = new object;
 		POINTF pos = {1789.f, 1242.f};
-		obj->init("bridge", pos, -1, OBJECT_TYPE_BRIDGE_RIGHT);
+		obj->init("bridgeRight", "bridge", pos, -1, OBJECT_TYPE_BRIDGE_RIGHT);
 
 		// 연결
 		lockRed->setLinkObject(obj);
@@ -64,7 +64,7 @@ HRESULT objectManager::init()
 	{
 		object* obj = new object;
 		POINTF pos = { 1664.f, 650.f };
-		obj->init("door", pos, -1, OBJECT_TYPE_DOOR_RIGHT);
+		obj->init("doorRight", "door", pos, -1, OBJECT_TYPE_DOOR_RIGHT);
 
 		// 연결
 		lockYellow->setLinkObject(obj);
@@ -76,7 +76,7 @@ HRESULT objectManager::init()
 	{
 		object* obj = new object;
 		POINTF pos = { 416.f, 1353.f };
-		obj->init("door", pos, -1, OBJECT_TYPE_DOOR_LEFT);
+		obj->init("doorLeft", "door", pos, -1, OBJECT_TYPE_DOOR_LEFT);
 
 		// 연결
 		lockBlue->setLinkObject(obj);
