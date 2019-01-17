@@ -18,10 +18,8 @@ HRESULT player_Olaf::init()
 	initShield();
 
 	_proveBottom = _playerRect.bottom + 5;
-	_proveRight = _playerRect.right - 5;
+	_proveRight = _playerRect.right;
 	_proveLeft = _playerRect.left + 5;
-
-	_isShieldUp = false;
 
 	return S_OK;
 }
@@ -32,6 +30,7 @@ void player_Olaf::release()
 
 void player_Olaf::update()
 {
+
 	//충돌처리
 	pixelBottomCollision();
 	pixelHorizenWallCollision();
@@ -42,29 +41,55 @@ void player_Olaf::update()
 	_proveRight = _playerRect.right - 5;
 	_proveLeft = _playerRect.left + 5;
 	
+	//방패갱신
+	stateShield();
 }
 
 void player_Olaf::render()
 {
 	Rectangle(CAMERA->getMemDC(), _playerRect);
+	Rectangle(CAMERA->getMemDC(), _shield);
 }
 
 void player_Olaf::initOlaf()
 {
 	_x = WINSIZEX / 2 + 100;
 	_y = 1350;
-	_speed = 2.f;
+	_speed = 2.0f;
 
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 }
 
 void player_Olaf::initShield()
 {
+	_isShieldUp = false;
 	_shield = RectMakeCenter(_playerRect.right + 4, _playerRect.top + 35, 10, 40);
 }
 
 void player_Olaf::stateShield()
 {
+	if (!_isShieldUp)
+	{
+		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
+		{
+			_shield = RectMakeCenter(_playerRect.right - 5, _playerRect.top + 35, 10, 70);
+		}
+		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
+		{
+			_shield = RectMakeCenter(_playerRect.left + 5, _playerRect.top + 35, 10, 70);
+		}
+	}
+	else
+	{
+		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
+		{
+			_shield = RectMakeCenter(_playerRect.right - 25, _playerRect.top + 5, 50, 10);
+		}
+		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
+		{
+			_shield = RectMakeCenter(_playerRect.left + 25, _playerRect.top + 5, 50, 10);
+		}
+	}
 }
 
 void player_Olaf::pixelHorizenWallCollision()
@@ -82,14 +107,12 @@ void player_Olaf::pixelHorizenWallCollision()
 			if (r == 0 && g == 255 && b == 255)
 			{
 				_state == PLAYER_PUSH_WALL_LEFT;
-				_speed = 0;
+				_speed = 0.f;
 				break;
 			}
-			_state == PLAYER_IDLE_LEFT;
-			_speed = 2.0f;
 		}
 	}
-	else if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
+	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
 	{
 		for (int i = _proveRight - 10; i < _proveRight + 10; ++i)
 		{
@@ -102,18 +125,16 @@ void player_Olaf::pixelHorizenWallCollision()
 			if (r == 0 && g == 255 && b == 255)
 			{
 				_state == PLAYER_PUSH_WALL_RIGHT;
-				_speed = 0;
+				_speed = 0.f;
 				break;
 			}
-			_state == PLAYER_IDLE_RIGHT;
-			_speed = 2.0f;
 		}
 	}
 }
 
 void player_Olaf::rectBrokenWallCollision()
 {
-
+	
 
 }
 
@@ -143,24 +164,26 @@ void player_Olaf::keyPressMove()
 		//오른쪽 방향키를 누르면
 		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 		{
-			_x += _speed;
 			_state = PLAYER_MOVE_RIGHT;							//오른쪽으로 이동한다.
-		}
-		//왼쪽 방향키를 누르면
-		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-		{
-			_x -= _speed;
-			_state = PLAYER_MOVE_LEFT;							//왼쪽으로 이동한다.
+			_x += _speed;
 		}
 		//오른쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
 		{
 			_state = PLAYER_IDLE_RIGHT;							//오른쪽을 본다.
+			_speed = 2.0f;
+		}
+		//왼쪽 방향키를 누르면
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			_state = PLAYER_MOVE_LEFT;							//왼쪽으로 이동한다.
+			_x -= _speed;
 		}
 		//왼쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
 		{
 			_state = PLAYER_IDLE_LEFT;							//왼쪽을 본다.
+			_speed = 2.0f;
 		}
 	}
 	//방패를 위로 들고 있다면
@@ -169,24 +192,26 @@ void player_Olaf::keyPressMove()
 		//오른쪽 방향키를 누르면
 		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 		{
-			_x += _speed;
 			_state = PLAYER_SHIELD_MOVE_RIGHT;					//방패를 들고 오른쪽으로 이동한다.
+			_x += _speed;
+		}
+		//오른쪽 방향키를 떼면
+		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;					//방패를 들고 오른쪽을 본다.
+			_speed = 2.0f;
 		}
 		//왼쪽 방향키를 누르면
 		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
 		{
-			_x -= _speed;
 			_state = PLAYER_SHIELD_MOVE_LEFT;					//방패를 들고 왼쪽으로 이동한다.
-		}
-		//오른쪽 방향키를 떼면
-		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-		{
-			_state = PLAYER_SHIELD_IDLE_RIGHT;					//방패를 들고 오른쪽을 본다.
+			_x -= _speed;
 		}
 		//왼쪽 방향키를 떼면
-		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
 		{
 			_state = PLAYER_SHIELD_IDLE_LEFT;					//방패를 들고 왼쪽을 본다.
+			_speed = 2.0f;
 		}
 	}
 }
