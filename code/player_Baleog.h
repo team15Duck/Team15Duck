@@ -6,6 +6,9 @@ private:
 	
 	//부서지는 벽 TEST할 임시 RECT
 	RECT	_tempWall;
+	//사다 TEST할 임시 RECT
+	RECT	_tempLadder;
+	bool	_isLadder;
 
 public:
 	player_Baleog();
@@ -23,7 +26,10 @@ public:
 	virtual void keyPressSpace() override;
 	virtual void keyPressD() override;
 
-	
+	//플레이어 초기화 정보 함수
+	void initBaleog();
+
+
 
 	//좌우체크
 	virtual void pixelHorizenWallCollision() override; // << 픽셀 벽 충돌 
