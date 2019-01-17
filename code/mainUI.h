@@ -6,6 +6,7 @@ struct tagItemSelect
 {
 	PLAYER_NAME name;	//캐릭터
 	int invenPos;		//인벤에서의 4가지의 포지션
+	POINTF renderPos;	//그려줄 포지션
 	bool isRender;		//렌더해줄거니
 };
 

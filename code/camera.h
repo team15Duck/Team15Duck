@@ -3,14 +3,15 @@
 #include "backBuffer.h"
 
 
-#define CAMERA_SPEED 450.0f
+#define CAMERA_SPEED 300.0f
 
 class camera : public singletonBase<camera>
 {
 private:
 	HDC _hdc;
 	POINTF _pos;			//카메라 위치할 포지션
-	
+	POINTF _centerPos;		//카메라 센터 포지션
+
 	float* _playerX;		//카메라가 따라가야 할 포지션
 	float* _playerY;		//카메라가 따라가야 할 포지션
 
@@ -38,7 +39,9 @@ public:
 	void setPosY(float y) { _pos.y = y; }
 	void setMaxMapSize(float x, float y) { _mapSize.x = x; _mapSize.y = y; }
 
+	POINTF getCenterPos() { return _centerPos; }
 
+	void setAngle(float angle) { _angle = angle; }
 
 	void setPlayerPosX(float* x) { _playerX = x; }
 	void setPlayerPosY(float* y) { _playerY = y; }

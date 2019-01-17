@@ -66,6 +66,10 @@ void playerManager::keyPressCtrl()
 			_currentSelectPlayer = PLAYER_NAME_ERIC;
 		}
 		CAMERA->setMapMove(true);
+		POINTF playerPos;
+		playerPos.x = *_vPlayer[_currentSelectPlayer]->getPosX();
+		playerPos.y = *_vPlayer[_currentSelectPlayer]->getPosY();
+		CAMERA->setAngle(dGetAngle(playerPos, CAMERA->getCenterPos()));
 		_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
 		CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 		CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());

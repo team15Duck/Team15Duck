@@ -48,7 +48,6 @@ void mainUI::update()
 			{
 				_itemSelect[i].isRender = true;
 			}
-
 		}
 		else //선택중으로 들어와서 옮기고 있지 않다면? 깜박여
 		{
@@ -67,6 +66,14 @@ void mainUI::update()
 			}
 		}
 	}
+	else
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			_itemSelect[i].renderPos.x = CAMERA->getPosX() + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
+			_itemSelect[i].renderPos.y = CAMERA->getPosY() + 388 + _itemSelect[i].invenPos / 2 * 32;
+		}
+	}
 }
 
 void mainUI::render()
@@ -76,8 +83,8 @@ void mainUI::render()
 	{
 		if (_itemSelect[i].isRender)
 		{
-			IMAGEMANAGER->findImage("itemSelect")->render(CAMERA->getMemDC(), CAMERA->getPosX() + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32,
-																			  CAMERA->getPosY() + 388 + _itemSelect[i].invenPos / 2 * 32);
+			IMAGEMANAGER->findImage("itemSelect")->render(CAMERA->getMemDC(), _itemSelect[i].renderPos.x,
+																			  _itemSelect[i].renderPos.y);
 		}
 	}
 }
