@@ -43,31 +43,36 @@ void playerManager::render()
 {
 	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
 	{
-		_vPlayer[i]->render(CAMERA->getMemDC());
+		_vPlayer[i]->render();
 	}
 }
 
 void playerManager::keyUpdate()
 {
-	if (CAMERA->getMapMove()) return;
-	_vPlayer[_currentSelectPlayer]->keyUpdate();
+	if (!CAMERA->getMapMove())
+		_vPlayer[_currentSelectPlayer]->keyUpdate();
 }
 
 void playerManager::keyPressCtrl()
 {
-	if (CAMERA->getMapMove()) return;
-
-	if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
+	if (!CAMERA->getMapMove())
 	{
-		
-		_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
-		if (_currentSelectPlayer == PLAYER_NAME_NONE)
+		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
 		{
-			_currentSelectPlayer = PLAYER_NAME_ERIC;
+
+			_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
+			if (_currentSelectPlayer == PLAYER_NAME_NONE)
+			{
+				_currentSelectPlayer = PLAYER_NAME_ERIC;
+			}
+			CAMERA->setMapMove(true);
+			POINTF playerPos;
+			playerPos.x = *_vPlayer[_currentSelectPlayer]->getPosX();
+			playerPos.y = *_vPlayer[_currentSelectPlayer]->getPosY();
+			CAMERA->setAngle(dGetAngle(playerPos, CAMERA->getCenterPos()));
+			_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
+			CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
+			CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 		}
-		CAMERA->setMapMove(true);
-		_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
-		CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
-		CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 	}
 }

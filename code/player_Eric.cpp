@@ -59,9 +59,9 @@ void player_Eric::update()
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 }
 
-void player_Eric::render(HDC cameraDC)
+void player_Eric::render()
 {
-	Rectangle(cameraDC, _playerRect);
+	Rectangle(CAMERA->getMemDC(), _playerRect);
 }
 
 void player_Eric::keyPressMove()

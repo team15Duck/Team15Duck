@@ -29,7 +29,7 @@ void playerBase::update()
 {
 }
 
-void playerBase::render(HDC cameraDC)
+void playerBase::render()
 {
 	
 

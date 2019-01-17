@@ -14,7 +14,7 @@ public:
 	HRESULT init();
 	void release();
 	void update();
-	void render(HDC cameraDC);
+	void render();
 
 	//얘네는 공통적으로 작동되는거 이외에 작성하면됨
 	virtual void keyPressMove()		override;

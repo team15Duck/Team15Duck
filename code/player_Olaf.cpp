@@ -46,11 +46,7 @@ void player_Olaf::update()
 
 void player_Olaf::render()
 {
-}
-
-void player_Olaf::render(HDC cameraDC)
-{
-	Rectangle(cameraDC, _playerRect);
+	Rectangle(CAMERA->getMemDC(), _playerRect);
 }
 
 void player_Olaf::initOlaf()

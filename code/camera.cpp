@@ -57,6 +57,8 @@ void camera::release()
 
 void camera::update()
 {
+	_centerPos.x = _pos.x + WINSIZEX / 2;
+	_centerPos.y = _pos.y + 176;
 	move();
 }
 
@@ -68,18 +70,20 @@ void camera::move()
 {
 	if (_mapMove)
 	{
-		POINTF cameraP, playerP;
-		cameraP.x = _pos.x + WINSIZEX / 2;
-		cameraP.y = _pos.y + 176;
+		POINTF playerP;
 		playerP.x = *_playerX;
 		playerP.y = *_playerY;
-		_angle = dGetAngle(playerP, cameraP);
+		
 
-		if (getDistance(cameraP, playerP) < 5 ||
+		if (getDistance(_centerPos, playerP) < 5 ||
 			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && (playerP.y < 176 && _pos.y < 5)) ||																					//left top
 			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y < 176 && _pos.y < 5)) ||												//right top
 			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)) ||											//left bottom
-			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)))		//right bottom
+			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)) ||    //right bottom
+			((playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5) && getDistance(_centerPos, playerP) < 176 - 128) ||										//아래벽 + 거리
+			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||																	//왼벽 + 거리
+			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||								//오른벽 + 거리
+			((playerP.y < 176 && _pos.y < 5) && getDistance(_centerPos, playerP) < 176))																						//윗벽 + 거리
 		{
 			_mapMove = false;
 		}
@@ -88,20 +92,11 @@ void camera::move()
 			if (!((playerP.x < WINSIZEX / 2 && _pos.x < 5) || (playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5)))
 			{
 				_pos.x += dCosf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
-
-				if ((playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5) && getDistance(cameraP, playerP) < 18)
-				{
-					_mapMove = false;
-				}
-
 			}
 			if (!((playerP.y < 176 && _pos.y < 5) || (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)))
 			{
 				_pos.y += -dSinf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
 			}
-
-			
-
 		}
 	}
 	else

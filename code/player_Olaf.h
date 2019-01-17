@@ -18,8 +18,8 @@ public:
 	HRESULT init();
 	void release();
 	void update();
+	
 	void render();
-	void render(HDC cameraDC);
 
 	// ========== 함수추가 ==========
 
