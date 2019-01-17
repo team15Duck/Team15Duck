@@ -97,6 +97,7 @@ void camera::move()
 	}
 	else
 	{
+		_mapMove = false;
 		_pos.x = *_playerX - WINSIZEX / 2;
 		_pos.y = *_playerY - 176;
 
