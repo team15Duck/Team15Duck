@@ -17,6 +17,8 @@ HRESULT player_Eric::init()
 	_x = 300;
 	_y = 1350;
 	_speed = MIN_SPEED;
+	_jumpPower = _gravity = 0;
+	_isJump = false;
 
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 
@@ -36,7 +38,7 @@ void player_Eric::update()
 {
 	//if (현재 점프파워 <= 0)
 	{
-		pixelBottomCollision();	
+		pixelBottomCollision();
 	}
 	_proveBottom = _playerRect.bottom + 5;
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
@@ -53,10 +55,10 @@ void player_Eric::keyPressMove()
 	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
 	{
 		_speed = MIN_SPEED;
-		if (_state != PLAYER_JUMP_RIGHT || _state != PLAYER_JUMP_LEFT)
+		/*if (_state != PLAYER_JUMP_RIGHT || _state != PLAYER_JUMP_LEFT)
 		{
 			_state = PLAYER_MOVE_LEFT;
-		}
+		}*/
 	}
 	// 왼쪽으로 가속도 붙이며 이동하는 키세팅  
 	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
@@ -135,13 +137,14 @@ void player_Eric::keyPressMove()
 
 void player_Eric::keyPressSpace()
 {
-	if (!(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT ||
+	//예외처리 
+	/*if (!(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT ||
 		_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT))
 	{
 		return;
-	}
+	}*/
 	//만약에 스페이스바를 누르면 점프해라
-	if (KEYMANAGER->isStayKeyDown(VK_SPACE))
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
 	{
 		if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
 		{
@@ -150,6 +153,26 @@ void player_Eric::keyPressSpace()
 		if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
 		{
 			_state = PLAYER_JUMP_RIGHT;
+		}
+
+		_isJump = true;
+		_jumpPower = 10.0f;
+		_gravity = 0.4f;
+	}
+	if (_isJump)
+	{
+		_y -= _jumpPower;
+		_jumpPower -= _gravity;
+	}
+	if (_jumpPower <= 0)
+	{
+		if (_state == PLAYER_JUMP_RIGHT)
+		{
+			_state = PLAYER_FALL_RIGHT;
+		}
+		else if (_state == PLAYER_JUMP_LEFT)
+		{
+			_state = PLAYER_FALL_LEFT;
 		}
 	}
 }
@@ -181,6 +204,9 @@ void player_Eric::pixelTopWallCollision()
 
 void player_Eric::pixelBottomCollision()
 {
+	//만약에 점프한다면 픽셀충돌하시마씨오 
+	if (_state == PLAYER_JUMP_LEFT || _state == PLAYER_JUMP_RIGHT) return;
+
 	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
@@ -189,9 +215,23 @@ void player_Eric::pixelBottomCollision()
 		int g = GetGValue(color);
 		int b = GetBValue(color);
 
+		// 만약에 색이 마젠타라면 충돌하시오 
 		if ((r == 255 && g == 0 && b == 255))
 		{
 			_y = i - 35;
+			_isJump = false;
+
+			//만약에 왼쪽을 바라보는 모양으로 떨어진다면 
+			if (_state == PLAYER_FALL_LEFT)
+			{
+				_state = PLAYER_IDLE_LEFT;
+			}
+			//만약에 오른쪽을 바라보는 모양으로 떨어진다면 
+			if (_state == PLAYER_FALL_RIGHT)
+			{
+				_state = PLAYER_IDLE_RIGHT;
+			}
+
 			break;
 		}
 	}

@@ -1,8 +1,12 @@
 #pragma once
 #include "playerBase.h"
-class player_Eric :
-	public playerBase
+class player_Eric : public playerBase
 {
+private:
+	float _jumpPower;
+	float _gravity;
+
+	bool _isJump;
 public:
 	player_Eric();
 	~player_Eric();
