@@ -36,9 +36,7 @@ HRESULT mainUI::init()
 	_isItemSelectOn = false;
 	_isItemMove = false;
 	_blinkedCount = 0;
-	_playerItem[0][0] = new item;
-	POINTF p = { 3,4 };
-	_playerItem[0][0]->init("fieldItem", p, 1, ITEM_TYPE_FRUIT_SMALL);
+	
 	return S_OK;
 }
 
