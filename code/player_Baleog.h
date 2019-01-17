@@ -17,6 +17,7 @@ public:
 
 
 	//얘네는 공통적으로 작동되는거 이외에 작성하면됨
+	virtual void keyPressMove() override;
 	virtual void keyPressSpace() override;
 	virtual void keyPressD() override;
 
