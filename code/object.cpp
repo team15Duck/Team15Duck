@@ -92,7 +92,7 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 		{
 			_frameX = 0;
 			_frameY = _type - OBJECT_TYPE_BRIDGE_RIGHT;
-			_size = { 32, 128 };
+			_size = { 32, 160 };
 
 			int bridgeIdle[] = { 0 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "bridgeRightIdle", imgName, bridgeIdle, 1, 6, false);
@@ -108,7 +108,7 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 		{
 			_frameX = 0;
 			_frameY = _type - OBJECT_TYPE_BRIDGE_RIGHT;
-			_size = {32, 128};
+			_size = {32, 160};
 
 			int bridgeIdle[] = { 5 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "bridgeLeftIdle", imgName, bridgeIdle, 1, 6, false);
@@ -155,7 +155,7 @@ void object::render()
 {
 	if(_ani)
 		_img->aniRender(CAMERA->getMemDC(), _destX, _destY, _ani);
-	Rectangle(CAMERA->getMemDC(), _rc);
+	//Rectangle(CAMERA->getMemDC(), _rc);
 	if (_isActiveFinished)
 	{
 		
@@ -243,12 +243,12 @@ void object::MakeRect()
 		}
 		case OBJECT_TYPE_BRIDGE_RIGHT:
 		{
-			_rc = RectMake(_x + _size.x, _y - _size.y / 2, _size.x, _size.y);
+			_rc = RectMakeCenter(_x + _size.x * 2, _y, _size.x, _size.y);
 			break;
 		}
 		case OBJECT_TYPE_BRIDGE_LEFT:
 		{
-			_rc = RectMake(_x - _size.x * 2, _y - _size.y / 2, _size.x, _size.y);
+			_rc = RectMakeCenter(_x - _size.x * 2, _y, _size.x, _size.y);
 			break;
 		}
 		default:

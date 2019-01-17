@@ -16,7 +16,7 @@ HRESULT objectManager::init()
 	_vFieldObjects.clear();
 
 	// todo 나중에 이미지 한번에 로드하는 부분으로 이동 할 것
-	IMAGEMANAGER->addFrameImage("bridge", "image/bridge.bmp", 645, 256, 5, 2, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addFrameImage("bridge", "image/bridge.bmp", 805, 320, 5, 2, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addFrameImage("door", "image/door.bmp", 192, 192, 3, 2, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addFrameImage("lock", "image/lock.bmp", 162, 54, 3, 1, true, RGB(255, 0, 255));
 
@@ -51,7 +51,7 @@ HRESULT objectManager::init()
 	// bridge right - linked lock red
 	{
 		object* obj = new object;
-		POINTF pos = {1789.f, 1242.f};
+		POINTF pos = {1773.f, 1258.f};
 		obj->init("bridgeRight", "bridge", pos, -1, OBJECT_TYPE_BRIDGE_RIGHT);
 
 		// 연결
