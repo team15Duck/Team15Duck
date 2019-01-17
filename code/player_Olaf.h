@@ -27,7 +27,10 @@ public:
 	void initOlaf();
 
 	//방패 초기화
-	void initShield();			
+	void initShield();	
+
+	//방패 상태
+	void stateShield();
 
 
 	// ========== 충돌함수 ==========
@@ -41,6 +44,12 @@ public:
 	//바닥충돌
 	virtual void pixelBottomCollision() override;
 
+
+	// ========== 키입력 ==========
+
+	virtual void keyPressMove() override;
+	virtual void keyPressSpace() override;
+	virtual void keyPressD() override;
 
 
 
