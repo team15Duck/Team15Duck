@@ -145,9 +145,6 @@ void itemManager::obtainItem(item* targetItem)
 
 		_vFieldItems.erase(iter);
 
-		SAFE_RELEASE(value);
-		SAFE_DELETE(value);
-
 		break;
 	}
 }

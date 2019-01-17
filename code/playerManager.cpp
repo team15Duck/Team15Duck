@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "playerManager.h"
 #include "mainUI.h"
+#include "itemManager.h"
+#include "objectManager.h"
 
 playerManager::playerManager()
 {
@@ -36,6 +38,34 @@ void playerManager::update()
 	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
 	{
 		_vPlayer[i]->update();
+		for (int j = 0; j < _im->getFieldItems().size(); j++)
+		{
+			RECT _temp;
+			if (IntersectRect(&_temp, &_im->getFieldItems()[j]->getItemRect(), &_vPlayer[i]->getPlayerRect()))
+			{
+				for (int k = 0; k < 4; k++)
+				{
+					if (_vPlayer[i]->getInvenItem()[k] == nullptr)
+					{
+						_vPlayer[i]->getInvenItem()[k] = _im->getFieldItems()[j];
+						_im->obtainItem(_im->getFieldItems()[j]);
+						switch (i)
+						{
+							case PLAYER_NAME_ERIC:
+								_mainUI->setEricItemInfo(_vPlayer[i]->getInvenItem());
+							break;
+							case PLAYER_NAME_BALEOG:
+								_mainUI->setBaleogItemInfo(_vPlayer[i]->getInvenItem());
+							break;
+							case PLAYER_NAME_OLAF:
+								_mainUI->setOlafItemInfo(_vPlayer[i]->getInvenItem());
+							break;
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
 }
 

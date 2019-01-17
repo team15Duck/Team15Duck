@@ -156,4 +156,6 @@ public:
 
 
 	void setPixelDataLink(image* img) { _pixelData = img; }
+	RECT getPlayerRect() { return _playerRect; }
+	item** getInvenItem() { return _invenItem; }
 };
