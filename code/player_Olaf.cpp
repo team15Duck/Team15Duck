@@ -15,7 +15,7 @@ HRESULT player_Olaf::init()
 {
 	//초기화
 	initOlaf();
-	initShield();
+	//initShield();
 
 	_proveBottom = _playerRect.bottom + 5;
 	_proveRight = _playerRect.right;
@@ -30,7 +30,6 @@ void player_Olaf::release()
 
 void player_Olaf::update()
 {
-
 	//충돌처리
 	pixelBottomCollision();
 	pixelHorizenWallCollision();
@@ -38,8 +37,8 @@ void player_Olaf::update()
 	//갱신
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 	_proveBottom = _playerRect.bottom + 5;
-	_proveRight = _playerRect.right - 5;
-	_proveLeft = _playerRect.left + 5;
+	_proveRight = _playerRect.right;// + 5;
+	_proveLeft = _playerRect.left;// -5;
 	
 	//방패갱신
 	stateShield();
@@ -49,111 +48,6 @@ void player_Olaf::render()
 {
 	Rectangle(CAMERA->getMemDC(), _playerRect);
 	Rectangle(CAMERA->getMemDC(), _shield);
-}
-
-void player_Olaf::initOlaf()
-{
-	_x = WINSIZEX / 2 + 100;
-	_y = 1350;
-	_speed = 2.0f;
-
-	_playerRect = RectMakeCenter(_x, _y, 50, 70);
-}
-
-void player_Olaf::initShield()
-{
-	_isShieldUp = false;
-	_shield = RectMakeCenter(_playerRect.right + 4, _playerRect.top + 35, 10, 40);
-}
-
-void player_Olaf::stateShield()
-{
-	if (!_isShieldUp)
-	{
-		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
-		{
-			_shield = RectMakeCenter(_playerRect.right - 5, _playerRect.top + 35, 10, 70);
-		}
-		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
-		{
-			_shield = RectMakeCenter(_playerRect.left + 5, _playerRect.top + 35, 10, 70);
-		}
-	}
-	else
-	{
-		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
-		{
-			_shield = RectMakeCenter(_playerRect.right - 25, _playerRect.top + 5, 50, 10);
-		}
-		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
-		{
-			_shield = RectMakeCenter(_playerRect.left + 25, _playerRect.top + 5, 50, 10);
-		}
-	}
-}
-
-void player_Olaf::pixelHorizenWallCollision()
-{
-	if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
-	{
-		for (int i = _proveLeft - 10; i < _proveLeft + 10; ++i)
-		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state == PLAYER_PUSH_WALL_LEFT;
-				_speed = 0.f;
-				break;
-			}
-		}
-	}
-	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
-	{
-		for (int i = _proveRight - 10; i < _proveRight + 10; ++i)
-		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state == PLAYER_PUSH_WALL_RIGHT;
-				_speed = 0.f;
-				break;
-			}
-		}
-	}
-}
-
-void player_Olaf::rectBrokenWallCollision()
-{
-	
-
-}
-
-void player_Olaf::pixelBottomCollision()
-{
-	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
-	{
-		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
-
-		int r = GetRValue(color);
-		int g = GetGValue(color);
-		int b = GetBValue(color);
-
-		if (r == 255 && g == 0 && b == 255)
-		{
-			_y = i - 35;
-			break;
-		}
-	}
 }
 
 void player_Olaf::keyPressMove()
@@ -172,6 +66,7 @@ void player_Olaf::keyPressMove()
 		{
 			_state = PLAYER_IDLE_RIGHT;							//오른쪽을 본다.
 			_speed = 2.0f;
+
 		}
 		//왼쪽 방향키를 누르면
 		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
@@ -184,6 +79,7 @@ void player_Olaf::keyPressMove()
 		{
 			_state = PLAYER_IDLE_LEFT;							//왼쪽을 본다.
 			_speed = 2.0f;
+		
 		}
 	}
 	//방패를 위로 들고 있다면
@@ -200,6 +96,7 @@ void player_Olaf::keyPressMove()
 		{
 			_state = PLAYER_SHIELD_IDLE_RIGHT;					//방패를 들고 오른쪽을 본다.
 			_speed = 2.0f;
+			
 		}
 		//왼쪽 방향키를 누르면
 		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
@@ -397,3 +294,112 @@ void player_Olaf::keyPressD()
 		}
 	}
 }
+
+void player_Olaf::initOlaf()
+{
+	_x = WINSIZEX / 2 + 500;
+	_y = 1350;
+	_speed = 2.0f;
+	
+
+	_playerRect = RectMakeCenter(_x, _y, 50, 70);
+}
+
+void player_Olaf::initShield()
+{
+	_isShieldUp = false;
+	_shield = RectMakeCenter(_playerRect.right + 4, _playerRect.top + 35, 10, 40);
+}
+
+void player_Olaf::stateShield()
+{
+	if (!_isShieldUp)
+	{
+		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
+		{
+			_shield = RectMake(_playerRect.right-10, _playerRect.top, 10, 70);
+		}
+		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
+		{
+			_shield = RectMake(_playerRect.left, _playerRect.top, 10, 70);
+		}
+	}
+	else
+	{
+		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
+		{
+			_shield = RectMake(_playerRect.right-10, _playerRect.top, 50, 10);
+		}
+		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
+		{
+			_shield = RectMake(_playerRect.left, _playerRect.top, 50, 10);
+		}
+	}
+}
+
+void player_Olaf::pixelHorizenWallCollision()
+{
+	if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT || _state == PLAYER_MOVE_RIGHT ||
+		_state == PLAYER_SHIELD_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+	{
+		for (int i = _proveLeft - 10; i < _proveLeft + 10; ++i)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+
+			if (r == 0 && g == 255 && b == 255)
+			{
+				_state == PLAYER_PUSH_WALL_LEFT;
+				_speed = 0.f;
+				break;
+			}
+		}
+	}
+	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT || _state == PLAYER_MOVE_LEFT || 
+		_state == PLAYER_SHIELD_MOVE_LEFT || _state == PLAYER_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_LEFT)
+	{
+		for (int i = _proveRight - 10; i < _proveRight + 10; ++i)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+
+			if (r == 0 && g == 255 && b == 255)
+			{
+				_state == PLAYER_PUSH_WALL_RIGHT;
+				_speed = 0.f;
+				break;
+			}
+		}
+	}
+}
+
+void player_Olaf::rectBrokenWallCollision()
+{
+	
+
+}
+
+void player_Olaf::pixelBottomCollision()
+{
+	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
+	{
+		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
+
+		int r = GetRValue(color);
+		int g = GetGValue(color);
+		int b = GetBValue(color);
+
+		if (r == 255 && g == 0 && b == 255)
+		{
+			_y = i - 35;
+			break;
+		}
+	}
+}
+

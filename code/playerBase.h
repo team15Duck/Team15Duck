@@ -78,19 +78,20 @@ protected:
 	PLAYER_NAME _name;
 
 
-	float			_x;						//좌표
-	float			_y;						//좌표
-	float			_saveY;					//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
+	float			_x;							//좌표
+	float			_y;							//좌표
+	float			_saveY;						//점프직전또는 떨어지기 직전의 y의 위치값을 저장해줌
 	float			_speed;
-	float			_proveTop;                //픽셀충돌 확인용 
-	float			_proveBottom;            //픽셀충돌 확인용 
-	float			_proveLeft;            //픽셀충돌 확인용 
-	float			_proveRight;            //픽셀충돌 확인용 
+	float			_proveTop;				    //픽셀충돌 확인용 
+	float			_proveBottom;			    //픽셀충돌 확인용 
+	float			_proveLeft;					//픽셀충돌 확인용 
+	float			_proveRight;			    //픽셀충돌 확인용 
 
 	bool			_isFall;
 	bool			_isAlive;
 	bool			_deathMotion;
 
+	int				_lifeCount;					//체력
 	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	PLAYER_STATE	_state;
 	RECT			_playerRect;

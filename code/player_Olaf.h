@@ -20,6 +20,12 @@ public:
 	void update();
 	
 	void render();
+	// ========== 키입력 ==========
+
+	virtual void keyPressMove() override;
+	virtual void keyPressSpace() override;
+	virtual void keyPressD() override;
+
 
 	// ========== 함수추가 ==========
 
@@ -44,12 +50,6 @@ public:
 	//바닥충돌
 	virtual void pixelBottomCollision() override;
 
-
-	// ========== 키입력 ==========
-
-	virtual void keyPressMove() override;
-	virtual void keyPressSpace() override;
-	virtual void keyPressD() override;
 
 
 
