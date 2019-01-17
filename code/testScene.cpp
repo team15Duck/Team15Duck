@@ -32,6 +32,11 @@ HRESULT testScene::init()
 	_itemManager = new itemManager;
 	_itemManager->init();
 
+	_mainUI = new mainUI;
+	_mainUI->init();
+
+	_pm->setMainUIAdressLink(_mainUI);
+
 	return S_OK;
 }
 
@@ -53,7 +58,7 @@ void testScene::update()
 		_pm->keyUpdate();
 	}
 	
-
+	_mainUI->update();
 }
 
 void testScene::render()
@@ -73,5 +78,6 @@ void testScene::render()
 	
 	_pm->render();
 	_itemManager->render();
+	_mainUI->render();
 	//------------------------------------------------------------------------------
 }

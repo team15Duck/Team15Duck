@@ -24,16 +24,10 @@ HRESULT mainUI::init()
 		_itemSelect[i].isRender = true;
 	}
 
-
-
-	_isItemSelectOn = true;
+	_isItemSelectOn = false;
 	_isItemMove = false;
 	_blinkedCount = 0;
 	
-	
-
-
-
 	return S_OK;
 }
 
@@ -92,7 +86,7 @@ void mainUI::setEricItemInfo(item ** it)
 {
 	for (int i = 0; i < 4; i++)
 	{
-		_playerItem[0][i] = it[i];
+		_playerItem[PLAYER_NAME_ERIC][i] = it[i];
 	}
 }
 
@@ -100,7 +94,7 @@ void mainUI::setBaleogItemInfo(item ** it)
 {
 	for (int i = 0; i < 4; i++)
 	{
-		_playerItem[1][i] = it[i];
+		_playerItem[PLAYER_NAME_BALEOG][i] = it[i];
 	}
 }
 
@@ -108,11 +102,9 @@ void mainUI::setOlafItemInfo(item ** it)
 {
 	for (int i = 0; i < 4; i++)
 	{
-		_playerItem[2][i] = it[i];
+		_playerItem[PLAYER_NAME_OLAF][i] = it[i];
 	}
 }
-
-
 
 void mainUI::setIsItemSelectOn(bool isItemSelectOn)
 {

@@ -3,7 +3,7 @@
 #include "backBuffer.h"
 
 
-#define CAMERA_SPEED 400.0f
+#define CAMERA_SPEED 450.0f
 
 class camera : public singletonBase<camera>
 {

@@ -4,7 +4,7 @@
 #include "player_Olaf.h"
 #include <vector>
 
-
+class mainUI;
 
 class playerManager
 {
@@ -13,6 +13,9 @@ private:
 	vector<playerBase*> _vPlayer;
 
 	PLAYER_NAME _currentSelectPlayer;
+
+
+	mainUI* _mainUI;
 
 public:
 	playerManager();
@@ -29,6 +32,6 @@ public:
 
 	vector<playerBase*> getVPlayer() { return _vPlayer; }
 
-	
+	void setMainUIAdressLink(mainUI* ui) { _mainUI = ui; }
 };
 

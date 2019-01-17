@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "playerManager.h"
-
+#include "mainUI.h"
 
 playerManager::playerManager()
 {
@@ -63,7 +63,7 @@ void playerManager::keyPressCtrl()
 			_currentSelectPlayer = PLAYER_NAME_ERIC;
 		}
 		CAMERA->setMapMove(true);
-	
+		_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
 		CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 		CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 	}
