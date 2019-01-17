@@ -70,15 +70,15 @@ void mainUI::update()
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			_itemSelect[i].renderPos.x = CAMERA->getPosX() + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
-			_itemSelect[i].renderPos.y = CAMERA->getPosY() + 388 + _itemSelect[i].invenPos / 2 * 32;
+			_itemSelect[i].renderPos.x = ceil(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
+			_itemSelect[i].renderPos.y = ceil(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
 		}
 	}
 }
 
 void mainUI::render()
 {
-	_main->frameRender(CAMERA->getMemDC(), CAMERA->getPosX(), CAMERA->getPosY() + WINSIZEY - 128, _currentMainFrameIndex, 0);
+	_main->frameRender(CAMERA->getMemDC(), ceil(CAMERA->getPosX()), ceil(CAMERA->getPosY()) + WINSIZEY - 128, _currentMainFrameIndex, 0);
 	for (int i = 0; i < 3; i++)
 	{
 		if (_itemSelect[i].isRender)

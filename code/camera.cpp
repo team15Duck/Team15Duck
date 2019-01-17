@@ -81,9 +81,9 @@ void camera::move()
 			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)) ||											//left bottom
 			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)) ||    //right bottom
 			((playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5) && getDistance(_centerPos, playerP) < 176 - 128) ||										//아래벽 + 거리
-			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||																		//왼벽 + 거리
-			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||									//오른벽 + 거리
-			((playerP.y < 176 && _pos.y < 5) && getDistance(_centerPos, playerP) < 176))																							//윗벽 + 거리
+			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||																	//왼벽 + 거리
+			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && getDistance(_centerPos, playerP) < WINSIZEX / 2) ||								//오른벽 + 거리
+			((playerP.y < 176 && _pos.y < 5) && getDistance(_centerPos, playerP) < 176))																						//윗벽 + 거리
 		{
 			_mapMove = false;
 		}
