@@ -15,7 +15,7 @@ HRESULT player_Olaf::init()
 {
 	//초기화
 	initOlaf();
-	//initShield();
+	initShield();
 
 	_proveBottom = _playerRect.bottom + 5;
 	_proveRight = _playerRect.right;
@@ -37,8 +37,8 @@ void player_Olaf::update()
 	//갱신
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 	_proveBottom = _playerRect.bottom + 5;
-	_proveRight = _playerRect.right;// + 5;
-	_proveLeft = _playerRect.left;// -5;
+	_proveRight = _playerRect.right; - 5;
+	_proveLeft = _playerRect.left; + 5;
 	
 	//방패갱신
 	stateShield();
@@ -297,48 +297,57 @@ void player_Olaf::keyPressD()
 
 void player_Olaf::initOlaf()
 {
-	_x = WINSIZEX / 2 + 500;
-	_y = 1350;
-	_speed = 2.0f;
+	_x = WINSIZEX / 2 + 500;				   //X좌표
+	_y = 1350;								   //Y좌표
+	_speed = 2.0f;							   //스피드
+	_lifeCount = 3;							   //체력
 	
 
-	_playerRect = RectMakeCenter(_x, _y, 50, 70);
+	_playerRect = RectMakeCenter(_x, _y, 50, 70); //올라프렉트생성
 }
 
 void player_Olaf::initShield()
 {
-	_isShieldUp = false;
-	_shield = RectMakeCenter(_playerRect.right + 4, _playerRect.top + 35, 10, 40);
+	_isShieldUp = false;																//방패들었니?
+	_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 40);				//방패렉트생성
 }
 
 void player_Olaf::stateShield()
 {
+	//방패를 위로 안들었다면
 	if (!_isShieldUp)
 	{
+		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right-10, _playerRect.top, 10, 70);
+			_shield = RectMake(_playerRect.right-10, _playerRect.top, 10, 70);			//오른쪽으로 방패렉트를 갱신한다.
 		}
+		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
 		{
-			_shield = RectMake(_playerRect.left, _playerRect.top, 10, 70);
+			_shield = RectMake(_playerRect.left, _playerRect.top, 10, 70);				//왼쪽으로 방패렉트를 갱신한다.
 		}
 	}
+	//방패를 위로 들었다면
 	else
 	{
+		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right-10, _playerRect.top, 50, 10);
+			_shield = RectMake(_playerRect.right-50, _playerRect.top, 50, 10);			//오른쪽으로 방패렉트를 갱신한다.
 		}
+		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
 		{
-			_shield = RectMake(_playerRect.left, _playerRect.top, 50, 10);
+			_shield = RectMake(_playerRect.left, _playerRect.top, 50, 10);				//왼쪽으로 방패렉트를 갱신한다.
 		}
 	}
 }
 
 void player_Olaf::pixelHorizenWallCollision()
 {
+	//플레이어가 왼쪽으로 이동할때(+방패 든 상태) 왼쪽키를 누른 상태에서 오른쪽키를 누르면 버그발생하므로 예외처리 함.
+	//예외처리 -> 오른쪽으로 이동, 대기(+방패 든 상태)
 	if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT || _state == PLAYER_MOVE_RIGHT ||
 		_state == PLAYER_SHIELD_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT || _state == PLAYER_SHIELD_IDLE_RIGHT)
 	{
@@ -352,16 +361,21 @@ void player_Olaf::pixelHorizenWallCollision()
 
 			if (r == 0 && g == 255 && b == 255)
 			{
-				_state == PLAYER_PUSH_WALL_LEFT;
-				_speed = 0.f;
-				break;
+				_state == PLAYER_PUSH_WALL_LEFT;				//상태는 왼쪽 벽을 민다.
+				_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
+				break;											  
 			}
 		}
 	}
-	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT || _state == PLAYER_MOVE_LEFT || 
-		_state == PLAYER_SHIELD_MOVE_LEFT || _state == PLAYER_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_LEFT)
+	//플레이어가 오른쪽으로 이동할때(+방패 든 상태) 오른쪽키를 누른 상태에서 왼쪽키를 누르면 버그발생하므로 예외처리 함.
+	//예외처리 -> 왼쪽으로 이동, 대기(+방패 든 상태)
+	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT ||
+		_state == PLAYER_IDLE_LEFT	|| _state == PLAYER_SHIELD_IDLE_LEFT)
 	{
-		for (int i = _proveRight - 10; i < _proveRight + 10; ++i)
+		if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
+			return;
+
+		for (int i = _proveRight - 5; i < _proveRight + 5; ++i)
 		{
 			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
 
@@ -371,8 +385,8 @@ void player_Olaf::pixelHorizenWallCollision()
 
 			if (r == 0 && g == 255 && b == 255)
 			{
-				_state == PLAYER_PUSH_WALL_RIGHT;
-				_speed = 0.f;
+				_state == PLAYER_PUSH_WALL_RIGHT;				//상태는 오른쪽 벽을 민다.
+				_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
 				break;
 			}
 		}
@@ -397,7 +411,7 @@ void player_Olaf::pixelBottomCollision()
 
 		if (r == 255 && g == 0 && b == 255)
 		{
-			_y = i - 35;
+			_y = i - 35;										   //플레이어 좌표 보정
 			break;
 		}
 	}
