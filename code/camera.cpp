@@ -76,17 +76,23 @@ void camera::move()
 		_angle = dGetAngle(playerP, cameraP);
 
 		if (getDistance(cameraP, playerP) < 5 ||
-			(playerP.x < WINSIZEX / 2 && _pos.x < 5) ||
-			(playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) ||
-			(playerP.y < 176 && _pos.y < 5) ||
-			(playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5))
+			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && (playerP.y < 176 && _pos.y < 5)) ||																					//left top
+			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y < 176 && _pos.y < 5)) ||												//right top
+			((playerP.x < WINSIZEX / 2 && _pos.x < 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)) ||											//left bottom
+			((playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) && (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)))		//right bottom
 		{
 			_mapMove = false;
 		}
 		else
 		{
-			_pos.x +=  dCosf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
-			_pos.y += -dSinf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+			if (!((playerP.x < WINSIZEX / 2 && _pos.x < 5) || (playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5)))
+			{
+				_pos.x += dCosf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+			}
+			if (!((playerP.y < 176 && _pos.y < 5) || (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)))
+			{
+				_pos.y += -dSinf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+			}
 		}
 	}
 	else
