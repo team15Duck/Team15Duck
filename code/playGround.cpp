@@ -20,6 +20,7 @@ HRESULT playGround::init()
 	SCENEMANAGER->addScene("테스트씬", new testScene);
 	SCENEMANAGER->addScene("치영테스트", new chiyeongTestScene);
 	SCENEMANAGER->changeScene("테스트씬");
+
 	return S_OK;
 }
 
