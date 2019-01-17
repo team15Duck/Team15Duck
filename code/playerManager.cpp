@@ -55,8 +55,11 @@ void playerManager::keyUpdate()
 
 void playerManager::keyPressCtrl()
 {
+	if (CAMERA->getMapMove()) return;
+
 	if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
 	{
+		
 		_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
 		if (_currentSelectPlayer == PLAYER_NAME_NONE)
 		{
