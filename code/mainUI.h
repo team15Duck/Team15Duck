@@ -23,7 +23,10 @@ private:
 
 	float _blinkedCount;			//아이템 선택중일때 깜박이기 위한 카운트
 
-	item* _playerItem[3][4];
+	item* _playerItem[3][4];		//플레이어아이템정보
+
+	int _playerHP[3];				//플레이어 체력정보
+	bool _isPlayerAlive[3];			//플레이어 생존정보
 	
 public:
 	mainUI();
@@ -46,6 +49,14 @@ public:
 
 	void setCurrentMainFrameIndex(int index) { _currentMainFrameIndex = index; }		//플레이어 매니저에서 선택된애가 누군지 알아서 넣어줄 함수
 
-	
+	void setEricUIHP(int hp) { _playerHP[PLAYER_NAME_ERIC] = hp; }
+	void setBaleogUIHP(int hp) { _playerHP[PLAYER_NAME_BALEOG] = hp; }
+	void setOlafUIHP(int hp) { _playerHP[PLAYER_NAME_OLAF] = hp; }
+
+	void setEricUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_ERIC] = alive; }
+	void setBaleogUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_BALEOG] = alive; }
+	void setOlafUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_OLAF] = alive; }
+
+
 };
 

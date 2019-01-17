@@ -32,6 +32,8 @@ private:
 	POINT	_size;			// 크기
 	RECT	_rc;			// 충돌 렉트
 
+	bool _isRender;
+
 public:
 	item();
 	~item();
@@ -44,5 +46,7 @@ public:
 	ITEM_TYPE getItemType() { return _type;	 }
 	int		  getItemValue(){ return _value; }
 	RECT	  getItemRect()	{ return _rc;	 }
+	bool	  getIsRender() { return _isRender; }
+	void	  setIsRender(bool render) { _isRender = render; }
 };
 

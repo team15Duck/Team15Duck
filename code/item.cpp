@@ -18,7 +18,7 @@ HRESULT item::init(const char* imgName, POINTF position, int itemValue, ITEM_TYP
 	
 	if(!_img)
 		return E_FAIL;
-
+	_isRender = true;
 	_type = type;
 
 	_x = position.x;

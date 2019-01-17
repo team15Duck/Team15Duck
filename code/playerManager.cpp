@@ -55,7 +55,7 @@ void playerManager::keyUpdate()
 
 void playerManager::keyPressCtrl()
 {
-	if (TIMEMANAGER->getWorldTime() < 0.5f) return;
+	if(TIMEMANAGER->getWorldTime() < 0.5f) return;
 	if (!CAMERA->getMapMove())
 	{
 		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
