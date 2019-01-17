@@ -6,7 +6,9 @@ private:
 	float _jumpPower;
 	float _gravity;
 
-	bool _isJump;
+	bool _isJump;       //점프 체크용
+	bool _isRCollision;	//오른쪽 충돌 체크용 
+	bool _isLCollision;	//왼쪽 충돌 체크용
 public:
 	player_Eric();
 	~player_Eric();
@@ -22,7 +24,7 @@ public:
 	virtual void keyPressD()		override;
 	virtual void keyPressE()		override;
 	virtual void keyPressS()		override;
-	
+
 
 
 	//좌우체크
@@ -37,6 +39,8 @@ public:
 
 
 	//처맞는함수
+
+	void jump();
 
 };
 
