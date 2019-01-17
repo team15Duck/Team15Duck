@@ -1,11 +1,12 @@
 #pragma once
 #include "item.h"
 //알아서 조절하셈
-#define MAX_SPEED 200.0f
-#define MIN_SPEED 10.0f
-#define ACC_SPEED 200.0f
+#define MAX_SPEED	200.0f
+#define MIN_SPEED	10.0f
+#define MAX_LIFE	3
+#define ACC_SPEED	200.0f
 #define START_JUMPP 200.0f
-#define GRAVITY 250.0f
+#define GRAVITY		250.0f
 
 enum PLAYER_NAME
 {

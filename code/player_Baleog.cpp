@@ -82,6 +82,7 @@ void player_Baleog::keyPressMove()
 	//일단 위로도 움직여 보자
 	if (KEYMANAGER->isStayKeyDown(VK_UP))
 	{
+
 		//사다리와 충돌 됐는지 여부를 체크할 임시 RECT
 		RECT collisionTempRect;
 
@@ -126,6 +127,10 @@ void player_Baleog::initBaleog()
 	//임시 충돌 체크용 Rect
 	_tempWall = RectMakeCenter(300, 1325, 50, 100);
 	_tempLadder = RectMakeCenter(192, 840, 50, 1130);
+
+	_isLadder = false;
+	_isLadderTop = false;
+
 }
 
 void player_Baleog::pixelHorizenWallCollision()
