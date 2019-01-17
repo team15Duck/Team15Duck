@@ -142,8 +142,8 @@ public:
 
 
 	//百悸篮 力老关俊 累己窍技夸
-	float getPosX() { return _x; }
-	float getPosY() { return _y; }
+	float* getPosX() { return &_x; }
+	float* getPosY() { return &_y; }
 
 	PLAYER_NAME getPlayerName() { return _name; }
 	

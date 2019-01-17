@@ -66,5 +66,49 @@ void camera::render()
 
 void camera::move()
 {
+	if (_mapMove)
+	{
+		POINTF cameraP, playerP;
+		cameraP.x = _pos.x + WINSIZEX / 2;
+		cameraP.y = _pos.y + 176;
+		playerP.x = *_playerX;
+		playerP.y = *_playerY;
+		_angle = dGetAngle(playerP, cameraP);
 
+		if (getDistance(cameraP, playerP) < 5 ||
+			(playerP.x < WINSIZEX / 2 && _pos.x < 5) ||
+			(playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5) ||
+			(playerP.y < 176 && _pos.y < 5) ||
+			(playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5))
+		{
+			_mapMove = false;
+		}
+		else
+		{
+			_pos.x +=  dCosf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+			_pos.y += -dSinf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+		}
+	}
+	else
+	{
+		_pos.x = *_playerX - WINSIZEX / 2;
+		_pos.y = *_playerY - 176;
+
+		if (_pos.x < 0)
+		{
+			_pos.x = 0;
+		}
+		if (_pos.x > _mapSize.x - WINSIZEX)
+		{
+			_pos.x = _mapSize.x - WINSIZEX;
+		}
+		if (_pos.y < 0)
+		{
+			_pos.y = 0;
+		}
+		if (_pos.y > _mapSize.y - WINSIZEY)
+		{
+			_pos.y = _mapSize.y - WINSIZEY;
+		}
+	}
 }

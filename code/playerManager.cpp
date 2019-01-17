@@ -22,7 +22,8 @@ HRESULT playerManager::init()
 	_vPlayer[PLAYER_NAME_OLAF]->init();
 
 	_currentSelectPlayer = PLAYER_NAME_ERIC;
-
+	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
+	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 	return S_OK;
 }
 
@@ -48,6 +49,7 @@ void playerManager::render()
 
 void playerManager::keyUpdate()
 {
+	if (CAMERA->getMapMove()) return;
 	_vPlayer[_currentSelectPlayer]->keyUpdate();
 }
 
@@ -60,5 +62,9 @@ void playerManager::keyPressCtrl()
 		{
 			_currentSelectPlayer = PLAYER_NAME_ERIC;
 		}
+		CAMERA->setMapMove(true);
+	
+		CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
+		CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 	}
 }

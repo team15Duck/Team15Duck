@@ -20,7 +20,7 @@ HRESULT testScene::init()
 
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
 	CAMERA->setPosY(1100);
-	
+	CAMERA->setPosX(100);
 	_pm = new playerManager;
 	_pm->init();
 
