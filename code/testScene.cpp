@@ -76,15 +76,16 @@ void testScene::render()
 
 	//--------------------------방패모양을 그릴거면 여기서 그릴것---------------------
 	//pixelMap의 DC에다가 그려줄것 마젠타로 바닥판정해주기
-
-	
-
+	_pm->shieldPixelRender();
 	//------------------------------------------------------------------------------
 	//-----------------------------렌더는 여기에-------------------------------------
 	//주의사항 : 여태 우리는 getMemDC()에 그려왔습니다
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
-	
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
+	}
 	_itemManager->render();
 	_objManager->render();;
 	_pm->render();

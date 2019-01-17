@@ -30,6 +30,8 @@ public:
 	void update();
 	void render();
 
+	void shieldPixelRender();
+
 	void keyUpdate();
 	void keyPressCtrl();
 

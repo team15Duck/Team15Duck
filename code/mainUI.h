@@ -57,6 +57,7 @@ public:
 	void setBaleogUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_BALEOG] = alive; }
 	void setOlafUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_OLAF] = alive; }
 
+	int getInvenPos(PLAYER_NAME name);
 
 };
 

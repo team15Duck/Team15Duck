@@ -145,8 +145,12 @@ void object::release()
 void object::update()
 {
 	KEYANIMANAGER->update(_objName);
-	//if(KEYMANAGER->isStayKeyDown(VK_SPACE))
-	//		active();
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		if(KEYMANAGER->isStayKeyDown(VK_SPACE))
+				active();
+
+	}
 
 	MakeRect();
 }
@@ -155,7 +159,11 @@ void object::render()
 {
 	if(_ani)
 		_img->aniRender(CAMERA->getMemDC(), _destX, _destY, _ani);
-	//Rectangle(CAMERA->getMemDC(), _rc);
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		Rectangle(CAMERA->getMemDC(), _rc);
+	}
+	
 	if (_isActiveFinished)
 	{
 		

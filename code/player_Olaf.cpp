@@ -90,6 +90,7 @@ void player_Olaf::keyPressMove()
 		{
 			_state = PLAYER_SHIELD_MOVE_RIGHT;					//방패를 들고 오른쪽으로 이동한다.
 			_x += _speed;
+			pixelHorizenWallCollision();
 		}
 		//오른쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
@@ -369,12 +370,12 @@ void player_Olaf::pixelHorizenWallCollision()
 	}
 	//플레이어가 오른쪽으로 이동할때(+방패 든 상태) 오른쪽키를 누른 상태에서 왼쪽키를 누르면 버그발생하므로 예외처리 함.
 	//예외처리 -> 왼쪽으로 이동, 대기(+방패 든 상태)
-	if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT ||
-		_state == PLAYER_IDLE_LEFT	|| _state == PLAYER_SHIELD_IDLE_LEFT)
+	//if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT ||
+	//	_state == PLAYER_IDLE_LEFT	|| _state == PLAYER_SHIELD_IDLE_LEFT)
 	{
-		if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
-			return;
-
+		//if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
+		//	return;
+	
 		for (int i = _proveRight - 5; i < _proveRight + 5; ++i)
 		{
 			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);

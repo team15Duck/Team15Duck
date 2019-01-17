@@ -192,9 +192,6 @@
     <ClInclude Include="object.h">
       <Filter>PlayGround\object</Filter>
     </ClInclude>
-    <ClInclude Include="chiyeongTestScene.h">
-      <Filter>PlayGround\scene\testScene</Filter>
-    </ClInclude>
     <ClInclude Include="player_Baleog.h">
       <Filter>PlayGround\player</Filter>
     </ClInclude>
@@ -307,9 +304,6 @@
     </ClCompile>
     <ClCompile Include="object.cpp">
       <Filter>PlayGround\object</Filter>
-    </ClCompile>
-    <ClCompile Include="chiyeongTestScene.cpp">
-      <Filter>PlayGround\scene\testScene</Filter>
     </ClCompile>
     <ClCompile Include="player_Baleog.cpp">
       <Filter>PlayGround\player</Filter>

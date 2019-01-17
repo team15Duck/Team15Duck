@@ -56,6 +56,7 @@ void player_Baleog::keyPressMove()
 		}
 		_state = PLAYER_MOVE_LEFT;					//상태값을 왼쪽 움직임 넣음
 		_x -= _speed;
+
 		//플레이어가 image
 	}
 	else if(KEYMANAGER->isOnceKeyUp(VK_LEFT))		//왼쪽 움직임에서 손을 떼면
@@ -110,8 +111,8 @@ void player_Baleog::keyPressD()
 
 void player_Baleog::initBaleog()
 {
-	//_x = WINSIZEX/2 + 120;
-	_x = WINSIZEX / 2 - 200;
+	_x = 1950;
+	//_x = WINSIZEX / 2 - 200;
 	_y = 1350;
 	_speed = 2.f;
 	_gravity = 0;

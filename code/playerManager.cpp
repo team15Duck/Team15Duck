@@ -24,6 +24,8 @@ HRESULT playerManager::init()
 	_vPlayer[PLAYER_NAME_OLAF]->init();
 
 	_currentSelectPlayer = PLAYER_NAME_ERIC;
+	//_currentSelectPlayer = PLAYER_NAME_BALEOG;
+	//_currentSelectPlayer = PLAYER_NAME_OLAF;
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 	return S_OK;
@@ -74,6 +76,14 @@ void playerManager::render()
 	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
 	{
 		_vPlayer[i]->render();
+	}
+}
+
+void playerManager::shieldPixelRender()
+{
+	//if (_vPlayer[PLAYER_NAME_OLAF]->방패들고있니?)
+	{
+		//들고있으면 IMAGEMANAGER->FindImage("stage1PixelMap")->getMemDC(); << 여기에 방패모양 올라프 좌표 맞춰서 그려주세요
 	}
 }
 

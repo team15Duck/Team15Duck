@@ -181,3 +181,8 @@ void mainUI::setIsItemSelectOn(bool isItemSelectOn)
 		}
 	}
 }
+
+int mainUI::getInvenPos(PLAYER_NAME name)
+{
+	return _itemSelect[name].invenPos;
+}
