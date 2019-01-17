@@ -92,6 +92,9 @@ protected:
 	bool			_isAlive;
 	bool			_deathMotion;
 
+	bool			_isLadder;					//사다리 타고있니?
+	bool			_isLadderTop;				//사다리 맨위에 있니?
+
 	int				_lifeCount;					//체력
 	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	PLAYER_STATE	_state;

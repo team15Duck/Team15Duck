@@ -13,20 +13,7 @@ player_Baleog::~player_Baleog()
 
 HRESULT player_Baleog::init()
 {
-	_x = WINSIZEX/2 + 120;
-	_y = 1350;
-	_speed = 2.f;
-
-	_playerRect = RectMakeCenter(_x, _y, 50, 70);
-
-	//rect의 바텀이 proveBottom
-
-	_proveBottom = _playerRect.bottom + 5;
-	_proveLeft = _playerRect.left + 5;
-	_proveRight = _playerRect.right - 5;
-
-	_tempWall = RectMakeCenter(300, 1325, 50, 100);
-
+	initBaleog();
 
 	return S_OK;
 }
@@ -40,6 +27,7 @@ void player_Baleog::update()
 	_speed = 2.0f;
 	pixelBottomCollision();
 	pixelHorizenWallCollision();
+	rectBrokenWallCollision();
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 	_proveBottom = _playerRect.bottom + 5;
 	_proveLeft = _playerRect.left + 5;
@@ -52,6 +40,7 @@ void player_Baleog::render()
 {
 	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255,0,0));
 	RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0));
+	RectangleBrush(CAMERA->getMemDC(), _tempLadder, RGB(100, 50, 10));
 }
 
 
@@ -89,6 +78,22 @@ void player_Baleog::keyPressMove()
 		_speed = 2.0f;								//스피드값을 다시 줌(벽에 부딪힌 경우 speed 값을 0으로 바꾸었기 때문에 되돌려 줘야함)
 		_state = PLAYER_IDLE_RIGHT;					//상태값은 idle
 	}
+
+	//일단 위로도 움직여 보자
+	if (KEYMANAGER->isStayKeyDown(VK_UP))
+	{
+		//사다리와 충돌 됐는지 여부를 체크할 임시 RECT
+		RECT collisionTempRect;
+
+		float halfWidth = (_playerRect.right - _playerRect.left) / 2;
+		if ((_playerRect.right - halfWidth >= _tempLadder.left &&
+			_playerRect.left + halfWidth <= _tempLadder.right) ||
+			_playerRect.bottom >= _tempLadder.top)
+		{
+			_y -= _speed;
+			_state = PLAYER_LADDER_UP;
+		}
+	}
 }
 
 void player_Baleog::keyPressSpace()
@@ -102,10 +107,29 @@ void player_Baleog::keyPressD()
 	//활쏘기
 }
 
+void player_Baleog::initBaleog()
+{
+	//_x = WINSIZEX/2 + 120;
+	_x = WINSIZEX / 2 - 200;
+	_y = 1350;
+	_speed = 2.f;
+	_gravity = 0;
+
+	_playerRect = RectMakeCenter(_x, _y, 50, 70);
+
+
+	//pixel 충돌 탐지할 변수
+	_proveBottom = _playerRect.bottom + 5;
+	_proveLeft = _playerRect.left + 5;
+	_proveRight = _playerRect.right - 5;
+
+	//임시 충돌 체크용 Rect
+	_tempWall = RectMakeCenter(300, 1325, 50, 100);
+	_tempLadder = RectMakeCenter(192, 840, 50, 1130);
+}
 
 void player_Baleog::pixelHorizenWallCollision()
 {
-
 	//왼쪽 벽 충돌(픽셀충돌)
 	if (_state == PLAYER_MOVE_LEFT)
 	{
@@ -149,11 +173,22 @@ void player_Baleog::pixelHorizenWallCollision()
 void player_Baleog::rectBrokenWallCollision()
 {
 	//부서지는 벽은 rect인데 그 벽이랑 부딪힌 경우
-	
-	//if ()
-	//{
-	//	_speed
-	//}
+	if (_state == PLAYER_MOVE_LEFT)
+	{
+		if (_x > _tempWall.right && _playerRect.left <= _tempWall.right)
+		{
+			_state = PLAYER_PUSH_WALL_LEFT;
+			_speed = 0.f;
+		}
+	}
+	if (_state == PLAYER_MOVE_RIGHT)
+	{
+		if (_x < _tempWall.left && _playerRect.right >= _tempWall.left)
+		{
+			_state = PLAYER_PUSH_WALL_RIGHT;
+			_speed = 0.f;
+		}
+	}
 }
 
 void player_Baleog::pixelBottomCollision()
@@ -168,6 +203,10 @@ void player_Baleog::pixelBottomCollision()
 
 		if (r == 255 && g == 0 && b == 255)
 		{
+			if (_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_END || _state == PLAYER_LADDER_DOWN)
+			{
+				break;
+			}
 			_y = i - 35;
 			break;
 		}
