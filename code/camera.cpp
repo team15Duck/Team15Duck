@@ -88,11 +88,20 @@ void camera::move()
 			if (!((playerP.x < WINSIZEX / 2 && _pos.x < 5) || (playerP.x > _mapSize.x - WINSIZEX / 2 && _pos.x > _mapSize.x - WINSIZEX - 5)))
 			{
 				_pos.x += dCosf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
+
+				if ((playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5) && getDistance(cameraP, playerP) < 18)
+				{
+					_mapMove = false;
+				}
+
 			}
 			if (!((playerP.y < 176 && _pos.y < 5) || (playerP.y > _mapSize.y - 128 - 176 && _pos.y > _mapSize.y - WINSIZEY - 5)))
 			{
 				_pos.y += -dSinf(_angle) * CAMERA_SPEED * TIMEMANAGER->getElpasedTime();
 			}
+
+			
+
 		}
 	}
 	else
