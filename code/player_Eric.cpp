@@ -15,7 +15,7 @@ player_Eric::~player_Eric()
 HRESULT player_Eric::init()
 {
 	_x = 450;
-	_y = 1100;
+	_y = 1400;
 	_speed = MIN_SPEED;
 	_jumpPower = _gravity = 0;
 	_isJump = false;
@@ -46,6 +46,7 @@ void player_Eric::update()
 	jump();
 	pixelBottomCollision();
 
+
 	if (_isRCollision)
 	{
 		_speed = 0;
@@ -56,7 +57,8 @@ void player_Eric::update()
 		_speed = 0;
 		_state = PLAYER_PUSH_WALL_LEFT;
 	}
-	_proveBottom = _playerRect.bottom + 5;
+	_proveBottom = _playerRect.bottom;
+	_proveTop = _playerRect.top;
 	_proveRight = _playerRect.right;
 	_proveLeft = _playerRect.left;
 
@@ -221,7 +223,7 @@ void player_Eric::rectBrokenWallCollision()
 
 void player_Eric::pixelTopWallCollision()
 {
-	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
+	for (int i = _proveTop; i < _proveTop + 30; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 
@@ -230,22 +232,10 @@ void player_Eric::pixelTopWallCollision()
 		int b = GetBValue(color);
 
 		// 만약에 색이 마젠타라면 충돌하시오 
-		if ((r == 255 && g == 0 && b == 255))
+		if ((r == 255 && g == 255 && b == 0))
 		{
-			_y = i - 35;
-			_isJump = false;
-
-			//만약에 왼쪽을 바라보는 모양으로 떨어진다면 
-			if (_state == PLAYER_FALL_LEFT)
-			{
-				_state = PLAYER_IDLE_LEFT;
-			}
-			//만약에 오른쪽을 바라보는 모양으로 떨어진다면 
-			if (_state == PLAYER_FALL_RIGHT)
-			{
-				_state = PLAYER_IDLE_RIGHT;
-			}
-
+			_y = i + 35;
+			_jumpPower = 0;
 			break;
 		}
 	}
@@ -292,6 +282,11 @@ void player_Eric::jump()
 	{
 		_y -= _jumpPower * TIMEMANAGER->getElpasedTime();
 		_jumpPower -= _gravity * TIMEMANAGER->getElpasedTime();
+
+		if (_jumpPower > 0)
+		{
+			pixelTopWallCollision();
+		}
 	}
 	if (_jumpPower <= 0)
 	{
