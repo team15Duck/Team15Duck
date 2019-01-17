@@ -1,6 +1,7 @@
 #pragma once
 #include "gameNode.h"
 #include "itemManager.h"
+#include "objectManager.h"
 #include "playerManager.h"
 #include "mainUI.h"
 
@@ -18,6 +19,7 @@ private:
 	mainUI*			_mainUI;
 	playerManager*	_pm;
 	itemManager*	_itemManager;
+	objectManager*	_objManager;
 
 public:
 	testScene();

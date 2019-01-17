@@ -34,6 +34,9 @@ HRESULT testScene::init()
 	_itemManager = new itemManager;
 	_itemManager->init();
 
+	_objManager = new objectManager;
+	_objManager->init();
+
 	_mainUI = new mainUI;
 	_mainUI->init();
 
@@ -45,6 +48,7 @@ HRESULT testScene::init()
 void testScene::release()
 {
 	_itemManager->release();
+	_objManager->release();
 }
 
 void testScene::update()
@@ -61,6 +65,8 @@ void testScene::update()
 	}
 	
 	_mainUI->update();
+
+	_objManager->update();
 }
 
 void testScene::render()
@@ -78,8 +84,9 @@ void testScene::render()
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
 	
-	_pm->render();
 	_itemManager->render();
+	_objManager->render();;
+	_pm->render();
 	_mainUI->render();
 	//------------------------------------------------------------------------------
 }

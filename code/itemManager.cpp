@@ -13,6 +13,9 @@ itemManager::~itemManager()
 
 HRESULT itemManager::init()
 {
+	_vFieldItems.clear();
+
+	// todo 나중에 이미지 한번에 로드하는 부분으로 이동 할 것
 	IMAGEMANAGER->addFrameImage("fieldItem", "image/fieldItem.bmp", 540, 54, 10, 1, true, RGB(255, 0, 255));
 
 	// create field items
@@ -80,34 +83,6 @@ HRESULT itemManager::init()
 			_vFieldItems.push_back(value);
 		}
 
-		// lock blue
-		{
-			item* value = new item;
-			POINTF pos = { 448, 1162};
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_BLUE * 100, ITEM_TYPE_LOCK_BLUE);
-
-			_vFieldItems.push_back(value);
-		}
-
-		// lock red
-		{
-			item* value = new item;
-			POINTF pos = { 1664, 1258};
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_RED * 100, ITEM_TYPE_LOCK_RED);
-
-			_vFieldItems.push_back(value);
-
-		}
-
-		// lock yellow
-		{
-			item* value = new item;
-			POINTF pos = { 1728, 648};
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_YELLOW * 100, ITEM_TYPE_LOCK_YELLOW);
-
-			_vFieldItems.push_back(value);
-		}
-
 		// shield
 		{
 			item* value = new item;
@@ -158,14 +133,6 @@ void itemManager::obtainItem(item* targetItem)
 {
 	// 빈 값이 들어오면 리턴
 	if(!targetItem)
-		return;
-
-	// 190117 진형 : 자물쇠는 object로 이동할것임. 그리고 자물쇠는 필드에서 삭제되는게 아님
-	// 일단 여기서 예외처리 시킴.
-	if(targetItem->getItemType() == ITEM_TYPE_LOCK_BLUE
-	   || targetItem->getItemType() == ITEM_TYPE_LOCK_RED
-	   || targetItem->getItemType() == ITEM_TYPE_LOCK_YELLOW
-	   )
 		return;
 
 	vector<item*>::iterator iter  = _vFieldItems.begin();

@@ -61,13 +61,6 @@ HRESULT item::init(const char* imgName, POINTF position, int itemValue, ITEM_TYP
 			_size = { 18, 32 };
 			break;
 		}
-		case ITEM_TYPE_LOCK_RED:
-		case ITEM_TYPE_LOCK_YELLOW:
-		case ITEM_TYPE_LOCK_BLUE:
-		{
-			_size = { 32, 32 };
-			break;
-		}
 		default:
 		{
 			_size = {};
