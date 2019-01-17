@@ -5,6 +5,8 @@
 #include <vector>
 
 class mainUI;
+class itemManager;
+class objectManager;
 
 class playerManager
 {
@@ -16,6 +18,8 @@ private:
 
 
 	mainUI* _mainUI;
+	itemManager* _im;
+	objectManager* _om;
 
 public:
 	playerManager();
@@ -33,5 +37,7 @@ public:
 	vector<playerBase*> getVPlayer() { return _vPlayer; }
 
 	void setMainUIAdressLink(mainUI* ui) { _mainUI = ui; }
+	void setItemManagerLink(itemManager* im) { _im = im; }
+	void setObjectManagerLink(objectManager* om) { _om = om; }
 };
 

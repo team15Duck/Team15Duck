@@ -41,7 +41,8 @@ HRESULT testScene::init()
 	_mainUI->init();
 
 	_pm->setMainUIAdressLink(_mainUI);
-
+	_pm->setItemManagerLink(_itemManager);
+	_pm->setObjectManagerLink(_objManager);
 	return S_OK;
 }
 
