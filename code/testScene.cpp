@@ -19,10 +19,12 @@ HRESULT testScene::init()
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
 
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
-	CAMERA->setPosY(1100);
-	CAMERA->setPosX(100);
+	
 	_pm = new playerManager;
 	_pm->init();
+
+	CAMERA->setPosX(*_pm->getVPlayer()[PLAYER_NAME_ERIC]->getPosX());
+	CAMERA->setPosY(*_pm->getVPlayer()[PLAYER_NAME_ERIC]->getPosY());
 
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setPixelDataLink(_pixelMap);
 	_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setPixelDataLink(_pixelMap);
