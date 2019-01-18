@@ -91,5 +91,15 @@ void testScene::render()
 	_objManager->render();;
 	_pm->render();
 	_mainUI->render();
+
+
+	char str[256];
+	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
+	sprintf_s(str, "cameraposX : %.1f", CAMERA->getPosX());
+	TextOut(CAMERA->getMemDC(), 0, 60, str, strlen(str));
+	sprintf_s(str, "cameraposY : %.1f", CAMERA->getPosY());
+	TextOut(CAMERA->getMemDC(),0, 80, str, strlen(str));
+	sprintf_s(str, "cameraAngle : %.1f", CAMERA->getAngle());
+	TextOut(CAMERA->getMemDC(), 0, 100, str, strlen(str));
 	//------------------------------------------------------------------------------
 }

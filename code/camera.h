@@ -20,6 +20,7 @@ private:
 	bool _mapMove;
 	backBuffer* _backBuffer;
 
+	float _distance;
 
 public:
 	camera();
@@ -41,6 +42,7 @@ public:
 
 	POINTF getCenterPos() { return _centerPos; }
 
+	float getAngle() { return _angle; }
 	void setAngle(float angle) { _angle = angle; }
 
 	void setPlayerPosX(float* x) { _playerX = x; }

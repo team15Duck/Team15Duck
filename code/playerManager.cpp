@@ -93,7 +93,7 @@ void playerManager::keyUpdate()
 void playerManager::keyPressCtrl()
 {
 	if(TIMEMANAGER->getWorldTime() < 0.5f) return;
-	if (!CAMERA->getMapMove())
+	//if (!CAMERA->getMapMove())
 	{
 		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
 		{
@@ -107,7 +107,46 @@ void playerManager::keyPressCtrl()
 			POINTF playerPos;
 			playerPos.x = *_vPlayer[_currentSelectPlayer]->getPosX();
 			playerPos.y = *_vPlayer[_currentSelectPlayer]->getPosY();
-			CAMERA->setAngle(dGetAngle(playerPos, CAMERA->getCenterPos()));
+
+
+			if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+			{
+				CAMERA->setMapMove(false);
+			}
+			else if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y > playerPos.y)
+			{
+				CAMERA->setAngle(90);
+			}
+			else if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y < playerPos.y)
+			{
+				CAMERA->setAngle(270);
+			}
+			else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+			{
+				CAMERA->setAngle(180);
+			}
+			else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+			{
+				CAMERA->setAngle(0);
+			}
+			else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y > playerPos.y)	//플레이어가 오른쪽위에 있을때
+			{
+				CAMERA->setAngle(45);
+			}
+			else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y < playerPos.y)	//플레이어가 오른쪽아래에 있을때
+			{
+				CAMERA->setAngle(315);
+			}
+			else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y > playerPos.y)	//플레이어가 왼쪽위에 있을때
+			{
+				CAMERA->setAngle(135);
+			}
+			else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y < playerPos.y)	//플레이어가 왼쪽아래에 있을때
+			{
+				CAMERA->setAngle(225);
+			}
+
+			//CAMERA->setAngle(dGetAngle(playerPos, CAMERA->getCenterPos()));
 			_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
 			CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 			CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());

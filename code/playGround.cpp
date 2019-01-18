@@ -19,7 +19,7 @@ HRESULT playGround::init()
 
 	SCENEMANAGER->addScene("Å×½ºÆ®¾À", new testScene);
 	SCENEMANAGER->addScene("½ºÅ¸Æ®¾À", new startScene);
-	SCENEMANAGER->changeScene("½ºÅ¸Æ®¾À");
+	SCENEMANAGER->changeScene("Å×½ºÆ®¾À");
 
 	return S_OK;
 }
