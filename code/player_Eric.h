@@ -8,6 +8,11 @@ private:
 	bool _isJump;       //점프 체크용
 	bool _isRCollision;	//오른쪽 충돌 체크용 
 	bool _isLCollision;	//왼쪽 충돌 체크용
+
+	POINT _size;
+
+	animation* _EricMotion;	//에릭모션
+
 public:
 	player_Eric();
 	~player_Eric();
@@ -39,6 +44,10 @@ public:
 	//처맞는함수
 
 	void jump();
+	void EricAniinit();
+	void EricAni();
+
+	void EricAniStart(string key);
 
 };
 
