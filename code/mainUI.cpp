@@ -70,8 +70,8 @@ void mainUI::update()
 						}
 					}
 				}
-				_itemSelect[i].renderPos.x = ceil(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
-				_itemSelect[i].renderPos.y = ceil(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
+				_itemSelect[i].renderPos.x = (int)(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
+				_itemSelect[i].renderPos.y = (int)(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
 			}
 		}
 		else //선택중으로 들어와서 옮기고 있지 않다면? 깜박여
@@ -94,8 +94,8 @@ void mainUI::update()
 						_playerItem[i][j]->setIsRender(true);
 					}
 				}
-				_itemSelect[i].renderPos.x = ceil(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
-				_itemSelect[i].renderPos.y = ceil(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
+				_itemSelect[i].renderPos.x = (int)(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
+				_itemSelect[i].renderPos.y = (int)(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
 			}
 		}
 	}
@@ -103,15 +103,15 @@ void mainUI::update()
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			_itemSelect[i].renderPos.x = ceil(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
-			_itemSelect[i].renderPos.y = ceil(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
+			_itemSelect[i].renderPos.x = (int)(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
+			_itemSelect[i].renderPos.y = (int)(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
 		}
 	}
 }
 
 void mainUI::render()
 {
-	_main->frameRender(CAMERA->getMemDC(), ceil(CAMERA->getPosX()), ceil(CAMERA->getPosY()) + WINSIZEY - 128, _currentMainFrameIndex, 0);
+	_main->frameRender(CAMERA->getMemDC(), (int)(CAMERA->getPosX()), (int)(CAMERA->getPosY()) + WINSIZEY - 128, _currentMainFrameIndex, 0);
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 4; j++)
@@ -120,8 +120,8 @@ void mainUI::render()
 			{
 				if (_playerItem[i][j]->getIsRender())
 				{
-					IMAGEMANAGER->findImage("invenItem")->frameRender(CAMERA->getMemDC(), ceil(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32,
-																						  ceil(CAMERA->getPosY()) + 388 + j / 2 * 32,
+					IMAGEMANAGER->findImage("invenItem")->frameRender(CAMERA->getMemDC(), (int)(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32,
+																						  (int)(CAMERA->getPosY()) + 388 + j / 2 * 32,
 																						  _playerItem[i][j]->getItemType(), 0);
 				}
 			}
@@ -135,12 +135,12 @@ void mainUI::render()
 		//살아있지 않다면?
 		if (!_isPlayerAlive[i])
 		{
-			IMAGEMANAGER->findImage("dieProfile")->frameRender(CAMERA->getMemDC(), ceil(CAMERA->getPosX()) + 90 + i * 144, ceil(CAMERA->getPosY()) + 388, i, 0);
+			IMAGEMANAGER->findImage("dieProfile")->frameRender(CAMERA->getMemDC(), (int)(CAMERA->getPosX()) + 90 + i * 144, (int)(CAMERA->getPosY()) + 388, i, 0);
 		}
 		//HP그리기
 		for (int j = 0; j < _playerHP[i]; j++)
 		{
-			IMAGEMANAGER->findImage("playerHP")->render(CAMERA->getMemDC(), ceil(CAMERA->getPosX()) + 92 + i * 144 + j * 17, ceil(CAMERA->getPosY()) + 440);
+			IMAGEMANAGER->findImage("playerHP")->render(CAMERA->getMemDC(), (int)(CAMERA->getPosX()) + 92 + i * 144 + j * 17, (int)(CAMERA->getPosY()) + 440);
 		}
 		
 	}

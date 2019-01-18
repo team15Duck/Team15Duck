@@ -528,8 +528,8 @@ void image::render(HDC hdc)
 
 void image::render(HDC hdc, int destX, int destY)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -592,8 +592,8 @@ void image::render2(HDC hdc, int destX, int destY)
 
 void image::render(HDC hdc, int destX, int destY, int sourX, int sourY, int sourWidth, int sourHeight)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -629,8 +629,8 @@ void image::render(HDC hdc, int destX, int destY, int sourX, int sourY, int sour
 
 void image::frameRender(HDC hdc, int destX, int destY)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -669,8 +669,8 @@ void image::frameRender(HDC hdc, int destX, int destY)
 
 void image::frameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -816,8 +816,8 @@ void image::alphaRender(HDC hdc, BYTE alpha)
 
 void image::alphaRender(HDC hdc, int destX, int destY, BYTE alpha)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -873,8 +873,8 @@ void image::alphaRender(HDC hdc, int destX, int destY, BYTE alpha)
 
 void image::alphaRender(HDC hdc, int destX, int destY, int sourX, int sourY, int sourWidth, int sourHeight, BYTE alpha)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -922,8 +922,8 @@ void image::alphaRender(HDC hdc, int destX, int destY, int sourX, int sourY, int
 
 void image::alphaFrameRender(HDC hdc, int destX, int destY, BYTE alpha)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{
@@ -973,8 +973,8 @@ void image::alphaFrameRender(HDC hdc, int destX, int destY, BYTE alpha)
 
 void image::alphaFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, BYTE alpha)
 {
-	float posX = destX - CAMERA->getPosX();
-	float posY = destY - CAMERA->getPosY();
+	float posX = destX - (int)CAMERA->getPosX();
+	float posY = destY - (int)CAMERA->getPosY();
 
 	if (_imageInfo->hMemDC != NULL)
 	{

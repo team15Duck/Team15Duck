@@ -146,7 +146,6 @@ void playerManager::keyPressCtrl()
 				CAMERA->setAngle(225);
 			}
 
-			//CAMERA->setAngle(dGetAngle(playerPos, CAMERA->getCenterPos()));
 			_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
 			CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 			CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());

@@ -20,8 +20,6 @@ private:
 	bool _mapMove;
 	backBuffer* _backBuffer;
 
-	float _distance;
-
 public:
 	camera();
 	~camera();

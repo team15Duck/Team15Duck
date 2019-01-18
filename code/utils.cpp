@@ -18,20 +18,20 @@ namespace TEAM_15DUCK_UTILL
 	}
 	void LineMake(HDC hdc, int startX, int startY, int endX, int endY, bool isAbsolut)
 	{
-		float posX = startX - CAMERA->getPosX();
-		float posY = startY - CAMERA->getPosY();
-		float posX2 = endX - CAMERA->getPosX();
-		float posY2 = endY - CAMERA->getPosY();
+		float posX = startX - (int)CAMERA->getPosX();
+		float posY = startY - (int)CAMERA->getPosY();
+		float posX2 = endX -  (int)CAMERA->getPosX();
+		float posY2 = endY -  (int)CAMERA->getPosY();
 
 		MoveToEx(hdc, posX, posY, NULL);
 		LineTo(hdc, posX2, posY2);
 	}
 	void LineMake(HDC hdc, POINTF start, POINTF end, bool isAbsolut)
 	{
-		float posX = start.x - CAMERA->getPosX();
-		float posY = start.y - CAMERA->getPosY();
-		float posX2 = end.x - CAMERA->getPosX();
-		float posY2 = end.y - CAMERA->getPosY();
+		float posX = start.x - (int)CAMERA->getPosX();
+		float posY = start.y - (int)CAMERA->getPosY();
+		float posX2 = end.x -  (int)CAMERA->getPosX();
+		float posY2 = end.y -  (int)CAMERA->getPosY();
 
 		MoveToEx(hdc, posX, posY, NULL);
 		LineTo(hdc, posX2, posY2);
@@ -56,10 +56,10 @@ namespace TEAM_15DUCK_UTILL
 
 		if (!isAbsolut)
 		{
-			left	-= CAMERA->getPosX();
-			top		-= CAMERA->getPosY();
-			right	-= CAMERA->getPosX();
-			bottom	-= CAMERA->getPosY();
+			left	-= (int)CAMERA->getPosX();
+			top		-= (int)CAMERA->getPosY();
+			right	-= (int)CAMERA->getPosX();
+			bottom	-= (int)CAMERA->getPosY();
 		
 		}
 		
@@ -74,10 +74,10 @@ namespace TEAM_15DUCK_UTILL
 
 		if (!isAbsolut)
 		{
-			left	-= CAMERA->getPosX();
-			top		-= CAMERA->getPosY();
-			right	-= CAMERA->getPosX();
-			bottom	-= CAMERA->getPosY();
+			left	-= (int)CAMERA->getPosX();
+			top		-= (int)CAMERA->getPosY();
+			right	-= (int)CAMERA->getPosX();
+			bottom	-= (int)CAMERA->getPosY();
 		}
 
 		Rectangle(hdc, left, top, right, bottom);
@@ -92,10 +92,10 @@ namespace TEAM_15DUCK_UTILL
 
 		if (!isAbsolut)
 		{
-			left	-= CAMERA->getPosX();
-			top		-= CAMERA->getPosY();
-			right	-= CAMERA->getPosX();
-			bottom  -= CAMERA->getPosY();
+			left	-= (int)CAMERA->getPosX();
+			top		-= (int)CAMERA->getPosY();
+			right	-= (int)CAMERA->getPosX();
+			bottom  -= (int)CAMERA->getPosY();
 		}
 
 		Rectangle(hdc, left, top, right, bottom);
@@ -117,10 +117,10 @@ namespace TEAM_15DUCK_UTILL
 
 		if (!isAbsolut)
 		{
-			left	-= CAMERA->getPosX();
-			top		-= CAMERA->getPosY();
-			right	-= CAMERA->getPosX();
-			bottom	-= CAMERA->getPosY();
+			left	-= (int)CAMERA->getPosX();
+			top		-= (int)CAMERA->getPosY();
+			right	-= (int)CAMERA->getPosX();
+			bottom	-= (int)CAMERA->getPosY();
 		}
 		Ellipse(hdc, left, top, right, bottom);
 	}
@@ -133,10 +133,10 @@ namespace TEAM_15DUCK_UTILL
 		
 		if (!isAbsolut)
 		{
-			left	-= CAMERA->getPosX();
-			top		-= CAMERA->getPosY();
-			right	-= CAMERA->getPosX();
-			bottom	-= CAMERA->getPosY();
+			left	-= (int)CAMERA->getPosX();
+			top		-= (int)CAMERA->getPosY();
+			right	-= (int)CAMERA->getPosX();
+			bottom	-= (int)CAMERA->getPosY();
 		}
 
 		Ellipse(hdc, left, top, right, bottom);
