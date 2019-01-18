@@ -79,12 +79,9 @@ void playerManager::render()
 	}
 }
 
-void playerManager::shieldPixelRender()
+void playerManager::shieldPixelRender(HDC hdc)
 {
-	//if (_vPlayer[PLAYER_NAME_OLAF]->방패들고있니?)
-	{
-		//들고있으면 IMAGEMANAGER->FindImage("stage1PixelMap")->getMemDC(); << 여기에 방패모양 올라프 좌표 맞춰서 그려주세요
-	}
+	
 }
 
 void playerManager::keyUpdate()

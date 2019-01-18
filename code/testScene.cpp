@@ -76,7 +76,7 @@ void testScene::render()
 
 	//--------------------------방패모양을 그릴거면 여기서 그릴것---------------------
 	//pixelMap의 DC에다가 그려줄것 마젠타로 바닥판정해주기
-	_pm->shieldPixelRender();
+	_pm->shieldPixelRender(_pixelMap->getMemDC());
 	_objManager->objectPixelRender(_pixelMap->getMemDC());
 	//------------------------------------------------------------------------------
 	//-----------------------------렌더는 여기에-------------------------------------

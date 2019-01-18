@@ -30,7 +30,7 @@ public:
 	void update();
 	void render();
 
-	void shieldPixelRender();
+	void shieldPixelRender(HDC hdc);
 
 	void keyUpdate();
 	void keyPressCtrl();
