@@ -75,6 +75,7 @@ class playerBase
 protected:
 
 	image* _pixelData;
+	image* _player;
 
 	PLAYER_NAME _name;
 
