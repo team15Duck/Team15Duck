@@ -669,7 +669,6 @@ void animation::stop()
 void animation::pause()
 {
 	_play = FALSE;
-
 }
 
 void animation::resume()
