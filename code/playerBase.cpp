@@ -84,9 +84,6 @@ void playerBase::pixelRightWallCollision()
 {
 }
 
-void playerBase::pixelHorizenWallCollision()
-{
-}
 
 void playerBase::rectBrokenWallCollision()
 {

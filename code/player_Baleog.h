@@ -32,7 +32,6 @@ public:
 
 
 	//좌우체크
-	virtual void pixelHorizenWallCollision() override; // << 픽셀 벽 충돌 
 	virtual void rectBrokenWallCollision() override; // << 렉트 부숴지는 벽 충돌 
 	
 	//바닥체크
