@@ -128,7 +128,8 @@ public:
 
 
 	//좌우체크
-	virtual void pixelHorizenWallCollision(); // << 픽셀 벽 충돌 
+	virtual void pixelLeftWallCollision();	 //픽셀벽충돌(왼쪽)
+	virtual void pixelRightWallCollision();	 //픽셀벽충돌(오른쪽)
 	virtual void rectBrokenWallCollision(); // << 렉트 부숴지는 벽 충돌 
 	//위에벽체크(천장) << 오버라이드 받아서 나만 쓰기 
 	virtual void pixelTopWallCollision(); // 픽셀 천장 충돌 

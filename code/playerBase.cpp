@@ -76,6 +76,14 @@ void playerBase::keyPressS()
 
 
 
+void playerBase::pixelLeftWallCollision()
+{
+}
+
+void playerBase::pixelRightWallCollision()
+{
+}
+
 void playerBase::pixelHorizenWallCollision()
 {
 }

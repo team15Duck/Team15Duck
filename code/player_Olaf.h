@@ -1,6 +1,6 @@
 #pragma once
 #include "playerBase.h"
-class player_Olaf :	public playerBase
+class player_Olaf : public playerBase
 {
 private:
 	RECT _shield;			//옆일때 방패
@@ -18,7 +18,7 @@ public:
 	HRESULT init();
 	void release();
 	void update();
-	
+
 	void render();
 	// ========== 키입력 ==========
 
@@ -33,7 +33,7 @@ public:
 	void initOlaf();
 
 	//방패 초기화
-	void initShield();	
+	void initShield();
 
 	//방패 상태
 	void stateShield();
@@ -42,25 +42,21 @@ public:
 	// ========== 충돌함수 ==========
 
 	//좌우벽충돌(픽셀용)
-	virtual void pixelHorizenWallCollision() override;
-	
+	virtual void pixelLeftWallCollision() override;
+	virtual void pixelRightWallCollision() override;
+
 	//좌우벽충돌(렉트용)
 	virtual void rectBrokenWallCollision() override;
-	
+
 	//바닥충돌
 	virtual void pixelBottomCollision() override;
 
 
-
-
-
 	// ========== GET & SET ==========
 
-	
 
-
+	virtual bool getIsShieldUp() { return _isShieldUp; }
 
 
 
 };
-

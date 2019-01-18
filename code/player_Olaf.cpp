@@ -19,7 +19,7 @@ HRESULT player_Olaf::init()
 
 	_proveBottom = _playerRect.bottom + 5;
 	_proveRight = _playerRect.right;
-	_proveLeft = _playerRect.left + 5;
+	_proveLeft = _playerRect.left;
 
 	return S_OK;
 }
@@ -32,14 +32,13 @@ void player_Olaf::update()
 {
 	//충돌처리
 	pixelBottomCollision();
-	pixelHorizenWallCollision();
-
+	//pixelHorizenWallCollision();
 	//갱신
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
-	_proveBottom = _playerRect.bottom + 5;
-	_proveRight = _playerRect.right; - 5;
-	_proveLeft = _playerRect.left; + 5;
-	
+	_proveBottom = _playerRect.bottom;
+	_proveRight = _playerRect.right;
+	_proveLeft = _playerRect.left;
+
 	//방패갱신
 	stateShield();
 }
@@ -55,12 +54,6 @@ void player_Olaf::keyPressMove()
 	//방패를 위로 들고 있지 않다면
 	if (!_isShieldUp)
 	{
-		//오른쪽 방향키를 누르면
-		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-		{
-			_state = PLAYER_MOVE_RIGHT;							//오른쪽으로 이동한다.
-			_x += _speed;
-		}
 		//오른쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
 		{
@@ -68,42 +61,45 @@ void player_Olaf::keyPressMove()
 			_speed = 2.0f;
 
 		}
-		//왼쪽 방향키를 누르면
-		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		//오른쪽 방향키를 누르면
+		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 		{
-			_state = PLAYER_MOVE_LEFT;							//왼쪽으로 이동한다.
-			_x -= _speed;
+			pixelRightWallCollision();
+			_state = PLAYER_MOVE_RIGHT;							//오른쪽으로 이동한다.
+			_x += _speed;
 		}
 		//왼쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
 		{
 			_state = PLAYER_IDLE_LEFT;							//왼쪽을 본다.
 			_speed = 2.0f;
-		
+
 		}
+		//왼쪽 방향키를 누르면
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			pixelLeftWallCollision();
+			_state = PLAYER_MOVE_LEFT;							//왼쪽으로 이동한다.
+			_x -= _speed;
+		}
+
 	}
 	//방패를 위로 들고 있다면
 	else
 	{
-		//오른쪽 방향키를 누르면
-		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-		{
-			_state = PLAYER_SHIELD_MOVE_RIGHT;					//방패를 들고 오른쪽으로 이동한다.
-			_x += _speed;
-			pixelHorizenWallCollision();
-		}
 		//오른쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
 		{
 			_state = PLAYER_SHIELD_IDLE_RIGHT;					//방패를 들고 오른쪽을 본다.
 			_speed = 2.0f;
-			
+
 		}
-		//왼쪽 방향키를 누르면
-		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		//오른쪽 방향키를 누르면
+		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 		{
-			_state = PLAYER_SHIELD_MOVE_LEFT;					//방패를 들고 왼쪽으로 이동한다.
-			_x -= _speed;
+			pixelRightWallCollision();
+			_state = PLAYER_SHIELD_MOVE_RIGHT;					//방패를 들고 오른쪽으로 이동한다.
+			_x += _speed;
 		}
 		//왼쪽 방향키를 떼면
 		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
@@ -111,6 +107,14 @@ void player_Olaf::keyPressMove()
 			_state = PLAYER_SHIELD_IDLE_LEFT;					//방패를 들고 왼쪽을 본다.
 			_speed = 2.0f;
 		}
+		//왼쪽 방향키를 누르면
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			pixelLeftWallCollision();
+			_state = PLAYER_SHIELD_MOVE_LEFT;					//방패를 들고 왼쪽으로 이동한다.
+			_x -= _speed;
+		}
+
 	}
 }
 
@@ -302,7 +306,7 @@ void player_Olaf::initOlaf()
 	_y = 1350;								   //Y좌표
 	_speed = 2.0f;							   //스피드
 	_lifeCount = 3;							   //체력
-	
+
 
 	_playerRect = RectMakeCenter(_x, _y, 50, 70); //올라프렉트생성
 }
@@ -321,7 +325,7 @@ void player_Olaf::stateShield()
 		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right-10, _playerRect.top, 10, 70);			//오른쪽으로 방패렉트를 갱신한다.
+			_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);			//오른쪽으로 방패렉트를 갱신한다.
 		}
 		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
@@ -335,7 +339,7 @@ void player_Olaf::stateShield()
 		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right-50, _playerRect.top, 50, 10);			//오른쪽으로 방패렉트를 갱신한다.
+			_shield = RectMake(_playerRect.right - 50, _playerRect.top, 50, 10);			//오른쪽으로 방패렉트를 갱신한다.
 		}
 		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
@@ -345,64 +349,53 @@ void player_Olaf::stateShield()
 	}
 }
 
-void player_Olaf::pixelHorizenWallCollision()
+void player_Olaf::pixelLeftWallCollision()
 {
-	//플레이어가 왼쪽으로 이동할때(+방패 든 상태) 왼쪽키를 누른 상태에서 오른쪽키를 누르면 버그발생하므로 예외처리 함.
-	//예외처리 -> 오른쪽으로 이동, 대기(+방패 든 상태)
-	if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT || _state == PLAYER_MOVE_RIGHT ||
-		_state == PLAYER_SHIELD_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+	for (int i = _proveLeft; i < _proveLeft + 5; ++i)
 	{
-		for (int i = _proveLeft - 10; i < _proveLeft + 10; ++i)
+		COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+		int r = GetRValue(color);
+		int g = GetGValue(color);
+		int b = GetBValue(color);
+
+		if (r == 0 && g == 255 && b == 255)
 		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state == PLAYER_PUSH_WALL_LEFT;				//상태는 왼쪽 벽을 민다.
-				_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
-				break;											  
-			}
+			_state == PLAYER_PUSH_WALL_LEFT;				//상태는 왼쪽 벽을 민다.
+			_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
+			break;
 		}
 	}
-	//플레이어가 오른쪽으로 이동할때(+방패 든 상태) 오른쪽키를 누른 상태에서 왼쪽키를 누르면 버그발생하므로 예외처리 함.
-	//예외처리 -> 왼쪽으로 이동, 대기(+방패 든 상태)
-	//if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT ||
-	//	_state == PLAYER_IDLE_LEFT	|| _state == PLAYER_SHIELD_IDLE_LEFT)
+}
+
+void player_Olaf::pixelRightWallCollision()
+{
+	for (int i = _proveRight - 5; i < _proveRight; ++i)
 	{
-		//if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
-		//	return;
-	
-		for (int i = _proveRight - 5; i < _proveRight + 5; ++i)
+		COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+		int r = GetRValue(color);
+		int g = GetGValue(color);
+		int b = GetBValue(color);
+
+		if (r == 0 && g == 255 && b == 255)
 		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state == PLAYER_PUSH_WALL_RIGHT;				//상태는 오른쪽 벽을 민다.
-				_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
-				break;
-			}
+			_state == PLAYER_PUSH_WALL_RIGHT;				//상태는 오른쪽 벽을 민다.
+			_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
+			break;
 		}
 	}
 }
 
 void player_Olaf::rectBrokenWallCollision()
 {
-	
+
 
 }
 
 void player_Olaf::pixelBottomCollision()
 {
-	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
+	for (int i = _proveBottom - 5; i < _proveBottom + 5; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 
