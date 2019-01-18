@@ -34,9 +34,6 @@ private:
 
 	bool _isActiveFinished;	// 작동 완료했는지 (ex. 문이 닫혀있다면 false, 열려있다면 true)
 
-	int _frameX;
-	int _frameY;
-
 	string _objName;		// 오브젝트 이름
 
 	animation* _ani;
@@ -49,6 +46,7 @@ public:
 	void release();
 	void update();
 	void render();
+	void pixelRender(HDC hdc);
 
 
 	// 작동

@@ -18,6 +18,7 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 
 	_img = IMAGEMANAGER->findImage(imgName);
 
+	// 이미지가 없다면 false
 	if(!_img)
 		return E_FAIL;
 
@@ -27,11 +28,14 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 	_destX = _x - (_img->getFrameWidth() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
 	_destY = _y - (_img->getFrameHeight() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
 
-	_linkObj = nullptr;
-	_value = itemValue;
-	_type = type;
+	_linkObj = nullptr;		// setLinkObject함수로 따로 연결해줄것임
+	_value	 = itemValue;
+	_type	 = type;
 
 	_ani = nullptr;
+	_size = { 0, 0 };
+
+	// 해당 오브젝트의 키 애니메이션 맵 생성
 
 	KEYANIMANAGER->addAnimationType(_objName);
 	// 190117 진형
@@ -43,8 +47,6 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 		case OBJECT_TYPE_LOCK_YELLOW:
 		case OBJECT_TYPE_LOCK_BLUE:
 		{
-			_frameX = _type;
-			_frameY = 0;
 			_size = {32, 32};
 
 			int lockIdle[] = { _type };
@@ -59,8 +61,6 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 		}
 		case OBJECT_TYPE_DOOR_RIGHT:
 		{
-			_frameX = 0;
-			_frameY = _type - OBJECT_TYPE_DOOR_RIGHT;
 			_size = { 32, 96 };
 
 			int doorIdle[] = { 0 };
@@ -75,8 +75,6 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 		}
 		case OBJECT_TYPE_DOOR_LEFT:
 		{
-			_frameX = 0;
-			_frameY = _type - OBJECT_TYPE_DOOR_RIGHT;
 			_size = {32, 96};
 
 			int doorIdle[] = { 3 };
@@ -90,8 +88,6 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 
 		case OBJECT_TYPE_BRIDGE_RIGHT:
 		{
-			_frameX = 0;
-			_frameY = _type - OBJECT_TYPE_BRIDGE_RIGHT;
 			_size = { 32, 160 };
 
 			int bridgeIdle[] = { 0 };
@@ -106,8 +102,6 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 
 		case OBJECT_TYPE_BRIDGE_LEFT:
 		{
-			_frameX = 0;
-			_frameY = _type - OBJECT_TYPE_BRIDGE_RIGHT;
 			_size = {32, 160};
 
 			int bridgeIdle[] = { 5 };
@@ -119,18 +113,15 @@ HRESULT object::init(const char* objName, const char * imgName, POINTF position,
 			_ani = KEYANIMANAGER->findAnimation(_objName, "bridgeLeftIdle");
 			break;
 		}
-		default:
-		{
-			_frameX = 0;
-			_frameY = 0;
-			_size = {0, 0};
-			break;
-		}
 	}
 	
 	MakeRect();
+
+	// 기본 애니메이션 실행
 	if(_ani)
 		_ani->start();
+
+	// 작동 안했음으로 초기화
 	_isActiveFinished = false;
 
 	return S_OK;
@@ -144,14 +135,14 @@ void object::release()
 
 void object::update()
 {
-	KEYANIMANAGER->update(_objName);
 	if (KEYMANAGER->isToggleKey(VK_F6))
 	{
 		if(KEYMANAGER->isStayKeyDown(VK_SPACE))
 				active();
 
 	}
-
+	
+	KEYANIMANAGER->update(_objName);
 	MakeRect();
 }
 
@@ -159,18 +150,69 @@ void object::render()
 {
 	if(_ani)
 		_img->aniRender(CAMERA->getMemDC(), _destX, _destY, _ani);
-	if (KEYMANAGER->isToggleKey(VK_F6))
-	{
-		Rectangle(CAMERA->getMemDC(), _rc);
-	}
-	
+}
+
+void object::pixelRender(HDC hdc)
+{
 	if (_isActiveFinished)
 	{
-		
+		switch (_type)
+		{
+			// 픽셀 충돌렉트 없음
+			case OBJECT_TYPE_LOCK_RED:
+			case OBJECT_TYPE_LOCK_YELLOW:
+			case OBJECT_TYPE_LOCK_BLUE:
+			case OBJECT_TYPE_DOOR_RIGHT:
+			case OBJECT_TYPE_DOOR_LEFT:
+			{
+				// none
+				break;
+			}
+
+			// 다리 : 바닥 충돌로 처리하기 위함.
+			case OBJECT_TYPE_BRIDGE_RIGHT:
+			case OBJECT_TYPE_BRIDGE_LEFT:
+			{
+				_rc = RectMake((int)_destX, (int)_destY + _img->getFrameHeight() - 32, _img->getFrameWidth(), 32);
+				
+				HBRUSH brush = CreateSolidBrush(RGB(255, 0, 255));
+				HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
+				Rectangle(hdc, _rc.left, _rc.top, _rc.right, _rc.bottom);
+				SelectObject(hdc, oBrush);
+				DeleteObject(brush);
+
+				break;
+			}
+		}
 	}
 	else
 	{
+		switch (_type)
+		{
+			// 픽셀 충돌 없음
+			case OBJECT_TYPE_LOCK_RED:
+			case OBJECT_TYPE_LOCK_YELLOW:
+			case OBJECT_TYPE_LOCK_BLUE:
+			{
+				// none
+				break;
+			}
 
+			// 벽 충돌로 처리하기 위함
+			case OBJECT_TYPE_DOOR_RIGHT:
+			case OBJECT_TYPE_DOOR_LEFT:
+			case OBJECT_TYPE_BRIDGE_RIGHT:
+			case OBJECT_TYPE_BRIDGE_LEFT:
+			{
+				HBRUSH brush = CreateSolidBrush(RGB(0, 255, 255));
+				HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
+				Rectangle(hdc, _rc.left, _rc.top, _rc.right, _rc.bottom);
+				SelectObject(hdc, oBrush);
+				DeleteObject(brush);
+
+				break;
+			}
+		}
 	}
 }
 

@@ -126,6 +126,15 @@ void objectManager::render()
 	}
 }
 
+void objectManager::objectPixelRender(HDC hdc)
+{
+	int size = _vFieldObjects.size();
+	for (int i = 0; i < size; ++i)
+	{
+		_vFieldObjects[i]->pixelRender(hdc);
+	}
+}
+
 void objectManager::interactionObjectWithItem(item* useItem)
 {
 	if(!useItem)
