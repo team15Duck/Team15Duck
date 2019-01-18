@@ -3,12 +3,13 @@
 class player_Baleog : public playerBase
 {
 private:
-	
+
 	//부서지는 벽 TEST할 임시 RECT
 	RECT	_tempWall;
-	//사다 TEST할 임시 RECT
+	//사다리 TEST할 임시 RECT
 	RECT	_tempLadder;
 	bool	_isLadder;
+
 
 public:
 	player_Baleog();
@@ -32,8 +33,11 @@ public:
 
 
 	//좌우체크
+	virtual void pixelLeftWallCollision() override;
+	virtual void pixelRightWallCollision() override;
+
 	virtual void rectBrokenWallCollision() override; // << 렉트 부숴지는 벽 충돌 
-	
+
 	//바닥체크
 	virtual void pixelBottomCollision() override; // << 바닥 픽셀 충돌
 
