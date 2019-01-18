@@ -5,11 +5,14 @@ class player_Baleog : public playerBase
 private:
 
 	//부서지는 벽 TEST할 임시 RECT
-	RECT	_tempWall;
+	RECT		_tempWall;
 	//사다리 TEST할 임시 RECT
-	RECT	_tempLadder;
-	bool	_isLadder;
+	RECT		_tempLadder;
+	bool		_isLadder;
 
+	animation*	_playerAni;
+	const char*		_imageKey;
+	const char*		_aniImageKey;
 
 public:
 	player_Baleog();
@@ -41,5 +44,8 @@ public:
 	//바닥체크
 	virtual void pixelBottomCollision() override; // << 바닥 픽셀 충돌
 
+
+	//keyAni 이미지 출력할 함수
+	void keyAniSetting();
 };
 

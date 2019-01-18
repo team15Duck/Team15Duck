@@ -24,13 +24,17 @@ void player_Baleog::release()
 
 void player_Baleog::update()
 {
-	_speed = 2.0f;
+	
+	_speed = 2.f;
 	pixelBottomCollision();
 	rectBrokenWallCollision();
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 	_proveBottom = _playerRect.bottom;
 	_proveLeft = _playerRect.left;
 	_proveRight = _playerRect.right;
+
+	KEYANIMANAGER->update("player_Baleog");
+	
 }
 
 
@@ -38,8 +42,9 @@ void player_Baleog::update()
 void player_Baleog::render()
 {
 	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255, 0, 0), false);
-	RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0), false);
-	RectangleBrush(CAMERA->getMemDC(), _tempLadder, RGB(100, 50, 10), false);
+	//RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0), false);
+	//RectangleBrush(CAMERA->getMemDC(), _tempLadder, RGB(100, 50, 10), false);
+	_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _playerAni);
 }
 
 
@@ -51,6 +56,7 @@ void player_Baleog::keyPressMove()
 	{
 		_speed = 2.0f;								//스피드 값을 다시 줌(벽에 부딪힌 경우 speed값을 0으로 두었기 때문에 되돌려주는 코드임)
 		_state = PLAYER_IDLE_LEFT;					//상태값은 idle
+		_playerAni = KEYANIMANAGER->findAnimation("player_Baleog","normalIdleLeft");
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_LEFT))			//왼쪽으로 움직임
 	{
@@ -67,6 +73,7 @@ void player_Baleog::keyPressMove()
 	{
 		_speed = 2.0f;								//스피드값을 다시 줌(벽에 부딪힌 경우 speed 값을 0으로 바꾸었기 때문에 되돌려 줘야함)
 		_state = PLAYER_IDLE_RIGHT;					//상태값은 idle
+		_playerAni = KEYANIMANAGER->findAnimation("player_Baleog", "normalIdleRight");
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 	{
@@ -130,6 +137,10 @@ void player_Baleog::initBaleog()
 
 	_isLadder = false;
 	_isLadderTop = false;
+
+
+	
+	keyAniSetting();
 
 }
 
@@ -214,4 +225,56 @@ void player_Baleog::pixelBottomCollision()
 			break;
 		}
 	}
+}
+
+void player_Baleog::keyAniSetting()
+{
+	/*
+	//공통
+	PLAYER_IDLE_RIGHT,	PLAYER_IDLE_LEFT,
+	PLAYER_IDLE_SPECIAL_RIGHT,	PLAYER_IDLE_SPECIAL_LEFT,
+	PLAYER_MOVE_RIGHT,	PLAYER_MOVE_LEFT,
+	PLAYER_FALL_RIGHT,	PLAYER_FALL_LEFT,
+	PLAYER_HIGH_FALL_RIGHT,	PLAYER_HIGH_FALL_LEFT,
+	PLAYER_PUSH_WALL_RIGHT,	PLAYER_PUSH_WALL_LEFT,
+	PLAYER_LADDER_UP,	PLAYER_LADDER_DOWN, 	PLAYER_LADDER_END,
+	PLAYER_HIT_RIGHT,	PLAYER_HIT_LEFT,
+	PLAYER_HIT_DEATH_RIGHT, 	PLAYER_HIT_DEATH_LEFT,
+	PLAYER_FALL_DEATH_RIGHT,	PLAYER_FALL_DEATH_LEFT,
+	PLAYER_FIRE_DEATH_RIGHT,	PLAYER_FIRE_DEATH_LEFT,
+
+	PLAYER_LOOK_FRONT_RIGHT,	PLAYER_LOOK_FRONT_LEFT,
+	PLAYER_ATTACK_RIGHT,	PLAYER_ATTACK_LEFT,
+	PLAYER_ARROW_RIGHT,	PLAYER_ARROW_LEFT,
+
+	*/
+	//이미지 추가
+	_imageKey = "baleog";
+	_aniImageKey = "player_Baleog";
+	_player = IMAGEMANAGER->addFrameImage(_imageKey, "image/baleog.bmp", 630, 1260, 9, 18, true, RGB(255, 0, 255));
+
+	//키 이름의 캐릭터를 생성함(맵)
+	KEYANIMANAGER->addAnimationType(_aniImageKey);
+
+
+
+	//=========================요 밑에 마저 추가하기=============================//
+
+
+	int normalIdleRight[] = { 0, 1};										//enume : PLAYER_IDLE_RIGHT 0
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "normalIdleRight", _imageKey, normalIdleRight, 2, 2, true);
+		
+	int normalIdleLeft[] = { 3, 4 };										//enume : PLAYER_IDLE_LEFT 1
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "normalIdleLeft", _imageKey, normalIdleLeft, 2, 2, true);
+
+	int specialIdleRight[] = { 9, 10, 11, 12, 13, 14, 15, 16, 17 };			//enume : PLAYER_PLAYER_IDLE_SPECIAL_RIGHT 2
+	KEYANIMANAGER->addArrayFrameAnimation("player_Baleog", "specialIdleRight", "baleog", specialIdleRight, 9, 6, true);
+	//
+	int specialIdleLeft[]{ 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Baleog", "specialIdleLeft", "baleog", specialIdleLeft, 9, 6, true);
+
+
+	//_state = PLAYER_IDLE_RIGHT;
+	_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
+	_playerAni->start();
 }
