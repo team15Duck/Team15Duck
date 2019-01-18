@@ -281,11 +281,13 @@ void object::MakeRect()
 			_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 			break;
 		}
+
 		case OBJECT_TYPE_DOOR_RIGHT:
 		{
 			_rc = RectMake(_x, _y - _size.y / 2, _size.x, _size.y);
 			break;
 		}
+
 		case OBJECT_TYPE_DOOR_LEFT:
 		{
 			_rc = RectMake(_x - _size.x, _y - _size.y / 2, _size.x, _size.y);

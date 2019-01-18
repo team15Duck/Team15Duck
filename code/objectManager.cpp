@@ -20,67 +20,60 @@ HRESULT objectManager::init()
 	IMAGEMANAGER->addFrameImage("door", "image/door.bmp", 192, 192, 3, 2, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addFrameImage("lock", "image/lock.bmp", 162, 54, 3, 1, true, RGB(255, 0, 255));
 
-	object* lockRed = new object;
-	object* lockYellow = new object;
-	object* lockBlue = new object;
+	object* lockRed		= new object;
+	object* lockYellow	= new object;
+	object* lockBlue	= new object;
 	
-	// lock blue
+	// 오브젝트 생성 : 자물쇠
 	{
+		// lock blue
 		POINTF pos = { 448, 1162 };
 		lockBlue->init("lockBlue", "lock", pos, ITEM_TYPE_KEY_BLUE * 100, OBJECT_TYPE_LOCK_BLUE);
-
 		_vFieldObjects.push_back(lockBlue);
-	}
 
-	// lock red
-	{
-		POINTF pos = { 1664, 1258 };
+		// lock red
+		pos = { 1664, 1258 };
 		lockRed->init("lockRed", "lock", pos, ITEM_TYPE_KEY_RED * 100, OBJECT_TYPE_LOCK_RED);
-
 		_vFieldObjects.push_back(lockRed);
-	}
 
-	// lock yellow
-	{
-		POINTF pos = { 1728, 648 };
+		// lock yellow
+		pos = { 1728, 648 };
 		lockYellow->init("lockYellow", "lock", pos, ITEM_TYPE_KEY_YELLOW * 100, OBJECT_TYPE_LOCK_YELLOW);
-
 		_vFieldObjects.push_back(lockYellow);
 	}
 
+	// 오브젝트 생성 : 다리
 	// bridge right - linked lock red
 	{
-		object* obj = new object;
+		object* bridge = new object;
 		POINTF pos = {1773.f, 1258.f};
-		obj->init("bridgeRight", "bridge", pos, -1, OBJECT_TYPE_BRIDGE_RIGHT);
+		bridge->init("bridgeRight", "bridge", pos, -1, OBJECT_TYPE_BRIDGE_RIGHT);
 
 		// 연결
-		lockRed->setLinkObject(obj);
+		lockRed->setLinkObject(bridge);
 
-		_vFieldObjects.push_back(obj);
+		_vFieldObjects.push_back(bridge);
 	}
 
-	// door right - linked lock yellow
+	// 오브젝트 생성 : 문
 	{
-		object* obj = new object;
+		// door right - linked lock yellow
+		object* door1 = new object;
 		POINTF pos = { 1664.f, 650.f };
-		obj->init("doorRight", "door", pos, -1, OBJECT_TYPE_DOOR_RIGHT);
+		door1->init("doorRight", "door", pos, -1, OBJECT_TYPE_DOOR_RIGHT);
 
 		// 연결
-		lockYellow->setLinkObject(obj);
+		lockYellow->setLinkObject(door1);
+		_vFieldObjects.push_back(door1);
 
-		_vFieldObjects.push_back(obj);
-	}
 
-	// door left - linked lock blue
-	{
+		// door left - linked lock blue
 		object* obj = new object;
-		POINTF pos = { 416.f, 1353.f };
+		pos = { 416.f, 1353.f };
 		obj->init("doorLeft", "door", pos, -1, OBJECT_TYPE_DOOR_LEFT);
 
 		// 연결
 		lockBlue->setLinkObject(obj);
-
 		_vFieldObjects.push_back(obj);
 	}
 
@@ -110,8 +103,8 @@ void objectManager::release()
 
 void objectManager::update()
 {
-	int size = _vFieldObjects.size();
-	for (int i = 0 ; i < size; ++i )
+	int size = (int)_vFieldObjects.size();
+	for (int i = 0; i < size; ++i )
 	{
 		_vFieldObjects[i]->update();
 	}
@@ -119,7 +112,7 @@ void objectManager::update()
 
 void objectManager::render()
 {
-	int size = _vFieldObjects.size();
+	int size = (int)_vFieldObjects.size();
 	for (int i = 0; i < size; ++i)
 	{
 		_vFieldObjects[i]->render();
@@ -128,24 +121,30 @@ void objectManager::render()
 
 void objectManager::objectPixelRender(HDC hdc)
 {
-	int size = _vFieldObjects.size();
+	int size = (int)_vFieldObjects.size();
 	for (int i = 0; i < size; ++i)
 	{
 		_vFieldObjects[i]->pixelRender(hdc);
 	}
 }
 
-void objectManager::interactionObjectWithItem(item* useItem)
+bool objectManager::interactionObjectWithItem(item* useItem)
 {
 	if(!useItem)
-		return;
+		return false;
 
-	int size = _vFieldObjects.size();
+	int size = (int)_vFieldObjects.size();
 	for (int i = 0; i < size; ++i)
 	{
-		if(_vFieldObjects[i]->getItemValue() == useItem->getItemValue())
+		// 값이 일치하면 사용
+		if (_vFieldObjects[i]->getObjectValue() == useItem->getItemValue())
+		{
 			doActiveObject(_vFieldObjects[i]);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void objectManager::doActiveObject(object* obj)
