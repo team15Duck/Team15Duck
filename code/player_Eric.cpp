@@ -67,7 +67,7 @@ void player_Eric::update()
 
 void player_Eric::render()
 {
-	Rectangle(CAMERA->getMemDC(), _playerRect);
+	Rectangle(CAMERA->getMemDC(), _playerRect, false);
 }
 
 void player_Eric::keyPressMove()

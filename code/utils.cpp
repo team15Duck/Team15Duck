@@ -16,7 +16,7 @@ namespace TEAM_15DUCK_UTILL
 
 		return pt;
 	}
-	void LineMake(HDC hdc, int startX, int startY, int endX, int endY)
+	void LineMake(HDC hdc, int startX, int startY, int endX, int endY, bool isAbsolut)
 	{
 		float posX = startX - CAMERA->getPosX();
 		float posY = startY - CAMERA->getPosY();
@@ -26,7 +26,7 @@ namespace TEAM_15DUCK_UTILL
 		MoveToEx(hdc, posX, posY, NULL);
 		LineTo(hdc, posX2, posY2);
 	}
-	void LineMake(HDC hdc, POINTF start, POINTF end)
+	void LineMake(HDC hdc, POINTF start, POINTF end, bool isAbsolut)
 	{
 		float posX = start.x - CAMERA->getPosX();
 		float posY = start.y - CAMERA->getPosY();
@@ -46,28 +46,57 @@ namespace TEAM_15DUCK_UTILL
 		RECT rc = { x - (width / 2), y - (height / 2), x + (width / 2), y + (height / 2) };
 		return rc;
 	}
-	void RectangleMake(HDC hdc, int x, int y, int width, int height)
+	void RectangleMake(HDC hdc, int x, int y, int width, int height, bool isAbsolut)
 	{
-		float left = x - CAMERA->getPosX();
-		float top = y - CAMERA->getPosY();
-		float right = x + width - CAMERA->getPosX();
-		float bottom = y + height - CAMERA->getPosY();
+
+		float left	 = x;
+		float top	 = y;
+		float right	 = x + width;
+		float bottom = y + height;
+
+		if (!isAbsolut)
+		{
+			left	-= CAMERA->getPosX();
+			top		-= CAMERA->getPosY();
+			right	-= CAMERA->getPosX();
+			bottom	-= CAMERA->getPosY();
+		
+		}
+		
 		Rectangle(hdc, left, top, right, bottom);
 	}
-	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height)
+	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height, bool isAbsolut)
 	{
-		float left = x - (width / 2) - CAMERA->getPosX();
-		float top = y - (height / 2) - CAMERA->getPosY();
-		float right = x + (width / 2) - CAMERA->getPosX();
-		float bottom = y + (height / 2) - CAMERA->getPosY();
+		float left	 = x - (width / 2);
+		float top	 = y - (height / 2);
+		float right	 = x + (width / 2);
+		float bottom = y + (height / 2);
+
+		if (!isAbsolut)
+		{
+			left	-= CAMERA->getPosX();
+			top		-= CAMERA->getPosY();
+			right	-= CAMERA->getPosX();
+			bottom	-= CAMERA->getPosY();
+		}
+
 		Rectangle(hdc, left, top, right, bottom);
 	}
-	void Rectangle(HDC hdc, RECT & rc)
+	void Rectangle(HDC hdc, RECT & rc, bool isAbsolut)
 	{
-		float left	 = rc.left - CAMERA->getPosX();
-		float top	 = rc.top - CAMERA->getPosY();
-		float right	 = rc.right - CAMERA->getPosX();
-		float bottom = rc.bottom - CAMERA->getPosY();
+
+		float left	 = rc.left;
+		float top	 = rc.top;
+		float right	 = rc.right;
+		float bottom = rc.bottom;
+
+		if (!isAbsolut)
+		{
+			left	-= CAMERA->getPosX();
+			top		-= CAMERA->getPosY();
+			right	-= CAMERA->getPosX();
+			bottom  -= CAMERA->getPosY();
+		}
 
 		Rectangle(hdc, left, top, right, bottom);
 	}
@@ -79,20 +108,37 @@ namespace TEAM_15DUCK_UTILL
 		rt.r = r;
 		return rt;
 	}
-	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height)
+	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height, bool isAbsolut)
 	{
-		float left = x - (width / 2) - CAMERA->getPosX();
-		float top = y - (height / 2) - CAMERA->getPosY();
-		float right = x + (width / 2) - CAMERA->getPosX();
-		float bottom = y + (height / 2) - CAMERA->getPosY();
+		float left	 = x - (width / 2);
+		float top	 = y - (height / 2);
+		float right	 = x + (width / 2);
+		float bottom = y + (height / 2);
+
+		if (!isAbsolut)
+		{
+			left	-= CAMERA->getPosX();
+			top		-= CAMERA->getPosY();
+			right	-= CAMERA->getPosX();
+			bottom	-= CAMERA->getPosY();
+		}
 		Ellipse(hdc, left, top, right, bottom);
 	}
-	void EllipseRender(HDC hdc, ELLIPSE & e)
+	void EllipseRender(HDC hdc, ELLIPSE & e, bool isAbsolut)
 	{
-		float left = e.p.x - e.r - CAMERA->getPosX();
-		float top = e.p.y - e.r - CAMERA->getPosY();
-		float right = e.p.x + e.r - CAMERA->getPosX();
-		float bottom = e.p.y + e.r - CAMERA->getPosY();
+		float left	 = e.p.x - e.r;
+		float top	 = e.p.y - e.r;
+		float right  = e.p.x + e.r;
+		float bottom = e.p.y + e.r;
+		
+		if (!isAbsolut)
+		{
+			left	-= CAMERA->getPosX();
+			top		-= CAMERA->getPosY();
+			right	-= CAMERA->getPosX();
+			bottom	-= CAMERA->getPosY();
+		}
+
 		Ellipse(hdc, left, top, right, bottom);
 	}
 	float RadToDeg(float angle)
@@ -282,64 +328,64 @@ namespace TEAM_15DUCK_UTILL
 		return false;
 	}
 
-	void RectangleBrush(HDC hdc, RECT & rc, COLORREF color)
+	void RectangleBrush(HDC hdc, RECT & rc, COLORREF color, bool isAbsolut)
 	{
 		HBRUSH brush = CreateSolidBrush(color);
 		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
-		Rectangle(hdc, rc);
+		Rectangle(hdc, rc, isAbsolut);
 		SelectObject(hdc, oBrush);
 		DeleteObject(brush);
 	}
 
-	void RectangleBrushPen(HDC hdc, RECT & rc, COLORREF color)
+	void RectangleBrushPen(HDC hdc, RECT & rc, COLORREF color, bool isAbsolut)
 	{
 		HBRUSH brush = CreateSolidBrush(color);
 		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
 		HPEN pen = CreatePen(PS_SOLID, 1, color);
 		HPEN oPen = (HPEN)SelectObject(hdc, pen);
-		Rectangle(hdc, rc);
-		SelectObject(hdc, oBrush);
-		DeleteObject(brush);
-		SelectObject(hdc, oPen);
-		DeleteObject(pen);
-	}
-
-	void RectanglePen(HDC hdc, RECT & rc, COLORREF color)
-	{
-		HPEN pen = CreatePen(PS_SOLID, 1, color);
-		HPEN oPen = (HPEN)SelectObject(hdc, pen);
-		Rectangle(hdc, rc);
-		SelectObject(hdc, oPen);
-		DeleteObject(pen);
-	}
-
-	void EllipseBrush(HDC hdc, ELLIPSE & e, COLORREF color)
-	{
-		HBRUSH brush = CreateSolidBrush(color);
-		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
-		EllipseRender(hdc, e);
-		SelectObject(hdc, oBrush);
-		DeleteObject(brush);
-	}
-
-	void EllipseBrushPen(HDC hdc, ELLIPSE & e, COLORREF color)
-	{
-		HBRUSH brush = CreateSolidBrush(color);
-		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
-		HPEN pen = CreatePen(PS_SOLID, 1, color);
-		HPEN oPen = (HPEN)SelectObject(hdc, pen);
-		EllipseRender(hdc, e);
+		Rectangle(hdc, rc, isAbsolut);
 		SelectObject(hdc, oBrush);
 		DeleteObject(brush);
 		SelectObject(hdc, oPen);
 		DeleteObject(pen);
 	}
 
-	void EllipsePen(HDC hdc, ELLIPSE & e, COLORREF color)
+	void RectanglePen(HDC hdc, RECT & rc, COLORREF color, bool isAbsolut)
 	{
 		HPEN pen = CreatePen(PS_SOLID, 1, color);
 		HPEN oPen = (HPEN)SelectObject(hdc, pen);
-		EllipseRender(hdc, e);
+		Rectangle(hdc, rc, isAbsolut);
+		SelectObject(hdc, oPen);
+		DeleteObject(pen);
+	}
+
+	void EllipseBrush(HDC hdc, ELLIPSE & e, COLORREF color, bool isAbsolut)
+	{
+		HBRUSH brush = CreateSolidBrush(color);
+		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
+		EllipseRender(hdc, e, isAbsolut);
+		SelectObject(hdc, oBrush);
+		DeleteObject(brush);
+	}
+
+	void EllipseBrushPen(HDC hdc, ELLIPSE & e, COLORREF color, bool isAbsolut)
+	{
+		HBRUSH brush = CreateSolidBrush(color);
+		HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
+		HPEN pen = CreatePen(PS_SOLID, 1, color);
+		HPEN oPen = (HPEN)SelectObject(hdc, pen);
+		EllipseRender(hdc, e, isAbsolut);
+		SelectObject(hdc, oBrush);
+		DeleteObject(brush);
+		SelectObject(hdc, oPen);
+		DeleteObject(pen);
+	}
+
+	void EllipsePen(HDC hdc, ELLIPSE & e, COLORREF color, bool isAbsolut)
+	{
+		HPEN pen = CreatePen(PS_SOLID, 1, color);
+		HPEN oPen = (HPEN)SelectObject(hdc, pen);
+		EllipseRender(hdc, e, isAbsolut);
 		SelectObject(hdc, oPen);
 		DeleteObject(pen);
 	}

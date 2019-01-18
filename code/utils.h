@@ -30,9 +30,9 @@ namespace TEAM_15DUCK_UTILL
 
 	POINTF PointFMake(float x, float y);
 
-	void LineMake(HDC hdc, int startX, int startY, int endX, int endY);
+	void LineMake(HDC hdc, int startX, int startY, int endX, int endY, bool isAbsolut = true);
 
-	void LineMake(HDC hdc, POINTF start, POINTF end);
+	void LineMake(HDC hdc, POINTF start, POINTF end, bool isAbsolut = true);
 
 
 	//================= 렉트 관련 함수 ========================
@@ -41,20 +41,20 @@ namespace TEAM_15DUCK_UTILL
 	//    렉트를 만든다(중점X좌표, 중점Y좌표, 가로크기, 세로크기)
 	RECT RectMakeCenter(int x, int y, int width, int height);
 	//================= 사각형 관련 함수 ======================
-	//          사각형 생성함수(뿌려줄DC, left, top, 가로크기, 세로크기
-	void RectangleMake(HDC hdc, int x, int y, int width, int height);
+	//          사각형 생성함수(뿌려줄DC, left, top, 가로크기, 세로크기, 절대좌표에 그리는가
+	void RectangleMake(HDC hdc, int x, int y, int width, int height, bool isAbsolut = true);
 
-	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height);
+	void RectangleMakeCenter(HDC hdc, int x, int y, int width, int height, bool isAbsolut = true);
 
-	void Rectangle(HDC hdc, RECT& rc);
+	void Rectangle(HDC hdc, RECT& rc, bool isAbsolut = true);
 
 	//====================== 동 그 라 미 관련 ===============================
 	//        원 생성함수 (hdc, left, top, 가로크기, 세로크기)
 	ELLIPSE EllipseMake(float x, float y, float r);
 	//        원 생성함수 (hdc, 센터좌표 X, 센터좌표 Y, 가로크기, 세로크기) //타원가능
-	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height);
+	void EllipseCenterRender(HDC hdc, int x, int y, int width, int height, bool isAbsolut = true);
 	//        원 그림
-	void EllipseRender(HDC hdc, ELLIPSE& e);
+	void EllipseRender(HDC hdc, ELLIPSE& e, bool isAbsolut = true);
 	//라디안 각도를 디그리로
 	float RadToDeg(float angle);
 
@@ -122,17 +122,17 @@ namespace TEAM_15DUCK_UTILL
 	bool RectEllipseCollition(RECT& rc, ELLIPSE& e);
 
 	//렉트 색칠
-	void RectangleBrush(HDC hdc, RECT& rc, COLORREF color);
+	void RectangleBrush(HDC hdc, RECT& rc, COLORREF color, bool isAbsolut = true);
 
-	void RectangleBrushPen(HDC hdc, RECT& rc, COLORREF color);
+	void RectangleBrushPen(HDC hdc, RECT& rc, COLORREF color, bool isAbsolut = true);
 
-	void RectanglePen(HDC hdc, RECT& rc, COLORREF color);
+	void RectanglePen(HDC hdc, RECT& rc, COLORREF color, bool isAbsolut = true);
 
 	//원색칠
-	void EllipseBrush(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipseBrush(HDC hdc, ELLIPSE& e, COLORREF color, bool isAbsolut = true);
 
-	void EllipseBrushPen(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipseBrushPen(HDC hdc, ELLIPSE& e, COLORREF color, bool isAbsolut = true);
 
-	void EllipsePen(HDC hdc, ELLIPSE& e, COLORREF color);
+	void EllipsePen(HDC hdc, ELLIPSE& e, COLORREF color, bool isAbsolut = true);
 
 }

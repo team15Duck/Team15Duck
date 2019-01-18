@@ -11,6 +11,7 @@ enum OBJECT_TYPE
 	OBJECT_TYPE_DOOR_LEFT,		// 문 왼쪽에 있는
 	OBJECT_TYPE_BRIDGE_RIGHT,	// 다리	오른쪽에 있는
 	OBJECT_TYPE_BRIDGE_LEFT,	// 다리 왼쪽에 있는
+	OBJECT_TYPE_LADDER,			// 사다리
 
 	OBJECT_TYPE_NONE,
 	OBJECT_TYPE_COUNT = OBJECT_TYPE_NONE,
@@ -57,6 +58,9 @@ public:
 
 	// 연결되는 오브젝트를 연결
 	void setLinkObject(object* obj) { _linkObj = obj; }
+
+	// 충돌체(rect) 크기 세팅
+	void setCollisionSize(POINT size) { _size = size; }
 
 	OBJECT_TYPE geObjectType()	{ return _type;	 }
 	int			getObjectValue(){ return _value; }

@@ -45,8 +45,8 @@ void player_Olaf::update()
 
 void player_Olaf::render()
 {
-	Rectangle(CAMERA->getMemDC(), _playerRect);
-	Rectangle(CAMERA->getMemDC(), _shield);
+	Rectangle(CAMERA->getMemDC(), _playerRect, false);
+	Rectangle(CAMERA->getMemDC(), _shield, false);
 }
 
 void player_Olaf::keyPressMove()

@@ -37,9 +37,9 @@ void player_Baleog::update()
 
 void player_Baleog::render()
 {
-	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255, 0, 0));
-	RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0));
-	RectangleBrush(CAMERA->getMemDC(), _tempLadder, RGB(100, 50, 10));
+	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255, 0, 0), false);
+	RectangleBrush(CAMERA->getMemDC(), _tempWall, RGB(0, 255, 0), false);
+	RectangleBrush(CAMERA->getMemDC(), _tempLadder, RGB(100, 50, 10), false);
 }
 
 

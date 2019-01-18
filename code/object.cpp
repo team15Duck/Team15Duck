@@ -19,7 +19,8 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 	_img = IMAGEMANAGER->findImage(imgName);
 
 	// 이미지가 없다면 false
-	if(!_img)
+	// 사다리는 맵에 이미지가 있기때문에 따로 이미지를 안해줄겁니다....ㅜ
+	if(!_img && type != OBJECT_TYPE_LADDER)
 		return E_FAIL;
 
 	_x = position.x;
@@ -174,12 +175,7 @@ void object::pixelRender(HDC hdc)
 			case OBJECT_TYPE_BRIDGE_LEFT:
 			{
 				_rc = RectMake((int)_destX, (int)_destY + _img->getFrameHeight() - 32, _img->getFrameWidth(), 32);
-				
-				HBRUSH brush = CreateSolidBrush(RGB(255, 0, 255));
-				HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
-				Rectangle(hdc, _rc.left, _rc.top, _rc.right, _rc.bottom);
-				SelectObject(hdc, oBrush);
-				DeleteObject(brush);
+				RectangleBrush(hdc, _rc, RGB(255, 0, 255));
 
 				break;
 			}
@@ -204,12 +200,7 @@ void object::pixelRender(HDC hdc)
 			case OBJECT_TYPE_BRIDGE_RIGHT:
 			case OBJECT_TYPE_BRIDGE_LEFT:
 			{
-				HBRUSH brush = CreateSolidBrush(RGB(0, 255, 255));
-				HBRUSH oBrush = (HBRUSH)SelectObject(hdc, brush);
-				Rectangle(hdc, _rc.left, _rc.top, _rc.right, _rc.bottom);
-				SelectObject(hdc, oBrush);
-				DeleteObject(brush);
-
+				RectangleBrush(hdc, _rc, RGB(0, 255, 255));
 				break;
 			}
 		}
