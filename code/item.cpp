@@ -13,13 +13,14 @@ item::~item()
 
 HRESULT item::init(const char* imgName, POINTF position, int itemValue, ITEM_TYPE type)
 {
-	
 	_img = IMAGEMANAGER->findImage(imgName);
 	
+	// 없는 이미지라면 false
 	if(!_img)
 		return E_FAIL;
-	_isRender = true;
-	_type = type;
+
+	_isRender	= true;
+	_type		= type;
 
 	_x = position.x;
 	_y = position.y;

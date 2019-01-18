@@ -11,7 +11,7 @@ object::~object()
 {
 }
 
-HRESULT object::init(const char* objName, const char * imgName, POINTF position, int itemValue, OBJECT_TYPE type)
+HRESULT object::init(const char* objName, const char* imgName, POINTF position, int itemValue, OBJECT_TYPE type)
 {
 	_objName.clear();
 	_objName.append(objName);

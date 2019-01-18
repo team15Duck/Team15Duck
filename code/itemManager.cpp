@@ -21,76 +21,60 @@ HRESULT itemManager::init()
 	// create field items
 	{
 		// fruit small
-		{
-			item* value = new item;
-			POINTF pos = { 64, 507};
-			value->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_SMALL);
+		item* fruitSmall = new item;
+		POINTF pos = { 64, 507};
+		fruitSmall->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_SMALL);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(fruitSmall);
 
 		// fruit big 1
-		{
-			item* value = new item;
-			POINTF pos = { 62, 956};
-			value->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_BIG);
+		item* fruitBig01 = new item;
+		pos = { 62, 956};
+		fruitBig01->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_BIG);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(fruitBig01);
 
 		// fruit big 2
-		{
-			item* value = new item;
-			POINTF pos = { 894, 700};
-			value->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_BIG);
+		item* fruitBig02 = new item;
+		pos = { 894, 700};
+		fruitBig02->init("fieldItem", pos, 1, ITEM_TYPE_FRUIT_BIG);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(fruitBig02);
 
 		// meat
-		{
-			item* value = new item;
-			POINTF pos = { 880, 284};
-			value->init("fieldItem", pos, 2, ITEM_TYPE_MEAT);
+		item* meat = new item;
+		pos = { 880, 284};
+		meat->init("fieldItem", pos, 2, ITEM_TYPE_MEAT);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(meat);
 
 		// key blue
-		{
-			item* value = new item;
-			POINTF pos = { 700, 1116};
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_BLUE * 100, ITEM_TYPE_KEY_BLUE);
+		item* keyBlue = new item;
+		pos = { 700, 1116};
+		keyBlue->init("fieldItem", pos, ITEM_TYPE_KEY_BLUE * 100, ITEM_TYPE_KEY_BLUE);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(keyBlue);
 
 		// key red
-		{
-			item* value = new item;
-			POINTF pos = { 1662, 442 };
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_RED * 100, ITEM_TYPE_KEY_RED);
+		item* keyRed = new item;
+		pos = { 1662, 442 };
+		keyRed->init("fieldItem", pos, ITEM_TYPE_KEY_RED * 100, ITEM_TYPE_KEY_RED);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(keyRed);
 
 		// key yellow
-		{
-			item* value = new item;
-			POINTF pos = { 1340, 986 };
-			value->init("fieldItem", pos, ITEM_TYPE_KEY_YELLOW * 100, ITEM_TYPE_KEY_YELLOW);
+		item* keyYellow = new item;
+		pos = { 1340, 986 };
+		keyYellow->init("fieldItem", pos, ITEM_TYPE_KEY_YELLOW * 100, ITEM_TYPE_KEY_YELLOW);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(keyYellow);
 
 		// shield
-		{
-			item* value = new item;
-			POINTF pos = { 1022, 600};
-			value->init("fieldItem", pos, 1, ITEM_TYPE_SHIELD);
+		item* shield = new item;
+		pos = { 1022, 600};
+		shield->init("fieldItem", pos, 1, ITEM_TYPE_SHIELD);
 
-			_vFieldItems.push_back(value);
-		}
+		_vFieldItems.push_back(shield);
 	}
 
 	return S_OK;
@@ -122,7 +106,7 @@ void itemManager::update()
 
 void itemManager::render()
 {
-	int size = _vFieldItems.size();
+	int size = (int)_vFieldItems.size();
 	for (int ii = 0 ; ii < size; ++ii)
 	{
 		_vFieldItems[ii]->render();

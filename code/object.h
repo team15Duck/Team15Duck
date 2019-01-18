@@ -43,6 +43,7 @@ public:
 	object();
 	~object();
 
+	// 오브젝트 이름(키애니메이션에서 사용), 이미지 이름, 중점좌표, 연동될 아이템 값, 오브젝트 타입
 	HRESULT init(const char* objName, const char* imgName, POINTF position, int itemValue, OBJECT_TYPE type);
 	void release();
 	void update();
