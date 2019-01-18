@@ -26,7 +26,6 @@ void player_Baleog::update()
 {
 	_speed = 2.0f;
 	pixelBottomCollision();
-	pixelHorizenWallCollision();
 	rectBrokenWallCollision();
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 	_proveBottom = _playerRect.bottom + 5;
@@ -134,47 +133,6 @@ void player_Baleog::initBaleog()
 
 }
 
-void player_Baleog::pixelHorizenWallCollision()
-{
-	//왼쪽 벽 충돌(픽셀충돌)
-	if (_state == PLAYER_MOVE_LEFT)
-	{
-		for (int i = _proveLeft - 10; i < _proveLeft + 10; ++i)
-		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state = PLAYER_PUSH_WALL_LEFT;			//상태값은 벽을 미는 상태(왼쪽)로 줌
-				_speed = 0.f;							//막혀서 더이상 못움직임
-
-				break;
-			}
-		}
-	}
-	//오른쪽 벽 충돌(픽셀충돌)
-	if (_state == PLAYER_MOVE_RIGHT)
-	{
-		for (int i = _playerRect.right - 5; i < _playerRect.right + 5; ++i)
-		{
-			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-			int r = GetRValue(color);
-			int g = GetGValue(color);
-			int b = GetBValue(color);
-
-			if (r == 0 && g == 255 && b == 255)
-			{
-				_state = PLAYER_PUSH_WALL_RIGHT;		//상태값은 벽을 미는 상태(오른쪽)로 줌
-				_speed = 0.f;							//막혀서 더이상 못움직임
-
-				break;
-			}
-		}
-	}
-}
 
 void player_Baleog::rectBrokenWallCollision()
 {

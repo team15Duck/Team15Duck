@@ -213,10 +213,6 @@ void player_Eric::keyPressS()
 }
 
 
-void player_Eric::pixelHorizenWallCollision()
-{
-}
-
 void player_Eric::rectBrokenWallCollision()
 {
 }
