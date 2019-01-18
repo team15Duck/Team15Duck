@@ -8,6 +8,7 @@ class objectManager
 {
 private:
 	vector<object*> _vFieldObjects;		// 필드에 있는 오브젝트들
+	vector<object*> _vFieldLadders;		// 필드에 있는 사다리들
 
 public:
 	objectManager();
@@ -27,6 +28,9 @@ public:
 
 	// 필드에 있는 오브젝트들
 	vector<object*> getFieldObjects() { return _vFieldObjects; }
+	
+	// 필드에 있는 사다리들
+	vector<object*> getFieldLadders() { return _vFieldLadders; }
 
 private:
 	// 오브젝트 작동 : 외부에서 사용할 함수가 아니므로 private

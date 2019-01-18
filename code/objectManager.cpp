@@ -77,6 +77,57 @@ HRESULT objectManager::init()
 		_vFieldObjects.push_back(obj);
 	}
 
+	// 오브젝트 생성 : 사다리
+	{
+		object* ladder01 = new object;
+		POINTF pos = {193.f, 841.f};
+		POINT size = {2, 1124};
+		ladder01->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder01->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder01);
+
+		object* ladder02 = new object;
+		pos = { 1121.f, 265.f };
+		size = { 2, 162 };
+		ladder02->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder02->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder02);
+
+		object* ladder03 = new object;
+		pos = { 1601.f, 585.f };
+		size = { 2, 226 };
+		ladder03->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder03->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder03);
+
+		object* ladder04 = new object;
+		pos = { 1985.f, 1001.f };
+		size = { 2, 674 };
+		ladder04->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder04->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder04);
+
+		object* ladder05 = new object;
+		pos = { 513.f, 1305.f };
+		size = { 2, 194 };
+		ladder05->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder05->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder05);
+
+		object* ladder06 = new object;
+		pos = { 1185.f, 1113.f };
+		size = { 2, 194 };
+		ladder06->init("ladder01", "", pos, -1, OBJECT_TYPE_LADDER);
+		ladder06->setCollisionSize(size);
+
+		_vFieldLadders.push_back(ladder06);
+	}
+
 
 	return S_OK;
 }
@@ -98,7 +149,23 @@ void objectManager::release()
 			++iter;
 	}
 
+	iter = _vFieldLadders.begin();
+	for (iter; _vFieldLadders.end() != iter; )
+	{
+		object* value = (*iter);
+		if (value)
+		{
+			iter = _vFieldLadders.erase(iter);
+
+			SAFE_RELEASE(value);
+			SAFE_DELETE(value);
+		}
+		else
+			++iter;
+	}
+
 	_vFieldObjects.clear();
+	_vFieldLadders.clear();
 }
 
 void objectManager::update()
@@ -108,6 +175,12 @@ void objectManager::update()
 	{
 		_vFieldObjects[i]->update();
 	}
+
+	size = (int)_vFieldLadders.size();
+	for (int i = 0; i < size; ++i)
+	{
+		_vFieldLadders[i]->update();
+	}
 }
 
 void objectManager::render()
@@ -116,6 +189,12 @@ void objectManager::render()
 	for (int i = 0; i < size; ++i)
 	{
 		_vFieldObjects[i]->render();
+	}
+
+	size = (int)_vFieldLadders.size();
+	for (int i = 0; i < size; ++i)
+	{
+		_vFieldLadders[i]->render();
 	}
 }
 

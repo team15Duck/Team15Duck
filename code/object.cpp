@@ -26,8 +26,11 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 	_x = position.x;
 	_y = position.y;
 
-	_destX = _x - (_img->getFrameWidth() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
-	_destY = _y - (_img->getFrameHeight() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
+	if (_img)
+	{
+		_destX = _x - (_img->getFrameWidth() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
+		_destY = _y - (_img->getFrameHeight() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
+	}
 
 	_linkObj = nullptr;		// setLinkObject함수로 따로 연결해줄것임
 	_value	 = itemValue;
@@ -37,8 +40,8 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 	_size = { 0, 0 };
 
 	// 해당 오브젝트의 키 애니메이션 맵 생성
-
 	KEYANIMANAGER->addAnimationType(_objName);
+
 	// 190117 진형
 	// 오브젝트 별로 크기를 따로 준다. : 원래 데이터에서 읽어와서 하는건데 일단 하드코딩으로 해놓겠움
 	// 렉트크기(충돌체)를 오브젝트 크기별로 따로 주기 위함
@@ -151,6 +154,11 @@ void object::render()
 {
 	if(_ani)
 		_img->aniRender(CAMERA->getMemDC(), _destX, _destY, _ani);
+
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		Rectangle(CAMERA->getMemDC(), _rc, false);
+	}
 }
 
 void object::pixelRender(HDC hdc)
@@ -243,6 +251,11 @@ void object::active()
 			_ani = KEYANIMANAGER->findAnimation(_objName, "bridgeLeftActive");
 			break;
 		}
+
+		case OBJECT_TYPE_LADDER:
+		{
+			return;
+		}
 	}
 
 	if(_ani)
@@ -292,6 +305,11 @@ void object::MakeRect()
 		case OBJECT_TYPE_BRIDGE_LEFT:
 		{
 			_rc = RectMakeCenter(_x - _size.x * 2, _y, _size.x, _size.y);
+			break;
+		}
+		case OBJECT_TYPE_LADDER:
+		{
+			_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 			break;
 		}
 		default:
