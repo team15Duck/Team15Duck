@@ -18,7 +18,7 @@ HRESULT playerManager::init()
 	_vPlayer.push_back(new player_Eric);
 	_vPlayer.push_back(new player_Baleog);
 	_vPlayer.push_back(new player_Olaf);
-	
+
 	_vPlayer[PLAYER_NAME_ERIC]->init();
 	_vPlayer[PLAYER_NAME_BALEOG]->init();
 	_vPlayer[PLAYER_NAME_OLAF]->init();
@@ -28,6 +28,7 @@ HRESULT playerManager::init()
 	//_currentSelectPlayer = PLAYER_NAME_OLAF;
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
+
 	return S_OK;
 }
 
@@ -53,19 +54,33 @@ void playerManager::update()
 						_im->obtainItem(_im->getFieldItems()[j]);
 						switch (i)
 						{
-							case PLAYER_NAME_ERIC:
-								_mainUI->setEricItemInfo(_vPlayer[i]->getInvenItem());
+						case PLAYER_NAME_ERIC:
+							_mainUI->setEricItemInfo(_vPlayer[i]->getInvenItem());
 							break;
-							case PLAYER_NAME_BALEOG:
-								_mainUI->setBaleogItemInfo(_vPlayer[i]->getInvenItem());
+						case PLAYER_NAME_BALEOG:
+							_mainUI->setBaleogItemInfo(_vPlayer[i]->getInvenItem());
 							break;
-							case PLAYER_NAME_OLAF:
-								_mainUI->setOlafItemInfo(_vPlayer[i]->getInvenItem());
+						case PLAYER_NAME_OLAF:
+							_mainUI->setOlafItemInfo(_vPlayer[i]->getInvenItem());
 							break;
 						}
 						break;
 					}
 				}
+			}
+		}
+	}
+
+	for (int i = 0; i < PLAYER_NAME_COUNT; ++i)
+	{
+		RECT temp;
+		vector<object*> ladders = _om->getFieldLadders();
+
+		for (int j = 0; j < ladders.size(); ++j)
+		{
+			if (IntersectRect(&temp, &ladders[j]->getObjectRect(), &_vPlayer[i]->getPlayerRect()))
+			{
+				_vPlayer[i]->playerCollisionLadder(ladders[j]);
 			}
 		}
 	}
@@ -81,7 +96,7 @@ void playerManager::render()
 
 void playerManager::shieldPixelRender(HDC hdc)
 {
-	
+
 }
 
 void playerManager::keyUpdate()
@@ -92,7 +107,7 @@ void playerManager::keyUpdate()
 
 void playerManager::keyPressCtrl()
 {
-	if(TIMEMANAGER->getWorldTime() < 0.5f) return;
+	if (TIMEMANAGER->getWorldTime() < 0.5f) return;
 	//if (!CAMERA->getMapMove())
 	{
 		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))

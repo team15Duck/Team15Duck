@@ -31,7 +31,7 @@ void playerBase::update()
 
 void playerBase::render()
 {
-	
+
 
 }
 
@@ -53,7 +53,7 @@ void playerBase::keyPressMove()
 	{
 		_x += _speed;
 	}
-	
+
 }
 
 void playerBase::keyPressSpace()
@@ -94,6 +94,11 @@ void playerBase::pixelTopWallCollision()
 }
 
 void playerBase::pixelBottomCollision()
+{
+
+}
+
+void playerBase::playerCollisionLadder(object* ladder)
 {
 
 }

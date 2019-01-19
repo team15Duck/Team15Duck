@@ -1,5 +1,7 @@
 #pragma once
 #include "item.h"
+#include "object.h"
+
 //알아서 조절하셈
 #define MAX_SPEED	200.0f
 #define MIN_SPEED	5.0f
@@ -141,7 +143,8 @@ public:
 	//바닥체크
 	virtual void pixelBottomCollision(); // << 바닥 픽셀 충돌 
 
-
+	//사다충돌 체크용
+	virtual void playerCollisionLadder(object* ladder);
 
 
 	//처맞는함수
@@ -159,9 +162,9 @@ public:
 
 	PLAYER_NAME getPlayerName() { return _name; }
 
-
-
 	void setPixelDataLink(image* img) { _pixelData = img; }
 	RECT getPlayerRect() { return _playerRect; }
 	item** getInvenItem() { return _invenItem; }
+
+
 };

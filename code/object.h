@@ -2,7 +2,7 @@
 //#include "animation.h"
 
 // 오브젝트 타입
-enum OBJECT_TYPE	
+enum OBJECT_TYPE
 {
 	OBJECT_TYPE_LOCK_RED,		// 자물쇠 R
 	OBJECT_TYPE_LOCK_YELLOW,	// 자물쇠 Y
@@ -61,10 +61,12 @@ public:
 
 	// 충돌체(rect) 크기 세팅
 	void setCollisionSize(POINT size) { _size = size; }
+	float getX() { return _x; }
+	float getY() { return _y; }
 
-	OBJECT_TYPE geObjectType()	{ return _type;	 }
-	int			getObjectValue(){ return _value; }
-	RECT		getObjectRect()	{ return _rc;	 }
+	OBJECT_TYPE geObjectType() { return _type; }
+	int			getObjectValue() { return _value; }
+	RECT		getObjectRect() { return _rc; }
 
 private:
 	// 렉트 생성
