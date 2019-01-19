@@ -37,6 +37,11 @@ HRESULT player_Eric::init()
 	_isRCollision = false;
 	_isLCollision = false;
 
+	//이동 예외처리용 불값 초기화
+
+	_isRightMove = false;
+	_isLeftMove = false;
+
 	return S_OK;
 }
 
@@ -49,8 +54,10 @@ void player_Eric::release()
 
 void player_Eric::update()
 {
-	pixelBottomCollision();
+	//이동
 	jump();
+	//바닥 픽셀충돌
+	pixelBottomCollision();
 	if (_isRCollision)
 	{
 		_speed = 0;
@@ -61,6 +68,7 @@ void player_Eric::update()
 		_speed = 0;
 		_state = PLAYER_PUSH_WALL_LEFT;
 	}
+
 	_proveBottom = _playerRect.bottom;
 	_proveTop = _playerRect.top;
 	_proveRight = _playerRect.right;
@@ -78,124 +86,10 @@ void player_Eric::render()
 
 void player_Eric::keyPressMove()
 {
-	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))								// 왼쪽키 출발속도 세팅
-	{
-		_isRCollision = false;
-		_speed = MIN_SPEED;
-		if (_state != PLAYER_JUMP_RIGHT || _state != PLAYER_JUMP_LEFT)
-		{
-			_state = PLAYER_MOVE_LEFT;
-		}
-		EricAniStart("move_left");
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_LEFT))								//왼쪽으로 가속도 붙이며 이동하는 키세팅  
-	{
-		if (_speed < MAX_SPEED)											//만약에 속도가 맥스 속도보다 작다면
-		{
-			if (!_isLCollision)											//만약에 벽에 안박았다면
-			{
-				_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();	//스피드를 계속 더해주는데 가속도 * 시간
-			}
-		}
-		else															//맥스 속도보다 작은게 아니라면
-		{
-			_speed = MAX_SPEED;											//스피드는 더이상 커지지 않게 최대 속도로 고정한다.
-		}
-		if (!_isLCollision)											//만약에 벽에 안박았다면
-		{
-			_x -= _speed * TIMEMANAGER->getElpasedTime();			// 캐릭터는 계속 속도 * 시간으로 움직인다.
-			for (int i = _proveLeft; i < _proveLeft + 30; ++i)
-			{
-				COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
 
-				int r = GetRValue(color);
-				int g = GetGValue(color);
-				int b = GetBValue(color);
+	rightMove();
+	leftMove();
 
-				// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
-				if ((r == 0 && g == 255 && b == 255))
-				{
-					_isLCollision = true;
-					_x = i + (_size.x / 2);
-				}
-				else
-				{
-					_isLCollision = false;
-				}
-			}
-		}
-		if (_x - (_size.x / 2) < 0)												// 만약에 캐릭터가 크기를 넘어가려고 한다면
-		{
-			_x = _size.x / 2;													// x의 값을 25로 고정한다.
-		}
-	}
-	if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-	{
-		if (_state == PLAYER_MOVE_LEFT)
-		{
-			_state = PLAYER_IDLE_LEFT;
-		}
-		EricAniStart("idleleft");
-	}
-	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))							//오른쪽키 출발속도 세팅
-	{
-		_isLCollision = false;
-		_speed = MIN_SPEED;
-		if (_state != PLAYER_JUMP_RIGHT || _state != PLAYER_JUMP_LEFT)
-		{
-			_state = PLAYER_MOVE_RIGHT;
-		}
-		EricAniStart("move_right");
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-	{
-		if (_speed < MAX_SPEED)
-		{
-			if (!_isRCollision)
-			{
-				_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
-			}
-		}
-		else
-		{
-			_speed = MAX_SPEED;
-		}
-		if (!_isRCollision)
-		{
-			_x += _speed * TIMEMANAGER->getElpasedTime();
-			for (int i = _proveRight - 30; i < _proveRight; ++i)
-			{
-				COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-				int r = GetRValue(color);
-				int g = GetGValue(color);
-				int b = GetBValue(color);
-
-				// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
-				if ((r == 0 && g == 255 && b == 255))
-				{
-					_isRCollision = true;
-					_x = i - (_size.x / 2);
-				}
-				else
-				{
-					_isRCollision = false;
-				}
-			}
-		}
-		if (_x + (_size.x / 2) > _pixelData->GetWidth())
-		{
-			_x = _pixelData->GetWidth() - (_size.x / 2);
-		}
-	}
-	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-	{
-		if (_state == PLAYER_MOVE_RIGHT)
-		{
-			_state = PLAYER_IDLE_RIGHT;
-		}
-		EricAniStart("idleright");
-	}
 }
 
 void player_Eric::keyPressSpace()
@@ -220,7 +114,6 @@ void player_Eric::keyPressSpace()
 			_state = PLAYER_JUMP_RIGHT;
 			EricAniStart("jump_right");
 		}
-
 		_isJump = true;
 		_jumpPower = START_JUMPP;
 		_gravity = GRAVITY;
@@ -293,11 +186,24 @@ void player_Eric::pixelBottomCollision()
 					_state = PLAYER_IDLE_LEFT;
 					EricAniStart("idleleft");
 				}
+				//만약에 오른쪽 키를 누르고있다면
+				if (_isRightMove && !_isJump)
+				{
+					_state = PLAYER_MOVE_RIGHT;
+					_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "move_right");
+
+				}
 				//만약에 오른쪽을 바라보는 모양으로 떨어진다면 
 				if (_state == PLAYER_FALL_RIGHT)
 				{
 					_state = PLAYER_IDLE_RIGHT;
 					EricAniStart("idleright");
+				}
+				//만약에 왼쪽키를 누르고 있다면
+				if (_isLeftMove && !_isJump)
+				{
+					_state = PLAYER_MOVE_LEFT;
+					_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "move_left");
 				}
 				collision = true;
 				break;
@@ -308,6 +214,156 @@ void player_Eric::pixelBottomCollision()
 			break;
 		}
 
+	}
+}
+
+void player_Eric::leftMove()
+{
+	//오른쪽 이동이 아닐때만 왼쪽 이동이 가능하다
+	if (!_isRightMove)
+	{
+		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+		{
+			_isLeftMove = true;
+			_isRCollision = false;
+			_speed = MIN_SPEED;
+			_state = PLAYER_MOVE_LEFT;
+			EricAniStart("move_left");
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			_isLeftMove = true;
+			if (_speed < MAX_SPEED)
+			{
+				if (!_isLCollision)
+				{
+					_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
+				}
+			}
+			else
+			{
+				_speed = MAX_SPEED;
+			}
+			if (!_isLCollision)
+			{
+				_x -= _speed * TIMEMANAGER->getElpasedTime();
+				for (int i = _proveLeft; i < _proveLeft + 30; ++i)
+				{
+					COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+					int r = GetRValue(color);
+					int g = GetGValue(color);
+					int b = GetBValue(color);
+
+					// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
+					if ((r == 0 && g == 255 && b == 255))
+					{
+						_isLCollision = true;
+						_x = i + (_size.x / 2);
+					}
+					else
+					{
+						_isLCollision = false;
+					}
+				}
+			}
+			if (_x - (_size.x / 2) < 0)
+			{
+				_x = _size.x / 2;
+			}
+		}
+		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+		{
+			_isLeftMove = false;
+			if (_state == PLAYER_MOVE_LEFT)
+			{
+				_state = PLAYER_IDLE_LEFT;
+			}
+			EricAniStart("idleleft");
+		}
+	}
+}
+
+void player_Eric::rightMove()
+{
+	//만약에 왼쪽이동이 아닐때만 오른쪽으로 이동이 가능하다.
+	if (!_isLeftMove)
+	{
+		//오른쪽 출발 세팅
+		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+		{
+			//오른쪽이동 가능
+			_isRightMove = true;
+			//왼쪽벽에 충돌하지 않음
+			_isLCollision = false;
+			//속도는 미니넘 속도로
+			_speed = MIN_SPEED;
+			//상태는 오른쪽 이동 상태
+			_state = PLAYER_MOVE_RIGHT;
+			//출력되는 애니메이션은 오른쪽이동 애니메이션 
+			EricAniStart("move_right");
+		}
+		//오른쪽 이동상태 세팅
+		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+		{
+			//만약에 스피드가 맥스스피드보다 작다면
+			if (_speed < MAX_SPEED)
+			{
+				//만약에 오른쪽 벽이랑 충돌하고 있지 않은 상태라면
+				if (!_isRCollision)
+				{
+					//속도는 가속도를 현재시간에 곱하면서 상승한다.
+					_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
+				}
+			}
+			//만약 그상황이 아니라면
+			else
+			{
+				//속도는 맥스스피드로 고정한다.
+				_speed = MAX_SPEED;
+			}
+			if (!_isRCollision)
+			{
+				_x += _speed * TIMEMANAGER->getElpasedTime();
+				for (int i = _proveRight - 30; i < _proveRight; ++i)
+				{
+					COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+					int r = GetRValue(color);
+					int g = GetGValue(color);
+					int b = GetBValue(color);
+
+					// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
+					if ((r == 0 && g == 255 && b == 255))
+					{
+						_isRCollision = true;
+						_x = i - (_size.x / 2);
+					}
+					else
+					{
+						_isRCollision = false;
+					}
+				}
+			}
+			if (_x + (_size.x / 2) > _pixelData->GetWidth())
+			{
+				_x = _pixelData->GetWidth() - (_size.x / 2);
+			}
+		}
+		//만약에 오른쪽이동 버튼을 누르지 않는다면 
+		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+		{
+			//만약에 캐릭터의 상태가 오른쪽 이동 상태였다면
+			if (_state == PLAYER_MOVE_RIGHT)
+			{
+				//오른쪽 정지상태 이미지를 출력한다.
+				_state = PLAYER_IDLE_RIGHT;
+			}
+			//애니메이션 상태를 오른쪽정지상태 애니메이션을 출력한다.
+			EricAniStart("idleright");
+			//오른쪽 이동상태를 아니오로 바꿔준다.
+			_isRightMove = false;
+		}
 	}
 }
 

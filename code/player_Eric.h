@@ -9,6 +9,10 @@ private:
 	bool _isRCollision;	//오른쪽 충돌 체크용 
 	bool _isLCollision;	//왼쪽 충돌 체크용
 
+	//이동 예외처리용 불값
+	bool _isRightMove;
+	bool _isLeftMove;
+
 	POINT _size;
 
 	animation* _EricMotion;	//에릭모션
@@ -38,15 +42,15 @@ public:
 	//바닥체크
 	virtual void pixelBottomCollision()				override; // << 바닥 픽셀 충돌 
 
-
-
-
-	//처맞는함수
+	// 이동관련 함수
+	void leftMove();
+	void rightMove();
 
 	void jump();
+
+	//애니메이션관련 함수
 	void EricAniinit();
 	void EricAni();
-
 	void EricAniStart(string key);
 
 };
