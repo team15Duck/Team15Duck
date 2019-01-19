@@ -2,7 +2,7 @@
 #include "item.h"
 //알아서 조절하셈
 #define MAX_SPEED	200.0f
-#define MIN_SPEED	10.0f
+#define MIN_SPEED	5.0f
 #define MAX_LIFE	3
 #define ACC_SPEED	200.0f
 #define START_JUMPP 200.0f
@@ -48,6 +48,8 @@ enum PLAYER_STATE
 	//하영캐릭
 	PLAYER_JUMP_RIGHT,
 	PLAYER_JUMP_LEFT,
+	PLAYER_SIGN_RIGHT,
+	PLAYER_SIGN_LEFT,
 	PLAYER_HEAD_BUTT_RIGHT,
 	PLAYER_HEAD_BUTT_LEFT,
 
@@ -156,7 +158,7 @@ public:
 	float* getPosY() { return &_y; }
 
 	PLAYER_NAME getPlayerName() { return _name; }
-	
+
 
 
 	void setPixelDataLink(image* img) { _pixelData = img; }
