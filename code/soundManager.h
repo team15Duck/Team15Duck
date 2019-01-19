@@ -27,6 +27,12 @@ private:
 
 	arrSounds _mTotalSounds;
 
+	ChannelGroup* _bgmGroup;
+	ChannelGroup* _effectGroup;
+
+	SoundGroup* _bgmSoundGroup;
+	SoundGroup* _effectSoundGroup;
+
 public:
 	HRESULT init();
 	void release();
@@ -40,6 +46,23 @@ public:
 
 	bool isPlaySound(string keyName);
 	bool isPauseSound(string keyName);
+
+	// effect voluem control
+	void setEffectVolume(float volume);
+	// bgm volume control
+	void setBgmVolume(float volume);
+	// ¸ðµç sound volume control
+	void setAllSoundVolume(float volume);
+
+	// pause
+	void setEffectPause();
+	void setBgmPause();
+	void setAllSoundPause();
+
+	// resume
+	void setEffectResume();
+	void setBgmResume();
+	void setAllSoundResume();
 
 
 	soundManager();
