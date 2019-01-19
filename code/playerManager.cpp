@@ -29,8 +29,6 @@ HRESULT playerManager::init()
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 
-	
-
 	return S_OK;
 }
 
@@ -73,7 +71,19 @@ void playerManager::update()
 		}
 	}
 
+	for (int i = 0; i < PLAYER_NAME_COUNT; ++i)
+	{
+		RECT temp;
+		vector<object*> ladders = _om->getFieldLadders();
 
+		for (int j = 0; j < ladders.size(); ++j)
+		{
+			if (IntersectRect(&temp, &ladders[j]->getObjectRect(), &_vPlayer[i]->getPlayerRect()))
+			{
+				_vPlayer[i]->playerCollisionLadder(ladders[j]);
+			}
+		}
+	}
 }
 
 void playerManager::render()
@@ -156,9 +166,4 @@ void playerManager::keyPressCtrl()
 			CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 		}
 	}
-}
-
-void playerManager::setLadderRectAdressLink(RECT * rc)
-{
-	_ladderRc.push_back(rc);
 }
