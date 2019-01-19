@@ -141,9 +141,8 @@ void object::update()
 {
 	if (KEYMANAGER->isToggleKey(VK_F6))
 	{
-		if(KEYMANAGER->isStayKeyDown(VK_SPACE))
+		if(KEYMANAGER->isStayKeyDown('E'))
 				active();
-
 	}
 	
 	KEYANIMANAGER->update(_objName);
@@ -155,7 +154,7 @@ void object::render()
 	if(_ani)
 		_img->aniRender(CAMERA->getMemDC(), _destX, _destY, _ani);
 
-	if (KEYMANAGER->isToggleKey(VK_F6))
+	if (KEYMANAGER->isToggleKey(VK_F7))
 	{
 		Rectangle(CAMERA->getMemDC(), _rc, false);
 	}
