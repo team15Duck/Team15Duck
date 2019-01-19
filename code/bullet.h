@@ -8,7 +8,7 @@ private:
 	RECT _rc;			//렉트
 	image* _img;		//이미지
 	bool _isRight;		//방향성
-
+	image* _pixelData;	//픽셀데이터
 public:
 	bullet();
 	~bullet();

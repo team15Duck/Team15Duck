@@ -13,6 +13,7 @@ bullet::~bullet()
 
 HRESULT bullet::init(image * img, image * pixelData, bool isRight, POINTF p)
 {
+
 	return S_OK;
 }
 
@@ -30,6 +31,14 @@ void bullet::render()
 
 void bullet::move()
 {
+	if (_isRight)
+	{
+		//오른쪽갈떄 이동
+	}
+	else
+	{
+		//왼쪽갈때 이동
+	}
 }
 
 void bullet::pixelCollition()
