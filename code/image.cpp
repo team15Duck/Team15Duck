@@ -437,7 +437,7 @@ void image::release()
 		_trans = false;
 		_transColor = FALSE;
 	}
-	if (_blendImage)
+	if (_alpha)
 	{
 		SelectObject(_blendImage->hMemDC, _blendImage->hOBit);
 		DeleteObject(_blendImage->hBit);

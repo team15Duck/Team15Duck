@@ -41,5 +41,6 @@ public:
 	void setMainUIAdressLink(mainUI* ui) { _mainUI = ui; }
 	void setItemManagerLink(itemManager* im) { _im = im; }
 	void setObjectManagerLink(objectManager* om) { _om = om; }
+
 };
 

@@ -110,6 +110,7 @@ protected:
 
 	item*			_invenItem[4];
 
+	vector<RECT*>	_ladderRc;
 
 public:
 	playerBase();
@@ -145,7 +146,7 @@ public:
 
 	//사다충돌 체크용
 	virtual void playerCollisionLadder(object* ladder);
-
+	virtual void setLadderRectAdressLink(RECT* rc);
 
 	//처맞는함수
 

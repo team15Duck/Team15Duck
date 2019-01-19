@@ -102,3 +102,8 @@ void playerBase::playerCollisionLadder(object* ladder)
 {
 
 }
+
+void playerBase::setLadderRectAdressLink(RECT * rc)
+{
+	_ladderRc.push_back(rc);
+}
