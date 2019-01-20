@@ -30,6 +30,7 @@ void player_Baleog::update()
 	pixelBottomCollision();
 	rectBrokenWallCollision();
 
+	
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 
 	_proveBottom = _playerRect.bottom;
@@ -52,7 +53,35 @@ void player_Baleog::render()
 
 void player_Baleog::keyPressMove()
 {
-	//============== 왼 쪽 ================
+	//다시 움직여 보고 싶어서 넣은 키 나중에 지우기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (KEYMANAGER->isOnceKeyDown('R'))
+	{
+		_isAlive = true;
+		_deathMotion = false;
+	}
+	//==================== 만약에 죽었고 죽는 모션이 끝났으면 더이상의 키 입력은 없당!!!!! ====================
+	if (!_isAlive && !_deathMotion)
+		return;
+	//==================== 만약에 죽었는데 죽는 모션이 나와야 하면 아래 실행문대로 키 애니 시작해랑(여기서 모션을 false로 바꿔줌 ====================
+	if (!_isAlive && _deathMotion)
+	{	
+		if (_state == PLAYER_FIRE_DEATH_LEFT)
+		{
+			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "fireDeathLeft");
+			_playerAni->start();
+		}
+		if (_state == PLAYER_FIRE_DEATH_RIGHT)
+		{
+			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "fireDeathRight");
+			_playerAni->start();
+		}
+		_deathMotion = false;
+		return;
+	}
+
+	//==================== 살아있다면 키 입력을 받아보장!! ====================
+
+	//============== <<왼 쪽>> ================
 	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))			//왼쪽 움직임을 처음 시작하면 _state와 _playerAni의 값을 바꿔 주기 위해서 넣었습니다.
 	{
 		pixelLeftWallCollision();
@@ -62,7 +91,7 @@ void player_Baleog::keyPressMove()
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "moveLeft");
 			_playerAni->start();
 		}
-		else if (_isPushWall && _speed == 0)
+		else if (_isPushWall)
 		{
 			_state = PLAYER_PUSH_WALL_LEFT;
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "pushWallLeft");
@@ -72,6 +101,13 @@ void player_Baleog::keyPressMove()
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_LEFT))			//왼쪽으로 움직임(지속)
 	{
+		//움직이면서 바닥 체크하고
+		pixelBottomCollision();
+
+		if (!_isGround)
+		{
+			_state = PLAYER_FALL_LEFT;
+		}
 		//왼쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
 		if (_playerRect.left <= 0)
 		{
@@ -86,7 +122,7 @@ void player_Baleog::keyPressMove()
 		pixelLeftWallCollision();
 		if (_isPushWall)
 		{
-			if (!_isChangeAni && _speed == 0)
+			if (!_isChangeAni)
 			{
 				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "pushWallLeft");
 				_playerAni->start();
@@ -103,8 +139,12 @@ void player_Baleog::keyPressMove()
 		_playerAni->start();
 		_isChangeAni = false;
 		_isPushWall = false;
+		if (!_isGround)
+		{
+			_state = PLAYER_FALL_LEFT;
+		}
 	}
-	//============== 오 른 쪽 ================
+	//============== <오 른 쪽> ================
 	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))		//오른쪽 움직임을 처음 시작하면 _state와 _playerAni의 값을 바꿔주기 위해서 넣었습니다.
 	{
 		pixelRightWallCollision();
@@ -124,6 +164,16 @@ void player_Baleog::keyPressMove()
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))		//오른쪽으로 움직임 지속
 	{
+		//움직이면서 바닥 체크하고
+		pixelBottomCollision();
+		//if (!_isGround && _isLadder)				//땅이 아니고 사다리를 타고 있으면
+		//{
+		//	_state == PLAYER_FALL_RIGHT;
+		//}
+		if (!_isGround)
+		{
+			_state = PLAYER_FALL_RIGHT;
+		}
 		//오른쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
 		if (_playerRect.right >= _pixelData->GetWidth())
 		{
@@ -149,34 +199,49 @@ void player_Baleog::keyPressMove()
 	}
 	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))			//오른쪽 움직임에서 손을 떼면
 	{
+		
 		_speed = 2.0f;								//스피드값을 다시 줌(벽에 부딪힌 경우 speed 값을 0으로 바꾸었기 때문에 되돌려 줘야함)
 		_state = PLAYER_IDLE_RIGHT;					//상태값은 idle
 		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
 		_playerAni->start();
 		_isChangeAni = false;
 		_isPushWall = false;
+		if (!_isGround)
+		{
+			_state = PLAYER_FALL_RIGHT;
+		}
 	}
+	
 
-	//playerCollisionLadder();
+	
+	
 	//============== 위 로 ===============
 	if (KEYMANAGER->isOnceKeyDown(VK_UP))
 	{
+
 		_state = PLAYER_LADDER_UP;
 		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderUp");
 		_playerAni->start();
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_UP))
 	{
+		pixelBottomCollision();
+		
 		//사다리와 충돌 됐는지 여부를 체크할 임시 RECT
-		RECT collisionTempRect;
+		//RECT collisionTempRect;
 		//int tempIndex = _object->getFieldLadders().size();
 		//for (int i = 0; i < tempIndex; ++i)
 		{
 			//if (IntersectRect(&collisionTempRect, (&_object->getFieldLadders()[i]->getObjectRect()), &_playerRect))
 			//{
-				_y -= _speed;
-
+			//만약에 사다리를 탔으면(나중에 추가)
+			//if (!_isGround)
+			//{
+			_y -= _speed;
 			//}
+				//_isGround = false;
+
+			
 		}
 	}
 	if (KEYMANAGER->isOnceKeyUp(VK_UP))
@@ -193,6 +258,11 @@ void player_Baleog::keyPressMove()
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
 	{
+		pixelBottomCollision();
+		if (_state == PLAYER_LADDER_DOWN && _isGround)
+		{
+			_speed = 0;
+		}
 		_y += _speed;
 	}
 	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
@@ -200,6 +270,11 @@ void player_Baleog::keyPressMove()
 		_playerAni->pause();
 	}
 
+	if (_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT)
+	{
+		_y += _gravity * TIMEMANAGER->getElpasedTime();
+		pixelFireCollision();
+	}
 }
 
 void player_Baleog::keyPressSpace()
@@ -215,11 +290,11 @@ void player_Baleog::keyPressD()
 
 void player_Baleog::initBaleog()
 {
-	_x = 1950;
+	_x = 1500;
 	//_x = WINSIZEX / 2 - 200;
-	_y = 1350;
+	_y = 1250;
 	_speed = 2.f;
-	_gravity = 0;
+	_gravity = GRAVITY;
 
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
 
@@ -228,14 +303,12 @@ void player_Baleog::initBaleog()
 	_proveLeft = _playerRect.left;
 	_proveRight = _playerRect.right;
 
-	//임시 충돌 체크용 Rect
-	//_tempWall = RectMakeCenter(300, 1325, 50, 100);
-	//_tempLadder = RectMakeCenter(192, 840, 50, 1130);
-
+	_isGround = false;			//바닥에 붙어있숑?
 	_isLadder = false;			//사다리 탔어?
 	_isLadderTop = false;		//사다리의 맨위야?
 	_isChangeAni = false;		//애니메이션 바꿔야댐??
 	_isPushWall = false;		//벽 밀고 있어?
+	_deathMotion = false;		//죽는 모션이 나와야댐?
 
 	
 	keyAniSetting();
@@ -283,29 +356,8 @@ void player_Baleog::pixelRightWallCollision()
 			break;
 		}
 	}
-
 }
 
-void player_Baleog::rectBrokenWallCollision()
-{
-	//부서지는 벽은 rect인데 그 벽이랑 부딪힌 경우
-	if (_state == PLAYER_MOVE_LEFT)
-	{
-		if (_x > _tempWall.right && _playerRect.left <= _tempWall.right)
-		{
-			//_state = PLAYER_PUSH_WALL_LEFT;
-			//_speed = 0.f;
-		}
-	}
-	if (_state == PLAYER_MOVE_RIGHT)
-	{
-		if (_x < _tempWall.left && _playerRect.right >= _tempWall.left)
-		{
-			//_state = PLAYER_PUSH_WALL_RIGHT;
-			//_speed = 0.f;
-		}
-	}
-}
 
 void player_Baleog::pixelBottomCollision()
 {
@@ -319,16 +371,63 @@ void player_Baleog::pixelBottomCollision()
 
 		if (r == 255 && g == 0 && b == 255)
 		{
-			if (_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_END || _state == PLAYER_LADDER_DOWN)
+			if (_state == PLAYER_LADDER_UP )
 			{
 				break;
 			}
 			_y = i - 35;
+			_isGround = true;
 			break;
+		}
+		else if (r != 255 && g != 0 && b != 255)				//캐릭터가 바닥 부분에 없으면
+		{
+			_isGround = false;
 		}
 	}
 }
 
+void player_Baleog::pixelFireCollision()
+{
+	for (int i = _playerRect.bottom - 10; i < _playerRect.bottom + 10; ++i)
+	{
+		//바닥에 불 충돌시 죽었다 표시까지 했고 멈추게 할것
+		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
+		int r = GetRValue(color);
+		int g = GetGValue(color);
+		int b = GetBValue(color);
+		if(r == 255 && g==0 && b == 0)
+		{
+			//불에 떨어지는 방향에 따라 죽는 모션의 방향이 달라서 조건문 달았음
+			if (_state == PLAYER_FALL_LEFT)
+			{
+				_state = PLAYER_FIRE_DEATH_LEFT;
+			}
+			if (_state == PLAYER_FALL_RIGHT)
+			{
+				_state = PLAYER_FIRE_DEATH_RIGHT;
+			}
+			_isAlive = false;
+			_deathMotion = true;
+			_speed = 0;
+			_y = i - 35;
+			break;
+			
+		}
+	}
+}
+
+void player_Baleog::rectBrokenWallCollision()
+{
+	//부서지는 벽은 rect인데 그 벽이랑 부딪힌 경우
+	if (_state == PLAYER_MOVE_LEFT)
+	{
+		
+	}
+	if (_state == PLAYER_MOVE_RIGHT)
+	{
+		
+	}
+}
 void player_Baleog::keyAniSetting()
 {
 	//이미지 추가
@@ -364,10 +463,10 @@ void player_Baleog::keyAniSetting()
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "normalIdleLeft", _imageKey, normalIdleLeft, 2, 2, true);
 
 	int specialIdleRight[] = { 9, 10, 11, 12, 13, 14, 15, 16, 17 };			//enume : PLAYER_PLAYER_IDLE_SPECIAL_RIGHT 2
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "specialIdleRight", _imageKey, specialIdleRight, 9, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "specialIdleRight", _imageKey, specialIdleRight, 9, 6, false);
 	//
 	int specialIdleLeft[]{ 18, 19, 20, 21, 22, 23, 24, 25, 26 };			//enume : PLAYER_PLAYER_IDLE_SPECIAL_LEFT 3
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "specialIdleLeft", _imageKey, specialIdleLeft, 9, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "specialIdleLeft", _imageKey, specialIdleLeft, 9, 6, false);
 
 	int moveRight[] = { 27, 28, 29, 30, 31, 32, 33, 34 };
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "moveRight", _imageKey, moveRight, 8, 10, true);
@@ -388,10 +487,10 @@ void player_Baleog::keyAniSetting()
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "highFallLeft", _imageKey, highFallLeft, 1, 6, true);
 
 	int highFallEndRight[] = { 66, 67, 68, 69, 70 };				//높은 곳에서 떨어지면서 rect의 bottom이 바닥에 닿은 경우에 이 애니메이션 추가(오른쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "highFallEndRight", _imageKey, highFallEndRight, 5, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "highFallEndRight", _imageKey, highFallEndRight, 5, 6, false);
 
 	int highFallEndLeft[] = { 75, 76, 77, 78, 79 };					//높은 곳에서 떨어지면서 rect의 bottom이 바닥에 닿은 경우에 이 애니메이션 추가(왼쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "highFallEndLeft", _imageKey, highFallEndLeft, 5, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "highFallEndLeft", _imageKey, highFallEndLeft, 5, 6, false);
 
 	int pushWallRight[] = { 45, 46, 47, 48 };
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "pushWallRight", _imageKey, pushWallRight, 4, 7, true);
@@ -406,31 +505,31 @@ void player_Baleog::keyAniSetting()
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "ladderDown", _imageKey, ladderDown, 4, 7, true);
 
 	int ladderEnd[] = { 58, 59 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "ladderEnd", _imageKey, ladderEnd, 2, 7, true);				//아직 끝 부분 조건을 안걸어서 잘 나오는지 확인 못해영 (사다리 다 처리하고 나면 확인할게영)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "ladderEnd", _imageKey, ladderEnd, 2, 7, false);				//아직 끝 부분 조건을 안걸어서 잘 나오는지 확인 못해영 (사다리 다 처리하고 나면 확인할게영)
 
 	int hitRight[] = { 123 };												//몬스터에게 맞으면(오른쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitRight", _imageKey, hitRight, 1, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitRight", _imageKey, hitRight, 1, 3, false);
 
 	int hitLeft[] = { 132 };												//몬스터에게 맞으면(왼쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitLeft", _imageKey, hitLeft, 1, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitLeft", _imageKey, hitLeft, 1, 3, false);
 
 	int hitDeathRight[] = { 117, 118, 119, 120, 121, 122 };					//몬스터에게 맞고 죽으면(오른쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitDeathRight", _imageKey, hitDeathRight, 6, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitDeathRight", _imageKey, hitDeathRight, 6, 3, false);
 
 	int hitDeathLeft[] = { 126, 127, 128, 129, 130, 131 };					//몬스터에게 맞고 죽으면(왼쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitDeathLeft", _imageKey, hitDeathLeft, 6, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "hitDeathLeft", _imageKey, hitDeathLeft, 6, 3, false);
 
 	int fallDeathRight[] = { 135, 136, 137, 138, 139 };						//떨어지다가 죽으면(오른쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fallDeathRight", _imageKey, fallDeathRight, 5, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fallDeathRight", _imageKey, fallDeathRight, 5, 3, false);
 
 	int fallDeathLeft[] = { 140, 141, 142, 143, 144 };						//떨어지다가 죽으면(왼쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fallDeathLeft", _imageKey, fallDeathLeft, 5, 3, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fallDeathLeft", _imageKey, fallDeathLeft, 5, 3, false);
 
 	int fireDeathRight[] = { 145, 146, 147, 148, 149, 150, 151, 152 };		//불타죽으면(오른쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fireDeathRight", _imageKey, fireDeathRight, 8, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fireDeathRight", _imageKey, fireDeathRight, 8, 6, false);
 
 	int fireDeathLeft[] = { 153, 154, 155, 156, 157, 158, 159, 160 };		//불타죽으면(왼쪽)
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fireDeathLeft", _imageKey, fireDeathLeft, 8, 6, true);
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "fireDeathLeft", _imageKey, fireDeathLeft, 8, 6, false);
 
 	int lookFrontRight[] = { 2 };
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "lookFrontRight", _imageKey, lookFrontRight, 1, 6, true);
@@ -438,31 +537,31 @@ void player_Baleog::keyAniSetting()
 	int lookFrontLeft[] = { 5 };
 	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "lookFrontLeft", _imageKey, lookFrontLeft, 1, 6, true);
 
-	int attackLengthRight[] = { 81, 82, 83, 84 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackLengthRight", _imageKey, attackLengthRight, 4, 6, true);
+	int attackLengthRight[] = { 81, 82, 83, 84 };							//세로 공격(오른쪽)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackLengthRight", _imageKey, attackLengthRight, 4, 6, false);
 
-	int attackLengthLeft[] = { 85, 86, 87, 88 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackLengthLeft", _imageKey, attackLengthLeft, 4, 6, true);
+	int attackLengthLeft[] = { 85, 86, 87, 88 };							//세로 공격(왼쪽)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackLengthLeft", _imageKey, attackLengthLeft, 4, 6, false);
 
-	int attackWidthRight[] = { 90, 91, 92, 93 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackWidthRight", _imageKey, attackWidthRight, 4, 6, true);
+	int attackWidthRight[] = { 90, 91, 92, 93 };							//가로 공격(오른쪽)	
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackWidthRight", _imageKey, attackWidthRight, 4, 6, false);
 
-	int attackWidthLeft[] = { 94, 95, 96, 97 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackWidthLeft", _imageKey, attackWidthLeft, 4, 6, true);
+	int attackWidthLeft[] = { 94, 95, 96, 97 };								//가로 공격(왼쪽)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "attackWidthLeft", _imageKey, attackWidthLeft, 4, 6, false);
 
-	int arrowRight[] = { 99, 100, 101, 102, 103, 104, 105, 106 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "arrowRight", _imageKey, arrowRight, 8, 6, true);
+	int arrowRight[] = { 99, 100, 101, 102, 103, 104, 105, 106 };			//활 공격(오른쪽)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "arrowRight", _imageKey, arrowRight, 8, 6, false);
 
-	int arrowLeft[] = { 108, 109, 110, 111, 112, 113, 114, 115 };
-	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "arrowLeft", _imageKey, arrowLeft, 8, 6, true);
+	int arrowLeft[] = { 108, 109, 110, 111, 112, 113, 114, 115 };			//활 공격(왼쪽)
+	KEYANIMANAGER->addArrayFrameAnimation(_aniImageKey, "arrowLeft", _imageKey, arrowLeft, 8, 6, false);
 
 	//_state = PLAYER_IDLE_RIGHT;
 	_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
 	_playerAni->start();
 }
 
-/*
-void player_Baleog::playerCollisionLadder(object * ladder)
+
+void player_Baleog::collisionLadder(vector<RECT*> ladder)
 {
 	//============== 위 로 ===============
 	if (KEYMANAGER->isOnceKeyDown(VK_UP))
@@ -503,4 +602,3 @@ void player_Baleog::playerCollisionLadder(object * ladder)
 		_playerAni->pause();
 	}
 }
-*/
