@@ -20,9 +20,8 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 	_img = IMAGEMANAGER->findImage(imgName);
 
 	// 이미지가 없다면 false
-	// 사다리는 맵에 이미지가 있기때문에 따로 이미지를 안해줄겁니다....ㅜ
-	// 부서지는 벽도 일단은 이미지가 없기 때문에 예외처리를 해주겟슴미다.. 얼른 고칠게여 ㅜㅜ
-	if(!_img && type != OBJECT_TYPE_LADDER && type != OBJECT_TYPE_BROKENBLOCK)
+	// OBJECT_TYPE_LADDER 전 까지만 이미지가 있다고 판단하여 작성된 코드 : 진형 190121
+	if(!_img && type < OBJECT_TYPE_LADDER)
 		return E_FAIL;
 
 	_x = position.x;
@@ -282,6 +281,12 @@ void object::active()
 
 	if (_linkObj)
 		_linkObj->active();
+}
+
+void object::setCollisionSize(POINT size)
+{
+	_size = size;
+	MakeRect();
 }
 
 void object::MakeRect()

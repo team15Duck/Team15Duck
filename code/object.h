@@ -61,7 +61,9 @@ public:
 	void setLinkObject(object* obj) { _linkObj = obj; }
 
 	// 충돌체(rect) 크기 세팅
-	void setCollisionSize(POINT size) { _size = size; }
+	void setCollisionSize(POINT size);
+
+
 	float getX() { return _x; }
 	float getY() { return _y; }
 
