@@ -3,6 +3,7 @@
 
 
 object::object()
+	: _isActiveFinished(false)
 {
 }
 
@@ -119,14 +120,15 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		}
 	}
 	
+	// 작동 안했음으로 초기화
+	_isActiveFinished = false;
+
 	MakeRect();
 
 	// 기본 애니메이션 실행
 	if(_ani)
 		_ani->start();
 
-	// 작동 안했음으로 초기화
-	_isActiveFinished = false;
 
 	return S_OK;
 }
