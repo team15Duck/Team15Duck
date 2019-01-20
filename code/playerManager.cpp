@@ -23,7 +23,7 @@ HRESULT playerManager::init()
 	_vPlayer[PLAYER_NAME_BALEOG]->init();
 	_vPlayer[PLAYER_NAME_OLAF]->init();
 
-	_currentSelectPlayer = PLAYER_NAME_ERIC;
+	_currentSelectPlayer = PLAYER_NAME_OLAF;
 	//_currentSelectPlayer = PLAYER_NAME_BALEOG;
 	//_currentSelectPlayer = PLAYER_NAME_OLAF;
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
@@ -78,7 +78,7 @@ void playerManager::update()
 
 		for (int j = 0; j < ladders.size(); ++j)
 		{
-			if (IntersectRect(&temp, &ladders[j]->getObjectRect(), &_vPlayer[i]->getPlayerRect()))
+			if (IntersectRect(&temp, ladders[j]->getObjectRect(), &_vPlayer[i]->getPlayerRect()))
 			{
 				_vPlayer[i]->playerCollisionLadder(ladders[j]);
 			}

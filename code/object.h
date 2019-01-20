@@ -66,7 +66,10 @@ public:
 
 	OBJECT_TYPE geObjectType() { return _type; }
 	int			getObjectValue() { return _value; }
-	RECT		getObjectRect() { return _rc; }
+	RECT*		getObjectRect()
+	{
+		return &_rc;
+	}
 
 private:
 	// 렉트 생성

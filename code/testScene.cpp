@@ -46,9 +46,10 @@ HRESULT testScene::init()
 
 	for (int i = 0; i < _objManager->getFieldLadders().size(); ++i)
 	{
-		_pm->getVPlayer()[PLAYER_NAME_ERIC]->setLadderRectAdressLink(&_objManager->getFieldLadders()[i]->getObjectRect());
-		_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setLadderRectAdressLink(&_objManager->getFieldLadders()[i]->getObjectRect());
-		_pm->getVPlayer()[PLAYER_NAME_OLAF]->setLadderRectAdressLink(&_objManager->getFieldLadders()[i]->getObjectRect());
+		RECT* adress = _objManager->getFieldLadders()[i]->getObjectRect();
+		_pm->getVPlayer()[PLAYER_NAME_ERIC]->setLadderRectAdressLink(adress);
+		_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setLadderRectAdressLink(adress);
+		_pm->getVPlayer()[PLAYER_NAME_OLAF]->setLadderRectAdressLink(adress);
 	}
 	return S_OK;
 }
