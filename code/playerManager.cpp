@@ -96,7 +96,7 @@ void playerManager::render()
 
 void playerManager::shieldPixelRender(HDC hdc)
 {
-
+	_vPlayer[PLAYER_NAME_OLAF]->shieldRender(hdc);
 }
 
 void playerManager::keyUpdate()

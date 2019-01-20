@@ -148,6 +148,8 @@ public:
 	virtual void playerCollisionLadder(object* ladder);
 	virtual void setLadderRectAdressLink(RECT* rc);
 
+	//방패출력
+	virtual void shieldRender(HDC hdc);
 	//처맞는함수
 
 	//살았니 죽었니 죽는중이니?

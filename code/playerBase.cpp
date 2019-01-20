@@ -107,3 +107,7 @@ void playerBase::setLadderRectAdressLink(RECT * rc)
 {
 	_ladderRc.push_back(rc);
 }
+
+void playerBase::shieldRender(HDC hdc)
+{
+}
