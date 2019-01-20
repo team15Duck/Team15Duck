@@ -21,7 +21,8 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 
 	// 이미지가 없다면 false
 	// 사다리는 맵에 이미지가 있기때문에 따로 이미지를 안해줄겁니다....ㅜ
-	if(!_img && type != OBJECT_TYPE_LADDER)
+	// 부서지는 벽도 일단은 이미지가 없기 때문에 예외처리를 해주겟슴미다.. 얼른 고칠게여 ㅜㅜ
+	if(!_img && type != OBJECT_TYPE_LADDER && type != OBJECT_TYPE_BROKENBLOCK)
 		return E_FAIL;
 
 	_x = position.x;
@@ -166,7 +167,7 @@ void object::pixelRender(HDC hdc)
 {
 	if (_isActiveFinished)
 	{
-		switch (_type)
+		switch ( _type )
 		{
 			// 픽셀 충돌렉트 없음
 			case OBJECT_TYPE_LOCK_RED:
@@ -183,9 +184,15 @@ void object::pixelRender(HDC hdc)
 			case OBJECT_TYPE_BRIDGE_RIGHT:
 			case OBJECT_TYPE_BRIDGE_LEFT:
 			{
-				_rc = RectMake((int)_destX, (int)_destY + _img->getFrameHeight() - 32, _img->getFrameWidth(), 32);
+				_rc = RectMake(( int )_destX, ( int )_destY + _img->getFrameHeight() - 32, _img->getFrameWidth(), 32);
 				RectangleBrush(hdc, _rc, RGB(255, 0, 255));
 
+				break;
+			}
+
+			case OBJECT_TYPE_LADDER:
+			case OBJECT_TYPE_BROKENBLOCK:
+			{
 				break;
 			}
 		}
@@ -212,6 +219,12 @@ void object::pixelRender(HDC hdc)
 				RectangleBrush(hdc, _rc, RGB(0, 255, 255));
 				break;
 			}
+
+			case OBJECT_TYPE_LADDER:
+			case OBJECT_TYPE_BROKENBLOCK:
+			{
+				break;
+			}
 		}
 	}
 }
@@ -224,6 +237,7 @@ void object::active()
 
 	switch (_type)
 	{
+		// 키 애니매이션 없음
 		case OBJECT_TYPE_LOCK_RED:
 		case OBJECT_TYPE_LOCK_YELLOW:
 		case OBJECT_TYPE_LOCK_BLUE:
@@ -253,7 +267,9 @@ void object::active()
 			break;
 		}
 
+		// 키 애니매이션 없음
 		case OBJECT_TYPE_LADDER:
+		case OBJECT_TYPE_BROKENBLOCK:
 		{
 			return;
 		}
@@ -309,13 +325,14 @@ void object::MakeRect()
 			break;
 		}
 		case OBJECT_TYPE_LADDER:
+		case OBJECT_TYPE_BROKENBLOCK : 
 		{
 			_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 			break;
 		}
 		default:
 		{
-			_rc = {};
+			_rc = RectMakeCenter(_x, _y, _size.x, _size.y);
 		}
 			break;
 	}

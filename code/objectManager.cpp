@@ -128,6 +128,17 @@ HRESULT objectManager::init()
 		_vFieldLadders.push_back(ladder06);
 	}
 
+	// 오브젝트 생성 : 부서지는 벽
+	{
+		object* brokenBlock = new object;
+		POINTF pos = {1120.f, 1161.f};
+		POINT size = {100, 300};
+		brokenBlock->init("brokenBlock01", "", pos, -1, OBJECT_TYPE_BROKENBLOCK);
+		brokenBlock->setCollisionSize(size);
+
+		_vFieldObjects.push_back(brokenBlock);
+	}
+
 
 	return S_OK;
 }
