@@ -1,21 +1,32 @@
 #pragma once
 #include "playerBase.h"
+
+
 class player_Eric : public playerBase
 {
 private:
 	float _jumpPower;
 
-	bool _isJump;       //점프 체크용
-	bool _isRCollision;	//오른쪽 충돌 체크용 
-	bool _isLCollision;	//왼쪽 충돌 체크용
+	bool _isJump;			//점프 체크용
+
+	bool _isladderup;		//사다리 오르기
+	bool _isladderdown;		//사다리 내려가기
+	bool _isladderchk;		//사다리 오르내리기 가능하냐
+
+	bool _isRCollision;		//오른쪽 충돌 체크용 
+	bool _isLCollision;		//왼쪽 충돌 체크용
+	bool _isBCollision;		//바닥 충돌 체크용
+	bool _isFCollision;		//죽는 바닥 충돌 체크용
 
 	//이동 예외처리용 불값
 	bool _isRightMove;
 	bool _isLeftMove;
 
+
 	POINT _size;
 
 	animation* _EricMotion;	//에릭모션
+	object* _ladder;
 
 public:
 	player_Eric();
@@ -42,9 +53,16 @@ public:
 	//바닥체크
 	virtual void pixelBottomCollision()				override; // << 바닥 픽셀 충돌 
 
+	virtual void playerCollisionLadder(object* ladder) override;
+
+	//죽는 함수	
+	void pixelDieCollision();
+
 	// 이동관련 함수
 	void leftMove();
 	void rightMove();
+	void upMove(object * ladder);
+	void downMove(object * ladder);
 
 	void jump();
 

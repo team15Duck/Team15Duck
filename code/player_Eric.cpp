@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "player_Eric.h"
+#include "objectManager.h"
 
 
 player_Eric::player_Eric()
@@ -14,19 +15,17 @@ player_Eric::~player_Eric()
 
 HRESULT player_Eric::init()
 {
-	_x = 450;
-	_y = 1400;
-	_speed = MIN_SPEED;
-	_jumpPower = _gravity = 0;
-	_isJump = false;
+	//플레이어 기본 설정 초기화
+	_size = { 64, 64 };		//플레이어 사이즈
+	_x = 450;				//플레이어 x좌표
+	_y = 1350;				//플레이어 y좌표
 
-	_size = { 64, 64 };
+	_speed = MIN_SPEED;		//플레이어 기본 스피드
+	_jumpPower = 0;				//플레이어 점프파워
+	_gravity = 0;				//플레이어 중력
+	_isAlive = true;				//플레이어 살아있는지 체크용 불값 
+	_lifeCount = 3;				//플레이어 생명은 최대 3
 	_playerRect = RectMakeCenter(_x, _y, _size.x, _size.y);
-
-
-	_player = IMAGEMANAGER->addFrameImage("player_eric", "image/eric.bmp", 704, 1024, 11, 16, true, RGB(255, 0, 255));
-	EricAniinit();
-
 
 	//충돌처리용 초기화 
 	_proveBottom = _playerRect.bottom;
@@ -34,13 +33,28 @@ HRESULT player_Eric::init()
 	_proveLeft = _playerRect.left;
 	_proveTop = _playerRect.top;
 
-	_isRCollision = false;
-	_isLCollision = false;
+	//픽셀충돌체크 불값 초기화
+	_isRCollision = false;		//오른쪽 벽
+	_isLCollision = false;		//왼쪽 벽
+	_isBCollision = false;		//바닥
+	_isFCollision = false;		//죽는바닥
 
-	//이동 예외처리용 불값 초기화
+	//이동관련 불값 초기화
 
+	_isJump = false;
 	_isRightMove = false;
 	_isLeftMove = false;
+
+	//사다리타기용 불값
+
+	_isLadder = false;		//사다리 타고있는지 확인용 불값
+	_isladderchk = false;		//사다리 오브젝트 확인용 불값
+	_isladderup = false;		//사다리 타고 올라가는지 확인용 불값
+	_isladderdown = false;		//사다리 타고 내려오는지 확인용 불값 
+	_isLadderTop = false;		//사다리 맨위에 있는지 확인용 불값
+
+	//애니메이션 초기화
+	EricAniinit();
 
 	return S_OK;
 }
@@ -54,69 +68,97 @@ void player_Eric::release()
 
 void player_Eric::update()
 {
-	//이동
-	jump();
-	//바닥 픽셀충돌
-	pixelBottomCollision();
-	if (_isRCollision)
+	KEYANIMANAGER->update("player_eric");
+	if (_state == PLAYER_FIRE_DEATH_LEFT || _state == PLAYER_FIRE_DEATH_RIGHT)
 	{
-		_speed = 0;
-		_state = PLAYER_PUSH_WALL_RIGHT;
+		if (_EricMotion->isPlay() == false)
+		{
+			_isAlive = false;
+		}
 	}
-	if (_isLCollision)
+	else
 	{
-		_speed = 0;
-		_state = PLAYER_PUSH_WALL_LEFT;
+		jump();
+		pixelBottomCollision();
+		pixelDieCollision();
+
+		//사다리관련
+		/*if (_ladder != nullptr)
+		{
+			RECT temp;
+			if (IntersectRect(&temp, &_ladder->getObjectRect(), &_playerRect))
+			{
+
+			}
+			else
+			{
+				_isladderchk = false;
+			}
+		}*/
+
+		_proveRight = _playerRect.right;
+		_proveLeft = _playerRect.left;
+		_proveTop = _playerRect.top;
+		_proveBottom = _playerRect.bottom;
+
+		//애니메이션
+		EricAni();
+
+		//플레이어 렉트 갱신
+		_playerRect = RectMakeCenter(_x, _y, _size.x, _size.y);
 	}
 
-	_proveBottom = _playerRect.bottom;
-	_proveTop = _playerRect.top;
-	_proveRight = _playerRect.right;
-	_proveLeft = _playerRect.left;
-
-	EricAni();
-	_playerRect = RectMakeCenter(_x, _y, _size.x, _size.y);
 }
 
 void player_Eric::render()
 {
-	//Rectangle(CAMERA->getMemDC(), _playerRect, false);
-	_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _EricMotion);
+	if (_isAlive)
+	{
+		Rectangle(CAMERA->getMemDC(), _playerRect, false);
+		_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _EricMotion);
+	}
+	//속도 테스트용 출력 
+	//char str[256];
+	//SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
+	//sprintf_s(str, "speed : %.1f", _speed);
+	//TextOut(CAMERA->getMemDC(), 0, 200, str, strlen(str));
+	//sprintf_s(str, "state : %d", _state);
+	//TextOut(CAMERA->getMemDC(), 0, 250, str, strlen(str));
 }
 
 void player_Eric::keyPressMove()
 {
-
 	rightMove();
 	leftMove();
-
 }
 
 void player_Eric::keyPressSpace()
 {
-	//예외처리 
+	//================================================================ 점프 예외처리 
 	if (!(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT ||
-		_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT))
+		_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT || _isFCollision))
 	{
 		return;
 	}
-	//만약에 스페이스바를 누르면 점프해라
+	//================================================================ 점프 세팅
 	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
 	{
+		//만야에 플레이어가 왼쪽을 보거나 왼쪽으로 이동하고 있다면
 		if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
 		{
 			_state = PLAYER_JUMP_LEFT;
 			EricAniStart("jump_left");
-
 		}
+		//만약에 플레이어가 오른쪽을 보거나 오른쪽으로 이동하고있다면
 		if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
 		{
 			_state = PLAYER_JUMP_RIGHT;
 			EricAniStart("jump_right");
 		}
-		_isJump = true;
-		_jumpPower = START_JUMPP;
-		_gravity = GRAVITY;
+
+		_isJump = true;												//점프 상태임을 확인
+		_jumpPower = START_JUMPP;										//점프 파워는 스타트 파워 세팅
+		_gravity = GRAVITY * TIMEMANAGER->getElpasedTime();			//낙하를 위해 중력 세팅 
 	}
 }
 
@@ -139,7 +181,7 @@ void player_Eric::rectBrokenWallCollision()
 
 void player_Eric::pixelTopWallCollision()
 {
-	for (int i = _proveTop; i < _proveTop + 30; ++i)
+	for (int i = _proveTop; i < _proveTop + 32; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 
@@ -159,13 +201,15 @@ void player_Eric::pixelTopWallCollision()
 
 void player_Eric::pixelBottomCollision()
 {
-	//만약에 점프한다면 픽셀충돌하시마씨오 
-	if (_state == PLAYER_JUMP_LEFT || _state == PLAYER_JUMP_RIGHT) return;
-
-	for (int i = _proveBottom - 5; i < _proveBottom + 10; ++i)
+	//================================================================= 예외처리
+	if (_state == PLAYER_JUMP_RIGHT || _state == PLAYER_JUMP_LEFT)
 	{
-		bool collision = false;
-
+		return;
+	}
+	//================================================================= 픽셀충돌
+	_isBCollision = false;
+	for (int i = _proveBottom - 15; i < _proveBottom + 10; ++i)
+	{
 		for (int j = _x - 1; j < _x + 2; ++j)
 		{
 			COLORREF color = GetPixel(_pixelData->getMemDC(), j, i);
@@ -173,199 +217,274 @@ void player_Eric::pixelBottomCollision()
 			int r = GetRValue(color);
 			int g = GetGValue(color);
 			int b = GetBValue(color);
-
-			// 만약에 색이 마젠타라면 충돌하시오 
-			if ((r == 255 && g == 0 && b == 255))
+			//========================================================= 실질적인 충돌부분
+			if (r == 255 && g == 0 && b == 255)
 			{
-				_y = i - (_size.y / 2);
-				_isJump = false;
+				_y = i - (_size.y / 2);	//플레이어의 y값을 보정해주고
+				_isBCollision = true;					//바닥과 충돌하고있음을 확인함
+				_isJump = false;				//점프가 가능하도록 점프변수를 false로 변겅
 
-				//만약에 왼쪽을 바라보는 모양으로 떨어진다면 
-				if (_state == PLAYER_FALL_LEFT)
-				{
-					_state = PLAYER_IDLE_LEFT;
-					EricAniStart("idleleft");
-				}
-				//만약에 오른쪽 키를 누르고있다면
-				if (_isRightMove && !_isJump)
-				{
-					_state = PLAYER_MOVE_RIGHT;
-					_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "move_right");
-
-				}
-				//만약에 오른쪽을 바라보는 모양으로 떨어진다면 
 				if (_state == PLAYER_FALL_RIGHT)
 				{
 					_state = PLAYER_IDLE_RIGHT;
-					EricAniStart("idleright");
 				}
-				//만약에 왼쪽키를 누르고 있다면
-				if (_isLeftMove && !_isJump)
+				else if (_state == PLAYER_FALL_LEFT)
 				{
-					_state = PLAYER_MOVE_LEFT;
-					_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "move_left");
+					_state = PLAYER_IDLE_LEFT;
 				}
-				collision = true;
-				break;
+
+				break;									//더이상 x축의 검사를 안한다.
 			}
 		}
-		if (collision)
+		//충돌중에 있다면
+		if (_isBCollision)
 		{
-			break;
+			break;										//더이상 y축의 검사를 안하고 부드럽게 이동함 ** 여기서 브레이크안걸면 덜덜떰
 		}
-
 	}
+	//================================================================= 바닥과 픽셀충돌중이 아닐때의 처리
+	if (!_isBCollision)
+	{
+		_gravity = GRAVITY;											//중력값 세팅
+		_y += _gravity * TIMEMANAGER->getElpasedTime();				//중력값 만큼 떨어진다.
+	}
+}
+
+void player_Eric::playerCollisionLadder(object* ladder)
+{
+	if (!ladder)
+	{
+		return;
+	}
+	_ladder = ladder;
+	_isladderchk = true;
+}
+
+void player_Eric::pixelDieCollision()
+{
+	_isFCollision = false;
+	for (int i = _proveBottom - 15; i < _proveBottom + 10; ++i)
+	{
+		for (int j = _x - 1; j < _x + 2; ++j)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), j, i);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+			//========================================================= 실질적인 충돌부분
+			if (r == 255 && g == 0 && b == 0)
+			{
+				_y = i - (_size.y / 2);					//플레이어의 y값을 보정해주고
+				_isFCollision = true;					//바닥과 충돌하고있음을 확인함
+				_lifeCount = 0;
+
+				if (_state == PLAYER_FALL_RIGHT || _state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
+				{
+					_state = PLAYER_FIRE_DEATH_RIGHT;
+					EricAniStart("die_fire_right");
+				}
+				if (_state == PLAYER_FALL_LEFT || _state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
+				{
+					_state = PLAYER_FIRE_DEATH_LEFT;
+					EricAniStart("die_fire_left");
+
+				}
+
+				break;									//더이상 x축의 검사를 안한다.
+			}
+		}
+	}
+
 }
 
 void player_Eric::leftMove()
 {
-	//오른쪽 이동이 아닐때만 왼쪽 이동이 가능하다
-	if (!_isRightMove)
+	//================================================ 기본속도 및 이동 세팅
+	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
 	{
-		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+		_isLeftMove = true;					//왼쪽으로 이동한다.
+		_speed = MIN_SPEED;					//스피드는 미니멈 스피드로 시작
+		_state = PLAYER_MOVE_LEFT;			//상태는 왼쪽 이동하는 애니메이션 출력
+		EricAniStart("move_left");
+	}
+	//================================================ 실제 움직임 세팅
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	{
+		//============================================	속도 및 가속도 처리
+		//만약에 속도가 맥스 스피드보다 작으면
+		if (_speed < MAX_SPEED)
 		{
-			_isLeftMove = true;
-			_isRCollision = false;
-			_speed = MIN_SPEED;
-			_state = PLAYER_MOVE_LEFT;
-			EricAniStart("move_left");
+			//속도는 가속도 * 시간으로 계속 더해서 상승한다.
+			_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
 		}
-		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		//속도가 맥스 스피드보다 큰 상태라면
+		else
 		{
-			_isLeftMove = true;
-			if (_speed < MAX_SPEED)
+			//스피드를 맥스스피드로 고정한다.
+			_speed = MAX_SPEED;
+		}
+		//============================================ 맵내 이동 제한 처리
+		//만약에 캐릭터가 맵 크기의 왼쪽을 넘어가지 못하도록 처리 
+		if (_x - (_size.x / 2) < 0)
+		{
+			_x = 0 + (_size.x / 2);
+		}
+		//============================================ 벽 픽셀충돌 처리
+		//만약에 왼쪽 벽과 픽셀충돌을 하지 않고 있다면
+		if (!_isLCollision)
+		{
+			_x -= _speed * TIMEMANAGER->getElpasedTime();
+
+			for (int i = _proveLeft; i < _proveLeft + 32; ++i)
 			{
-				if (!_isLCollision)
+				COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+				int r = GetRValue(color);
+				int g = GetGValue(color);
+				int b = GetBValue(color);
+
+				//========================================================== 실질적인 충돌처리 부분
+				if ((r == 0 && g == 255 && b == 255))
 				{
-					_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
+					_isLCollision = true;						//충돌했음을 확인
+					_x = i + (_size.x / 2);						//플레이어 x좌표 보정
+				}
+				else
+				{
+					_isLCollision = false;						//그게아니라면 충돌안했다
 				}
 			}
-			else
-			{
-				_speed = MAX_SPEED;
-			}
-			if (!_isLCollision)
-			{
-				_x -= _speed * TIMEMANAGER->getElpasedTime();
-				for (int i = _proveLeft; i < _proveLeft + 30; ++i)
-				{
-					COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-					int r = GetRValue(color);
-					int g = GetGValue(color);
-					int b = GetBValue(color);
-
-					// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
-					if ((r == 0 && g == 255 && b == 255))
-					{
-						_isLCollision = true;
-						_x = i + (_size.x / 2);
-					}
-					else
-					{
-						_isLCollision = false;
-					}
-				}
-			}
-			if (_x - (_size.x / 2) < 0)
-			{
-				_x = _size.x / 2;
-			}
 		}
-		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-		{
-			_isLeftMove = false;
-			if (_state == PLAYER_MOVE_LEFT)
-			{
-				_state = PLAYER_IDLE_LEFT;
-			}
-			EricAniStart("idleleft");
-		}
+	}
+	//================================================ 기본속도 및 이동 리셋
+	if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+	{
+		_isLeftMove = false;				//왼쪽으로 이동안함.
+		_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 리셋
+		_state = PLAYER_IDLE_LEFT;		//상태는 왼쪽을 바라보는 애니메이션 출력
 	}
 }
 
 void player_Eric::rightMove()
 {
-	//만약에 왼쪽이동이 아닐때만 오른쪽으로 이동이 가능하다.
-	if (!_isLeftMove)
+	//================================================ 기본속도 및 이동 세팅
+	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
 	{
-		//오른쪽 출발 세팅
-		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+		_isRightMove = true;					//오른쪽으로 이동한다.
+		_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 시작
+		_state = PLAYER_MOVE_RIGHT;	//상태는 오른쪽 이동하는 애니메이션 출력
+		EricAniStart("move_right");
+	}
+	//================================================ 실제 움직임 세팅
+	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+	{
+		//============================================	속도 및 가속도 처리
+		//만약에 속도가 맥스 스피드보다 작으면
+		if (_speed < MAX_SPEED)
 		{
-			//오른쪽이동 가능
-			_isRightMove = true;
-			//왼쪽벽에 충돌하지 않음
-			_isLCollision = false;
-			//속도는 미니넘 속도로
-			_speed = MIN_SPEED;
-			//상태는 오른쪽 이동 상태
-			_state = PLAYER_MOVE_RIGHT;
-			//출력되는 애니메이션은 오른쪽이동 애니메이션 
-			EricAniStart("move_right");
+			//속도는 가속도 * 시간으로 계속 더해서 상승한다.
+			_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
 		}
-		//오른쪽 이동상태 세팅
-		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+		//속도가 맥스 스피드보다 큰 상태라면
+		else
 		{
-			//만약에 스피드가 맥스스피드보다 작다면
-			if (_speed < MAX_SPEED)
+			//스피드를 맥스스피드로 고정한다.
+			_speed = MAX_SPEED;
+		}
+		//============================================ 맵내 이동 제한 처리
+		//만약에 캐릭터가 맵 크기의 오른쪽을 넘어가지 못하도록 처리 
+		if (_x + (_size.x / 2) > _pixelData->GetWidth())
+		{
+			_x = _pixelData->GetWidth() - (_size.x / 2);
+		}
+		//============================================ 벽 픽셀충돌 처리
+		//만약에 오른쪽 벽과 픽셀충돌을 하지 않고 있다면
+		if (!_isRCollision)
+		{
+			_x += _speed * TIMEMANAGER->getElpasedTime();
+
+			for (int i = _proveRight; i > _proveRight - 32; --i)
 			{
-				//만약에 오른쪽 벽이랑 충돌하고 있지 않은 상태라면
-				if (!_isRCollision)
+				COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
+
+				int r = GetRValue(color);
+				int g = GetGValue(color);
+				int b = GetBValue(color);
+
+				//========================================================== 실질적인 충돌처리 부분
+				if ((r == 0 && g == 255 && b == 255))
 				{
-					//속도는 가속도를 현재시간에 곱하면서 상승한다.
-					_speed += ACC_SPEED * TIMEMANAGER->getElpasedTime();
+					_isRCollision = true;						//충돌했음을 확인
+					_x = i - (_size.x / 2);						//플레이어 x 값 보정
+				}
+				else
+				{
+					_isRCollision = false;
 				}
 			}
-			//만약 그상황이 아니라면
-			else
-			{
-				//속도는 맥스스피드로 고정한다.
-				_speed = MAX_SPEED;
-			}
-			if (!_isRCollision)
-			{
-				_x += _speed * TIMEMANAGER->getElpasedTime();
-				for (int i = _proveRight - 30; i < _proveRight; ++i)
-				{
-					COLORREF color = GetPixel(_pixelData->getMemDC(), i, _y);
-
-					int r = GetRValue(color);
-					int g = GetGValue(color);
-					int b = GetBValue(color);
-
-					// 만약에 색이 눈아픈파랑색이라면 충돌하시오 
-					if ((r == 0 && g == 255 && b == 255))
-					{
-						_isRCollision = true;
-						_x = i - (_size.x / 2);
-					}
-					else
-					{
-						_isRCollision = false;
-					}
-				}
-			}
-			if (_x + (_size.x / 2) > _pixelData->GetWidth())
-			{
-				_x = _pixelData->GetWidth() - (_size.x / 2);
-			}
-		}
-		//만약에 오른쪽이동 버튼을 누르지 않는다면 
-		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-		{
-			//만약에 캐릭터의 상태가 오른쪽 이동 상태였다면
-			if (_state == PLAYER_MOVE_RIGHT)
-			{
-				//오른쪽 정지상태 이미지를 출력한다.
-				_state = PLAYER_IDLE_RIGHT;
-			}
-			//애니메이션 상태를 오른쪽정지상태 애니메이션을 출력한다.
-			EricAniStart("idleright");
-			//오른쪽 이동상태를 아니오로 바꿔준다.
-			_isRightMove = false;
 		}
 	}
+	//================================================ 기본속도 및 이동 리셋
+	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+	{
+		_isRightMove = false;				//오른쪽으로 이동안함.
+		_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 리셋
+		_state = PLAYER_IDLE_RIGHT;	//상태는 오른쪽 바라보는 애니메이션 출력
+	}
 }
+
+void player_Eric::upMove(object * ladder)
+{
+	/*
+	if (_isladderchk)
+	{
+		if (KEYMANAGER->isOnceKeyDown(VK_UP))
+		{
+			_x = ladder->getX();
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_UP))
+		{
+			_speed = MIN_SPEED;
+
+			_y -= _speed;
+		}
+	}
+	else
+	{
+
+	}
+	*/
+	//만약에 위쪽키를 누르면 위로 이동해라
+	if (KEYMANAGER->isStayKeyDown(VK_UP))
+	{
+		_y -= _speed;
+	}
+}
+
+void player_Eric::downMove(object * ladder)
+{
+	/*
+	if (_isladderchk)
+	{
+		if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
+		{
+			_x = ladder->getX();
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_DOWN))
+		{
+			_speed = MIN_SPEED;
+			_y += _speed;
+		}
+	}
+	*/
+	//만약에 아래쪽키를 누르면 아래로 이동해
+	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
+	{
+		_y += _speed;
+	}
+}
+
 
 void player_Eric::jump()
 {
@@ -396,8 +515,10 @@ void player_Eric::jump()
 
 void player_Eric::EricAniinit()
 {
+	//이미지 추가
+	_player = IMAGEMANAGER->addFrameImage("player_eric", "image/eric.bmp", 704, 1024, 11, 16, true, RGB(255, 0, 255));
+	//애니메이션 타입추가
 	KEYANIMANAGER->addAnimationType("player_eric");
-	_state = PLAYER_IDLE_RIGHT;
 
 	int idle_right[] = { 0, 1 };
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "idleright", "player_eric", idle_right, 2, 2, true);
@@ -415,8 +536,18 @@ void player_Eric::EricAniinit()
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "jump_left", "player_eric", jump_left, 2, 10, false);
 	int jump_fall_left[] = { 61,62 };
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "jump_fall_left", "player_eric", jump_fall_left, 2, 2, false);
+	int push_wall_right[] = { 77, 78, 79, 80 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "push_wall_right", "player_eric", push_wall_right, 4, 10, true);
+	int push_wall_left[] = { 81, 82, 83, 84 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "push_wall_left", "player_eric", push_wall_left, 4, 10, true);
+	int die_fire_right[] = { 132, 133, 134, 135, 136, 137, 138, 139 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "die_fire_right", "player_eric", die_fire_right, 8, 10, false);
+	int die_fire_left[] = { 143, 144, 145, 146, 147, 148, 149, 150 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "die_fire_left", "player_eric", die_fire_left, 8, 10, false);
 
+	//기본 애니메이션 설정
 	_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "idleright");
+	KEYANIMANAGER->start("player_eric", "idleright");
 }
 
 void player_Eric::EricAni()
@@ -424,15 +555,13 @@ void player_Eric::EricAni()
 	if (_state == PLAYER_IDLE_RIGHT)
 	{
 		_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "idleright");
-		KEYANIMANAGER->start("player_eric", "idleright");
 
 	}
 	if (_state == PLAYER_IDLE_LEFT)
 	{
 		_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "idleleft");
-		KEYANIMANAGER->start("player_eric", "idleleft");
 	}
-	KEYANIMANAGER->update("player_eric");
+
 }
 
 void player_Eric::EricAniStart(string key)
