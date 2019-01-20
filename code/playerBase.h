@@ -3,11 +3,11 @@
 #include "object.h"
 
 //알아서 조절하셈
-#define MAX_SPEED	350.0f
+#define MAX_SPEED	200.0f
 #define MIN_SPEED	5.0f
 #define MAX_LIFE	3
 #define ACC_SPEED	200.0f
-#define START_JUMPP 300.0f
+#define START_JUMPP 200.0f
 #define GRAVITY		250.0f
 
 enum PLAYER_NAME
@@ -52,8 +52,6 @@ enum PLAYER_STATE
 	PLAYER_JUMP_LEFT,
 	PLAYER_SIGN_RIGHT,
 	PLAYER_SIGN_LEFT,
-	PLAYER_RUSH_RIGHT,
-	PLAYER_RUSH_LEFT,
 	PLAYER_HEAD_BUTT_RIGHT,
 	PLAYER_HEAD_BUTT_LEFT,
 
@@ -112,6 +110,7 @@ protected:
 
 	item*			_invenItem[4];
 
+	vector<RECT*>	_ladderRc;
 
 public:
 	playerBase();
@@ -144,9 +143,10 @@ public:
 	virtual void pixelTopWallCollision(); // 픽셀 천장 충돌 
 	//바닥체크
 	virtual void pixelBottomCollision(); // << 바닥 픽셀 충돌 
+
 	//사다충돌 체크용
 	virtual void playerCollisionLadder(object* ladder);
-
+	virtual void setLadderRectAdressLink(RECT* rc);
 
 	//처맞는함수
 
