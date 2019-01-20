@@ -1,18 +1,22 @@
 #pragma once
 #include "playerBase.h"
+
+//class objectManager;
+
 class player_Baleog : public playerBase
 {
 private:
+	bool			_isLadder;
 
-	//부서지는 벽 TEST할 임시 RECT
-	RECT		_tempWall;
-	//사다리 TEST할 임시 RECT
-	RECT		_tempLadder;
-	bool		_isLadder;
-
-	animation*	_playerAni;
+	animation*		_playerAni;
 	const char*		_imageKey;
 	const char*		_aniImageKey;
+
+	bool			_isChangeAni;
+	bool			_isPushWall;
+
+
+	//objectManager*	_object;
 
 public:
 	player_Baleog();
@@ -47,5 +51,11 @@ public:
 
 	//keyAni 이미지 출력할 함수
 	void keyAniSetting();
+
+	//사다리 충돌 체크할 함수
+	//virtual void playerCollisionLadder(object* ladder) override;
+
+	//링크할 함수
+	//void setObjectAdderssLink(objectManager* obj) { _object = obj; }
 };
 
