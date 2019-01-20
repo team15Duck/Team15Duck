@@ -3,11 +3,11 @@
 #include "object.h"
 
 //알아서 조절하셈
-#define MAX_SPEED	200.0f
+#define MAX_SPEED	350.0f
 #define MIN_SPEED	5.0f
 #define MAX_LIFE	3
 #define ACC_SPEED	200.0f
-#define START_JUMPP 200.0f
+#define START_JUMPP 300.0f
 #define GRAVITY		250.0f
 
 enum PLAYER_NAME
