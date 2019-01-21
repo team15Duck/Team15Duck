@@ -13,6 +13,7 @@ player_Baleog::~player_Baleog()
 
 HRESULT player_Baleog::init()
 {
+	playerBase::init();
 	initBaleog();
 	
 	return S_OK;
@@ -28,7 +29,7 @@ void player_Baleog::update()
 	_speed = 2.f;
 
 	pixelBottomCollision();
-	rectBrokenWallCollision();
+	//rectBrokenWallCollision();
 
 	
 	_playerRect = RectMakeCenter(_x, _y, 50, 70);
@@ -103,7 +104,21 @@ void player_Baleog::keyPressMove()
 	{
 		//움직이면서 바닥 체크하고
 		pixelBottomCollision();
-
+		//방향키를 누르던 도중에 공격이 들어오면
+		if (_state == PLAYER_ATTACK_LEFT)
+		{
+			_speed = 0;
+			if (!_playerAni->isPlay())
+			{
+				if (!_isChangeAni)
+				{
+					_state = PLAYER_MOVE_LEFT;
+					_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "moveLeft");
+					_playerAni->start();
+					_isChangeAni = true;
+				}
+			}
+		}
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_LEFT;
@@ -166,10 +181,21 @@ void player_Baleog::keyPressMove()
 	{
 		//움직이면서 바닥 체크하고
 		pixelBottomCollision();
-		//if (!_isGround && _isLadder)				//땅이 아니고 사다리를 타고 있으면
-		//{
-		//	_state == PLAYER_FALL_RIGHT;
-		//}
+		//움직이다가 공격이 들어오면
+		if (_state == PLAYER_ATTACK_RIGHT)
+		{
+			_speed = 0;
+			if (!_playerAni->isPlay())
+			{
+				if (!_isChangeAni)
+				{
+					_state = PLAYER_MOVE_RIGHT;
+					_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "moveRight");
+					_playerAni->start();
+					_isChangeAni = true;
+				}
+			}
+		}
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_RIGHT;
@@ -212,9 +238,12 @@ void player_Baleog::keyPressMove()
 		}
 	}
 	
+	//공격키 함수
+	attackKey();
 
-	
-	
+
+	collisionLadder(_ladderRc);
+	/*
 	//============== 위 로 ===============
 	if (KEYMANAGER->isOnceKeyDown(VK_UP))
 	{
@@ -269,6 +298,10 @@ void player_Baleog::keyPressMove()
 	{
 		_playerAni->pause();
 	}
+	*/
+
+
+
 
 	if (_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT)
 	{
@@ -309,10 +342,9 @@ void player_Baleog::initBaleog()
 	_isChangeAni = false;		//애니메이션 바꿔야댐??
 	_isPushWall = false;		//벽 밀고 있어?
 	_deathMotion = false;		//죽는 모션이 나와야댐?
+	_isRight = true;
 
-	
 	keyAniSetting();
-
 }
 
 
@@ -416,6 +448,7 @@ void player_Baleog::pixelFireCollision()
 	}
 }
 
+/*
 void player_Baleog::rectBrokenWallCollision()
 {
 	//부서지는 벽은 rect인데 그 벽이랑 부딪힌 경우
@@ -428,6 +461,7 @@ void player_Baleog::rectBrokenWallCollision()
 		
 	}
 }
+*/
 void player_Baleog::keyAniSetting()
 {
 	//이미지 추가
@@ -563,27 +597,93 @@ void player_Baleog::keyAniSetting()
 
 void player_Baleog::collisionLadder(vector<RECT*> ladder)
 {
+	RECT ladderTempRc;
+	int ladderVSize = ladder.size();
 	//============== 위 로 ===============
 	if (KEYMANAGER->isOnceKeyDown(VK_UP))
 	{
-		_state = PLAYER_LADDER_UP;
-		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderUp");
-		_playerAni->start();
+		if (_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
+		{
+			_isRight = false;
+		}
+		if(_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
+		{
+			_isRight = true;
+		}
+
+		for (int i = 0; i < ladderVSize; ++i)
+		{
+			if (IntersectRect(&ladderTempRc, ladder[i], &_playerRect))
+			{
+				if (_isLadder)
+				{
+					if (_playerRect.bottom - 5 <= (*ladder[i]).top)
+					{
+						_state = PLAYER_LADDER_END;
+						_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderEnd");
+						_playerAni->start();
+						_speed = 0;
+						break;
+					}
+				}
+				_isLadder = true;
+				_state = PLAYER_LADDER_UP;
+				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderUp");
+				_playerAni->start();
+			}
+		}
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_UP))
 	{
 		//사다리와 충돌 됐는지 여부를 체크할 임시 RECT
-		RECT collisionTempRect;
-		//int tempIndex = _object->getFieldLadders().size();
 		
+		for (int i = 0; i < ladderVSize; ++i)
+		{
+			if (IntersectRect(&ladderTempRc, ladder[i], &_playerRect))
+			{
+				if (_playerRect.bottom - 5 <= (*ladder[i]).top)
+				{
+					if (_isLadder)
+					{
+						_state = PLAYER_LADDER_END;
+						_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderEnd");
+						_playerAni->start();
+						_isLadder = false;
+					}
+					_speed = 0;
+					if (!_playerAni->isPlay())
+					{
+						//왼쪽 방향으로 오던 중에 사다리를 탄거라면
+						if (!_isRight && _state == PLAYER_LADDER_END && !_isLadder)
+						{
+							_state = PLAYER_IDLE_LEFT;
+							_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleLeft");
+							_playerAni->start();
+						}
+						else if (_isRight && _state == PLAYER_LADDER_END && !_isLadder)
+						{
+							_state = PLAYER_IDLE_RIGHT;
+							_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
+							_playerAni->start();
+						}
+					}
+				}
+			}
+		}
 		_y -= _speed;
-
-		
-		
 	}
 	if (KEYMANAGER->isOnceKeyUp(VK_UP))
 	{
-		_playerAni->pause();
+		if (_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_DOWN)
+		{
+			_playerAni->pause();
+		}
+		if (_state == PLAYER_LADDER_END)
+		{
+			_isLadder = false;
+			_gravity = 0;
+			_state = PLAYER_IDLE_RIGHT;
+		}
 	}
 
 	//============== 아 래 로 ===============
@@ -600,5 +700,70 @@ void player_Baleog::collisionLadder(vector<RECT*> ladder)
 	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
 	{
 		_playerAni->pause();
+	}
+}
+
+void player_Baleog::attackKey()
+{
+	//========================== <공 격 키> ===========================
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+	{
+		//============ 오른쪽으로 공격하면 ==============
+		if (_state == PLAYER_ATTACK_RIGHT || _state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_ATTACK_RIGHT;
+			if (RND->getInt(2) == 0)				//오른쪽 세로 공격
+			{
+				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "attackLengthRight");
+				_playerAni->start();
+				if (!_playerAni->isPlay())
+				{
+					if (_state == PLAYER_MOVE_RIGHT)
+					{
+						_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "moveRight");
+						_playerAni->start();
+					}
+					if (_state == PLAYER_IDLE_RIGHT)
+					{
+						_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
+						_playerAni->start();
+					}
+				}
+			}
+			else if (RND->getInt(2) == 1)			//오른쪽 가로 공격
+			{
+				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "attackWidthRight");
+				_playerAni->start();
+			}
+		}
+		//============= 왼쪽으로 공격하면 ===============
+		if (_state == PLAYER_ATTACK_LEFT || _state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
+		{
+			_state = PLAYER_ATTACK_LEFT;
+			if (RND->getInt(2) == 0)				//왼쪽 세로 공격
+			{
+				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "attackLengthLeft");
+				_playerAni->start(); 
+				_isChangeAni = false;
+			}
+			else if (RND->getInt(2) == 1)			//왼쪽 가로 공격
+			{
+				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "attackWidthLeft");
+				_playerAni->start();
+				_isChangeAni = false;
+			}
+		}
+	}
+	if (KEYMANAGER->isOnceKeyUp(VK_SPACE))
+	{
+		_isChangeAni = false;
+		if (_state == PLAYER_ATTACK_RIGHT)
+		{
+			_state == PLAYER_IDLE_RIGHT;
+		}
+		if (_state == PLAYER_ATTACK_LEFT)
+		{
+			_state == PLAYER_IDLE_LEFT;
+		}
 	}
 }

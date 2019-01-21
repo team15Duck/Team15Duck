@@ -18,6 +18,7 @@ private:
 	bool			_isChangeAni;			//애니메이션 바뀜?
 	bool			_isPushWall;			//벽 미는 중임?
 	bool			_isLadder;				//사다리 탔음?
+	bool			_isRight;				//사다리 올라가고 나서 나오는 아이들 모션때문에 들어간 bool 값
 
 
 
@@ -54,13 +55,14 @@ public:
 	virtual void pixelFireCollision();				// << 불과 부딪힌 경우 
 
 
-	virtual void rectBrokenWallCollision() override; // << 렉트 부숴지는 벽 충돌 
+	//virtual void rectBrokenWallCollision() override; // << 렉트 부숴지는 벽 충돌 
 
 	//keyAni 이미지 출력할 함수
 	void keyAniSetting();
 
 	//사다리 충돌 체크할 함수
 	virtual void collisionLadder(vector<RECT*> ladder);
+	virtual void attackKey();
 
 	//링크할 함수
 	//void setObjectAdderssLink(objectManager* obj) { _object = obj; }
