@@ -170,5 +170,6 @@ public:
 	RECT getPlayerRect() { return _playerRect; }
 	item** getInvenItem() { return _invenItem; }
 
+	bool getIsAlive() { return _isAlive; }
 
 };

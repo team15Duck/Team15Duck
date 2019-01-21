@@ -108,16 +108,23 @@ void playerManager::keyUpdate()
 void playerManager::keyPressCtrl()
 {
 	if (TIMEMANAGER->getWorldTime() < 0.5f) return;
-	//if (!CAMERA->getMapMove())
+	//셋중 하나라도 살아 있다면
+	if (_vPlayer[PLAYER_NAME_ERIC]->getIsAlive() || _vPlayer[PLAYER_NAME_BALEOG]->getIsAlive() || _vPlayer[PLAYER_NAME_OLAF]->getIsAlive())
 	{
+		//컨트롤키를 누른다면
 		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
 		{
-
-			_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
-			if (_currentSelectPlayer == PLAYER_NAME_NONE)
+			//다음놈이 살아있는놈일때까지 바꿈
+			while (true)
 			{
-				_currentSelectPlayer = PLAYER_NAME_ERIC;
+				_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
+				if (_currentSelectPlayer == PLAYER_NAME_NONE)
+				{
+					_currentSelectPlayer = PLAYER_NAME_ERIC;
+				}
+				if (_vPlayer[_currentSelectPlayer]->getIsAlive()) break;
 			}
+			
 			CAMERA->setMapMove(true);
 			POINTF playerPos;
 			playerPos.x = *_vPlayer[_currentSelectPlayer]->getPosX();
