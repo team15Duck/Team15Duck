@@ -145,10 +145,12 @@ void object::update()
 	{
 		if(KEYMANAGER->isStayKeyDown('E'))
 				active();
+		else if(KEYMANAGER->isStayKeyDown(VK_ESCAPE))
+			initActive();
 	}
 	
-	KEYANIMANAGER->update(_objName);
-	MakeRect();
+	if(_ani)
+		KEYANIMANAGER->update(_objName);
 }
 
 void object::render()
@@ -281,6 +283,71 @@ void object::active()
 
 	if (_linkObj)
 		_linkObj->active();
+
+	MakeRect();
+}
+
+void object::initActive()
+{
+	switch (_type)
+	{
+		case OBJECT_TYPE_LOCK_RED:
+		case OBJECT_TYPE_LOCK_YELLOW:
+		case OBJECT_TYPE_LOCK_BLUE:
+		{
+			_size = { 32, 32 };
+
+			int lockIdle[] = { _type };
+			char key[128];
+			sprintf_s(key, "lock%d", _type);
+
+			_ani = KEYANIMANAGER->findAnimation(_objName, key);
+
+			break;
+		}
+		case OBJECT_TYPE_DOOR_RIGHT:
+		{
+			_size = { 32, 96 };
+			_ani = KEYANIMANAGER->findAnimation(_objName, "doorRightIdle");
+
+			break;
+		}
+		case OBJECT_TYPE_DOOR_LEFT:
+		{
+			_size = { 32, 96 };
+			_ani = KEYANIMANAGER->findAnimation(_objName, "doorLeftIdle");
+			break;
+		}
+
+		case OBJECT_TYPE_BRIDGE_RIGHT:
+		{
+			_size = { 32, 160 };
+			_ani = KEYANIMANAGER->findAnimation(_objName, "bridgeRightIdle");
+			break;
+		}
+
+		case OBJECT_TYPE_BRIDGE_LEFT:
+		{
+			_size = { 32, 160 };
+			_ani = KEYANIMANAGER->findAnimation(_objName, "bridgeLeftIdle");
+			break;
+		}
+
+		case OBJECT_TYPE_LADDER :			
+		case OBJECT_TYPE_BROKENBLOCK :
+		{
+			break;
+		}
+	}
+
+	// 작동 안했음으로 초기화
+	_isActiveFinished = false;
+
+	MakeRect();
+
+	// 기본 애니메이션 실행
+	if (_ani)
+		_ani->start();
 }
 
 void object::setCollisionSize(POINT size)

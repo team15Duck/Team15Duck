@@ -28,7 +28,7 @@ private:
 
 	float _destX, _destY;	// 이미지 그릴 left, top좌표
 
-	string _objName;		// 오브젝트 이름
+	string		_objName;	// 오브젝트 이름
 	OBJECT_TYPE	_type;		// 오브젝트 타입
 	int			_value;		// 아이템이랑 연동될 키값(ex.  KEY _value == LOCK _value >> 문이 열린다		
 	object*		_linkObj;	// 연결된 오브젝트 (ex. 자물쇠랑 문 or 다리 는 연결되어있음)
@@ -56,6 +56,9 @@ public:
 
 	// 작동
 	void active();
+
+	// 테스트용 : 작동 전으로 돌리기
+	void initActive();
 
 	// 연결되는 오브젝트를 연결
 	void setLinkObject(object* obj) { _linkObj = obj; }
