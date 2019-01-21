@@ -18,6 +18,17 @@ enum OBJECT_TYPE
 	OBJECT_TYPE_COUNT = OBJECT_TYPE_NONE,
 };
 
+// 오브젝트 작동 타입
+enum OBJECT_ACTIVE_TYPE
+{
+	OBJECT_ACTIVE_TYPE_STATIC,	// 움직이지 않고, 작동되지 않는 오브젝트 (ex. 사다리)
+	OBJECT_ACTIVE_TYPE_SWITCH,	// 다른 오브젝트를 작동시키는 오브젝트 (ex. 자물쇠, 버튼)
+	OBJECT_ACTIVE_TYPE_WORK,	// 작동되는 오브젝트 (ex. 다리, 문)
+	
+	OBJECT_ACTIVE_TYPE_NONE,
+	OBJECT_ACTIVE_TYPE_COUNT = OBJECT_ACTIVE_TYPE_NONE,
+};
+
 // 오브젝트 클래스
 class object
 {
@@ -30,6 +41,7 @@ private:
 
 	string		_objName;	// 오브젝트 이름
 	OBJECT_TYPE	_type;		// 오브젝트 타입
+	OBJECT_ACTIVE_TYPE _activeType;	// 오브젝트 작동 타입
 	int			_value;		// 아이템이랑 연동될 키값(ex.  KEY _value == LOCK _value >> 문이 열린다		
 	object*		_linkObj;	// 연결된 오브젝트 (ex. 자물쇠랑 문 or 다리 는 연결되어있음)
 
@@ -70,12 +82,10 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 
-	OBJECT_TYPE geObjectType() { return _type; }
-	int			getObjectValue() { return _value; }
-	RECT*		getObjectRect()
-	{
-		return &_rc;
-	}
+	OBJECT_TYPE			geObjectType()		 { return _type;		}
+	OBJECT_ACTIVE_TYPE	geObjectActiveType() { return _activeType;	}
+	int					getObjectValue()	 { return _value;		}
+	RECT*				getObjectRect()		 { return &_rc;			}
 
 private:
 	// 렉트 생성

@@ -3,10 +3,20 @@
 
 
 object::object()
-	: _isActiveFinished(false)
+: _x(0.f), _y(0.f)
+, _destX(0.f), _destY(0.f)
+, _objName("")
+, _type(OBJECT_TYPE_NONE)
+, _activeType(OBJECT_ACTIVE_TYPE_NONE)
+, _value(-1)
+, _linkObj(nullptr)
+, _img(nullptr)
+, _isActiveFinished(false)
+, _ani(nullptr)
 {
+	_size = {0, 0};
+	_rc = {0, 0, 0, 0};
 }
-
 
 object::~object()
 {
@@ -33,12 +43,8 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		_destY = _y - (_img->getFrameHeight() / 2);	// 이미지 렌더는 left, top 으로 그리기때문
 	}
 
-	_linkObj = nullptr;		// setLinkObject함수로 따로 연결해줄것임
 	_value	 = itemValue;
 	_type	 = type;
-
-	_ani = nullptr;
-	_size = { 0, 0 };
 
 	// 해당 오브젝트의 키 애니메이션 맵 생성
 	KEYANIMANAGER->addAnimationType(_objName);
@@ -53,6 +59,7 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		case OBJECT_TYPE_LOCK_BLUE:
 		{
 			_size = {32, 32};
+			_activeType = OBJECT_ACTIVE_TYPE_SWITCH;
 
 			int lockIdle[] = { _type };
 			char key[128];
@@ -67,6 +74,7 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		case OBJECT_TYPE_DOOR_RIGHT:
 		{
 			_size = { 32, 96 };
+			_activeType = OBJECT_ACTIVE_TYPE_WORK;
 
 			int doorIdle[] = { 0 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "doorRightIdle", imgName, doorIdle, 1, 6, false);
@@ -81,6 +89,7 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		case OBJECT_TYPE_DOOR_LEFT:
 		{
 			_size = {32, 96};
+			_activeType = OBJECT_ACTIVE_TYPE_WORK;
 
 			int doorIdle[] = { 3 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "doorLeftIdle", imgName, doorIdle, 1, 6, false);
@@ -94,6 +103,7 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		case OBJECT_TYPE_BRIDGE_RIGHT:
 		{
 			_size = { 32, 160 };
+			_activeType = OBJECT_ACTIVE_TYPE_WORK;
 
 			int bridgeIdle[] = { 0 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "bridgeRightIdle", imgName, bridgeIdle, 1, 6, false);
@@ -108,6 +118,7 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 		case OBJECT_TYPE_BRIDGE_LEFT:
 		{
 			_size = {32, 160};
+			_activeType = OBJECT_ACTIVE_TYPE_WORK;
 
 			int bridgeIdle[] = { 5 };
 			KEYANIMANAGER->addArrayFrameAnimation(_objName, "bridgeLeftIdle", imgName, bridgeIdle, 1, 6, false);
@@ -118,11 +129,14 @@ HRESULT object::init(const char* objName, const char* imgName, POINTF position, 
 			_ani = KEYANIMANAGER->findAnimation(_objName, "bridgeLeftIdle");
 			break;
 		}
+
+		default:
+		{
+			_activeType = OBJECT_ACTIVE_TYPE_STATIC;
+			break;
+		}
 	}
 	
-	// 작동 안했음으로 초기화
-	_isActiveFinished = false;
-
 	MakeRect();
 
 	// 기본 애니메이션 실행
@@ -144,7 +158,7 @@ void object::update()
 	if (KEYMANAGER->isToggleKey(VK_F6))
 	{
 		if(KEYMANAGER->isStayKeyDown('E'))
-				active();
+			active();
 		else if(KEYMANAGER->isStayKeyDown(VK_ESCAPE))
 			initActive();
 	}
@@ -232,6 +246,10 @@ void object::pixelRender(HDC hdc)
 
 void object::active()
 {
+	// 정적인 오브젝트는 작동하지 않는다.
+	if(OBJECT_ACTIVE_TYPE_STATIC == _activeType)
+		return;
+
 	// 한번 작동된 오브젝트는 다시 작동하지 않는다
 	if(_isActiveFinished)
 		return;

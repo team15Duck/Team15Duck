@@ -218,23 +218,22 @@ void objectManager::objectPixelRender(HDC hdc)
 	}
 }
 
-bool objectManager::interactionObjectWithItem(item* useItem)
+void objectManager::interactionObject(object* obj)
 {
-	if(!useItem)
-		return false;
+	if(!obj)
+		return;
 
 	int size = (int)_vFieldObjects.size();
 	for (int i = 0; i < size; ++i)
 	{
-		// 값이 일치하면 사용
-		if (_vFieldObjects[i]->getObjectValue() == useItem->getItemValue())
+		// 필드에 있는 오브젝트이고, 스위치 타입이라면
+		if (obj == _vFieldObjects[i] && obj->geObjectActiveType() == OBJECT_ACTIVE_TYPE_SWITCH)
 		{
+			// 작동
 			doActiveObject(_vFieldObjects[i]);
-			return true;
+			break;
 		}
 	}
-
-	return false;
 }
 
 void objectManager::doActiveObject(object* obj)

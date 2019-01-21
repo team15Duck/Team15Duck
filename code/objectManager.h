@@ -22,9 +22,10 @@ public:
 	// 픽셀 충돌을 위한 렌더 함수
 	void objectPixelRender(HDC hdc);				
 
-	// 아이템을 가지고 오브젝트와 상호작용 ex: 아이템 사용(자물쇠는 열쇠 아이템이 있어야 사용)
-	// 사용이 되면 return true, 그렇지 않다면 false
-	bool interactionObjectWithItem(item* useItem);	
+	// 오브젝트 사용
+	// 만약 아이템을 사용해야 하는 오브젝트라면 플레이어에서 아이템과 오브젝트의 value값을 확인하고 값이 일치한다면 이 함수를 호출해주세요
+	// 아이템 없이 사용하는 경우에는 그냥 호출해주세요
+	void interactionObject(object* obj);
 
 	// 필드에 있는 오브젝트들
 	vector<object*> getFieldObjects() { return _vFieldObjects; }
