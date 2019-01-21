@@ -64,11 +64,15 @@ public:
 	virtual void pixelLeftWallCollision() override;
 	virtual void pixelRightWallCollision() override;
 
-	//바닥충돌
+	//바닥충돌(픽셀용)
 	virtual void pixelBottomCollision() override;
 
-	//사다리충돌
+	//불충돌(픽셀용)
+	void pixelFireCollision();
+
+	//사다리충돌(렉트용)
 	void playerCollisionLadder();
+
 
 
 	// ========== GET & SET ==========
