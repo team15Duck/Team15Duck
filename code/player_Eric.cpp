@@ -112,6 +112,8 @@ void player_Eric::render()
 	TextOut(CAMERA->getMemDC(), 0, 200, str, strlen(str));
 	sprintf_s(str, "state : %d", _state);
 	TextOut(CAMERA->getMemDC(), 0, 250, str, strlen(str));
+	sprintf_s(str, "state : %d", _aniCount);
+	TextOut(CAMERA->getMemDC(), 0, 225, str, strlen(str));
 }
 
 void player_Eric::keyPressMove()
@@ -169,18 +171,7 @@ void player_Eric::keyPressD()
 				//상태를 오른쪽 박치기로 바꿔주고 애니메이션 출력
 				_state = PLAYER_HEAD_BUTT_RIGHT;
 				EricAniStart("head_butt_right");
-				//======================================================= 예외처리 
-				//만약에 상태가 오른쪽 박치기라면 
-				if (_state == PLAYER_HEAD_BUTT_RIGHT)
-				{
-					//애니메이션 플레이가 끝났다면 
-					if (_EricMotion->isPlay() == false)
-					{
-						//오른쪽으로 한숨쉬는 애니메이션을 출력해라
-						EricAniStart("sign_right");
-						_speed = 0;
-					}
-				}
+
 			}
 			else if (_state == PLAYER_MOVE_LEFT)
 			{
@@ -352,6 +343,13 @@ void player_Eric::leftMove()
 				//스피드를 맥스스피드로 고정한다.
 				_speed = MAX_SPEED;
 			}
+			if (_state == PLAYER_HEAD_BUTT_LEFT)
+			{
+				if (_EricMotion->isPlay() == false)
+				{
+					EricAniStart("move_left");
+				}
+			}
 			//============================================ 맵내 이동 제한 처리
 			//만약에 캐릭터가 맵 크기의 왼쪽을 넘어가지 못하도록 처리 
 			if (_x - (_size.x / 2) < 0)
@@ -400,9 +398,35 @@ void player_Eric::leftMove()
 		//================================================ 기본속도 및 이동 리셋
 		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
 		{
-			_isLeftMove = false;				//왼쪽으로 이동안함.
-			_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 리셋
-			_state = PLAYER_IDLE_LEFT;		//상태는 왼쪽을 바라보는 애니메이션 출력
+			_isLeftMove = false;						//왼쪽으로 이동안함.
+			_speed = MIN_SPEED;							//스피드는 미니멈 스피드로 리셋
+			if (_state == PLAYER_HEAD_BUTT_LEFT)
+			{
+				_state = PLAYER_SIGN_LEFT;
+				EricAniStart("sign_left");
+				_aniCount += 1;
+			}
+			else
+			{
+				_state = PLAYER_IDLE_LEFT;				//상태는 왼쪽 바라보는 애니메이션 출력
+			}
+		}
+		if (_state == PLAYER_SIGN_LEFT)
+		{
+			if (_EricMotion->isPlay() == false)
+			{
+				if (_aniCount < 3)
+				{
+					EricAniStart("sign_left");
+					_aniCount += 1;
+				}
+				else if (_aniCount == 3)
+				{
+					_aniCount = 0;
+					_state = PLAYER_IDLE_LEFT;
+					EricAniStart("idleleft");
+				}
+			}
 		}
 	}
 }
@@ -434,6 +458,13 @@ void player_Eric::rightMove()
 			{
 				//스피드를 맥스스피드로 고정한다.
 				_speed = MAX_SPEED;
+			}
+			if (_state == PLAYER_HEAD_BUTT_RIGHT)
+			{
+				if (_EricMotion->isPlay() == false)
+				{
+					EricAniStart("move_right");
+				}
 			}
 			//============================================ 맵내 이동 제한 처리
 			//만약에 캐릭터가 맵 크기의 오른쪽을 넘어가지 못하도록 처리 
@@ -484,7 +515,34 @@ void player_Eric::rightMove()
 		{
 			_isRightMove = false;				//오른쪽으로 이동안함.
 			_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 리셋
-			_state = PLAYER_IDLE_RIGHT;	//상태는 오른쪽 바라보는 애니메이션 출력
+
+			if (_state == PLAYER_HEAD_BUTT_RIGHT)
+			{
+				_state = PLAYER_SIGN_RIGHT;
+				EricAniStart("sign_right");
+				_aniCount += 1;
+			}
+			else
+			{
+				_state = PLAYER_IDLE_RIGHT;	//상태는 오른쪽 바라보는 애니메이션 출력
+			}
+		}
+		if (_state == PLAYER_SIGN_RIGHT)
+		{
+			if (_EricMotion->isPlay() == false)
+			{
+				if (_aniCount < 3)
+				{
+					EricAniStart("sign_right");
+					_aniCount += 1;
+				}
+				else if (_aniCount == 3)
+				{
+					_aniCount = 0;
+					_state = PLAYER_IDLE_RIGHT;
+					EricAniStart("idleright");
+				}
+			}
 		}
 	}
 }
@@ -564,6 +622,7 @@ void player_Eric::jump()
 
 void player_Eric::EricAniinit()
 {
+	_aniCount = 0;
 	//이미지 추가
 	_player = IMAGEMANAGER->addFrameImage("player_eric", "image/eric.bmp", 704, 1024, 11, 16, true, RGB(255, 0, 255));
 	//애니메이션 타입추가

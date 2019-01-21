@@ -5,6 +5,7 @@
 class player_Eric : public playerBase
 {
 private:
+	int _aniCount;
 	float _jumpPower;
 
 	bool _isJump;			//점프 체크용
