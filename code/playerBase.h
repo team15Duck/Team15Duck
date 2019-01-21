@@ -54,6 +54,8 @@ enum PLAYER_STATE
 	PLAYER_SIGN_LEFT,
 	PLAYER_HEAD_BUTT_RIGHT,
 	PLAYER_HEAD_BUTT_LEFT,
+	PLAYER_STUN_RIGHT,
+	PLAYER_STUN_LEFT,
 
 	//재원캐릭	칼쓰는거 가로 세로는 랜덤으로 0 , 1 줘서 처리
 	PLAYER_LOOK_FRONT_RIGHT,
@@ -147,9 +149,8 @@ public:
 	//사다충돌 체크용
 	virtual void playerCollisionLadder(object* ladder);
 	virtual void setLadderRectAdressLink(RECT* rc);
-
-	//방패출력
 	virtual void shieldRender(HDC hdc);
+
 	//처맞는함수
 
 	//살았니 죽었니 죽는중이니?

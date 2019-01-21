@@ -23,7 +23,7 @@ HRESULT playerManager::init()
 	_vPlayer[PLAYER_NAME_BALEOG]->init();
 	_vPlayer[PLAYER_NAME_OLAF]->init();
 
-	_currentSelectPlayer = PLAYER_NAME_OLAF;
+	_currentSelectPlayer = PLAYER_NAME_ERIC;
 	//_currentSelectPlayer = PLAYER_NAME_BALEOG;
 	//_currentSelectPlayer = PLAYER_NAME_OLAF;
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
