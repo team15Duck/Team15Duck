@@ -16,7 +16,7 @@ HRESULT itemManager::init()
 	_vFieldItems.clear();
 
 	// todo 나중에 이미지 한번에 로드하는 부분으로 이동 할 것
-	IMAGEMANAGER->addFrameImage("fieldItem", "image/fieldItem.bmp", 540, 54, 10, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addFrameImage("fieldItem", "image/fieldItem.bmp", 378, 54, 7, 1, true, RGB(255, 0, 255));
 
 	// create field items
 	{
@@ -57,14 +57,14 @@ HRESULT itemManager::init()
 
 		// key red
 		item* keyRed = new item;
-		pos = { 1662, 442 };
+		pos = { 1340, 986 };
 		keyRed->init("fieldItem", pos, ITEM_TYPE_KEY_RED * 100, ITEM_TYPE_KEY_RED);
 
 		_vFieldItems.push_back(keyRed);
 
 		// key yellow
 		item* keyYellow = new item;
-		pos = { 1340, 986 };
+		pos = { 1662, 442 };
 		keyYellow->init("fieldItem", pos, ITEM_TYPE_KEY_YELLOW * 100, ITEM_TYPE_KEY_YELLOW);
 
 		_vFieldItems.push_back(keyYellow);
