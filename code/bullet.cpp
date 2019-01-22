@@ -43,7 +43,7 @@ HRESULT bullet::init(image * img, image * pixelData, bool isRight, POINTF p)
 
 	_pos.x = p.x;
 	_pos.y = p.y;
-	_bulletSpeed = BULLET_SPEED * TIMEMANAGER->getElpasedTime();
+	_bulletSpeed = BULLET_SPEED;
 	_bulletRc = RectMakeCenter(_pos.x, _pos.y, ARROW_WIDTH, ARROW_HEIGHT);
 	_isAlive = true;
 	_isBroking = false;
@@ -91,7 +91,7 @@ void bullet::update2()
 
 void bullet::render()
 {
-	Rectangle(CAMERA->getMemDC(), _bulletRc, false);
+	//Rectangle(CAMERA->getMemDC(), _bulletRc, false);
 	_bulletImage->aniRender(CAMERA->getMemDC(), _pos.x - _bulletImage->getFrameWidth() / 2, _pos.y - _bulletImage->getFrameHeight() / 2, _animation);
 }
 
@@ -106,11 +106,11 @@ void bullet::move()
 	pixelCollition();
 	if (_isRight)
 	{
-		_pos.x += BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+		_pos.x += _bulletSpeed * TIMEMANAGER->getElpasedTime();
 	}
 	else
 	{
-		_pos.x -= BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+		_pos.x -= _bulletSpeed * TIMEMANAGER->getElpasedTime();
 	}
 }
 
@@ -119,11 +119,11 @@ void bullet::move2()
 	pixelCollition2();
 	if (_isRight)
 	{
-		_pos.x += BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+		_pos.x += BULLET_SPEED * TIMEMANAGER->getElpasedTime();
 	}
 	else
 	{
-		_pos.x -= BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+		_pos.x -= BULLET_SPEED * TIMEMANAGER->getElpasedTime();
 	}
 }
 
