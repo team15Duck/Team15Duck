@@ -17,6 +17,7 @@ HRESULT testScene::init()
 	_pixelMap = IMAGEMANAGER->addImage("stage1PixelMap", "image/stage1PixelMap.bmp", 2048, 1528, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
 
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("mapV2_topLayer", "image/mapV2_top.bmp", 2048, 1528, true, RGB(255, 0, 255));
 
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
 	
@@ -108,8 +109,9 @@ void testScene::render()
 	_objManager->render();
 	_em->render();
 	_pm->render();
-	_mainUI->render();
 
+	IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+	_mainUI->render();
 
 	char str[256];
 	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
