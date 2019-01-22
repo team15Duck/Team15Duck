@@ -101,18 +101,16 @@ void testScene::render()
 	//주의사항 : 여태 우리는 getMemDC()에 그려왔습니다
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
-	if (KEYMANAGER->isToggleKey(VK_F6))
-	{
-		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
-	}
+
 	_itemManager->render();
 	_objManager->render();
 	_em->render();
 	_pm->render();
-
-	if (!KEYMANAGER->isToggleKey(VK_F6))
+	IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+	if (KEYMANAGER->isToggleKey(VK_F6))
 	{
-		IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
+		_pm->render();
 	}
 
 	_mainUI->render();
