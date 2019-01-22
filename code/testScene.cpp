@@ -40,6 +40,12 @@ HRESULT testScene::init()
 	_mainUI = new mainUI;
 	_mainUI->init();
 
+	_em = new enemyManager;
+	_em->init();
+
+	_em->setPixelDataAdressLink(_pixelMap);
+	_em->setPlayerManagerAdressLink(_pm);
+
 	_pm->setMainUIAdressLink(_mainUI);
 	_pm->setItemManagerLink(_itemManager);
 	_pm->setObjectManagerLink(_objManager);
@@ -51,6 +57,7 @@ HRESULT testScene::init()
 		_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setLadderRectAdressLink(adress);
 		_pm->getVPlayer()[PLAYER_NAME_OLAF]->setLadderRectAdressLink(adress);
 	}
+
 	return S_OK;
 }
 
@@ -58,6 +65,7 @@ void testScene::release()
 {
 	_itemManager->release();
 	_objManager->release();
+	_em->release();
 }
 
 void testScene::update()
@@ -76,6 +84,7 @@ void testScene::update()
 	_mainUI->update();
 
 	_objManager->update();
+	_em->update();
 }
 
 void testScene::render()
@@ -96,7 +105,8 @@ void testScene::render()
 		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
 	}
 	_itemManager->render();
-	_objManager->render();;
+	_objManager->render();
+	_em->render();
 	_pm->render();
 	_mainUI->render();
 
