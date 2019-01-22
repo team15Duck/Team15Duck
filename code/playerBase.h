@@ -106,6 +106,8 @@ protected:
 
 	bool			_isLadder;					//사다리 타고있니?
 	bool			_isLadderTop;				//사다리 맨위에 있니?
+	bool			_isAttackRight;					//오른쪽이냐?
+
 
 	int				_lifeCount;					//체력
 	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
@@ -175,4 +177,5 @@ public:
 	bool getIsAlive() { return _isAlive; }
 	virtual bool getIsFire() { return false; }
 	virtual	void setIsFire(bool isFire) {}
+	virtual bool getIsAttackRight() { return _isAttackRight; }
 };

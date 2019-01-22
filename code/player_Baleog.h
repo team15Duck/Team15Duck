@@ -72,8 +72,9 @@ public:
 	virtual void collisionLadder(vector<RECT*> ladder);
 	virtual void attackKey();
 
-	bool getIsRight() { return _isRight; }
+	virtual bool getIsAttackRight() override;
 	virtual bool getIsFire() override;
 	virtual void setIsFire(bool isFire) override;
+	
 };
 

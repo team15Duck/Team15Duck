@@ -380,9 +380,9 @@ void player_Baleog::initBaleog()
 	_y = 1370;
 	_speed = 0.f;
 	
-	_acceleration = 3.f;		//가속도
-	_minSpeed = 0.1f;			//최저속도
-	_maxSpeed = 2.5f;			//최고속도
+	_acceleration = 3.5f;		//가속도
+	_minSpeed = 1.f;			//최저속도
+	_maxSpeed = 4.5f;			//최고속도
 
 	_damageHeight = 315.f;
 	_gravity = GRAVITY;
@@ -456,7 +456,7 @@ void player_Baleog::pixelRightWallCollision()
 void player_Baleog::pixelBottomCollision()
 {
 	//바닥충돌처리(픽셀충돌)
-	for (int i = _proveBottom - 5; i < _proveBottom + 5; ++i)
+	for (int i = _proveBottom - 10; i < _proveBottom + 10; ++i)
 	{
 		COLORREF color = GetPixel(_pixelData->getMemDC(), _x, i);
 		int r = GetRValue(color);
@@ -874,6 +874,7 @@ void player_Baleog::attackKey()
 	{
 		if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
 		{
+			_isAttackRight = true;
 			_isFire = true;
 			_state = PLAYER_ARROW_RIGHT;
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "arrowRight");
@@ -883,6 +884,7 @@ void player_Baleog::attackKey()
 		}
 		if(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
 		{
+			_isAttackRight = false;
 			_isFire = true;
 			_state = PLAYER_ARROW_LEFT;
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "arrowLeft");
@@ -908,6 +910,11 @@ void player_Baleog::attackKey()
 			_playerAni->start();
 		}
 	}
+}
+
+bool player_Baleog::getIsAttackRight()
+{
+	 return _isAttackRight;
 }
 
 bool player_Baleog::getIsFire()

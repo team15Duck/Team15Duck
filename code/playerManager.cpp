@@ -209,10 +209,9 @@ void playerManager::attackKey()
 		
 		image* arrowImg = IMAGEMANAGER->addFrameImage("arrow", "image/arrow.bmp", 136, 40, 4, 2, true, RGB(255, 0, 255));
 		_arrow = new bullet;
-		_arrow->init(arrowImg, _pixelData, true, baleogPos);			//todo 일단 한방향으로만 발사해보자
+		_arrow->init(arrowImg, _pixelData, _vPlayer[PLAYER_NAME_BALEOG]->getIsAttackRight(), baleogPos);			//todo 일단 한방향으로만 발사해보자
 		
 		_vPlayer[PLAYER_NAME_BALEOG]->setIsFire(false);
 		_vArrow.push_back(_arrow);
-
 	}
 }
