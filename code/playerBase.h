@@ -173,5 +173,6 @@ public:
 	item** getInvenItem() { return _invenItem; }
 
 	bool getIsAlive() { return _isAlive; }
-
+	virtual bool getIsFire() { return false; }
+	virtual	void setIsFire(bool isFire) {}
 };
