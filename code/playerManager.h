@@ -2,6 +2,7 @@
 #include "player_Baleog.h"
 #include "player_Eric.h"
 #include "player_Olaf.h"
+#include "bullet.h"
 #include <vector>
 
 class mainUI;
@@ -14,12 +15,16 @@ private:
 
 	vector<playerBase*> _vPlayer;
 
-	PLAYER_NAME _currentSelectPlayer;
+	PLAYER_NAME			_currentSelectPlayer;
 
+	bullet*				_arrow;
+	mainUI*				_mainUI;
+	itemManager*		_im;
+	objectManager*		_om;
 
-	mainUI* _mainUI;
-	itemManager* _im;
-	objectManager* _om;
+	image*				_pixelData;
+
+	vector<bullet*>		_vArrow;
 
 public:
 	playerManager();
@@ -34,13 +39,15 @@ public:
 
 	void keyUpdate();
 	void keyPressCtrl();
-
+	void attackKey();
 
 	vector<playerBase*> getVPlayer() { return _vPlayer; }
 
 	void setMainUIAdressLink(mainUI* ui) { _mainUI = ui; }
 	void setItemManagerLink(itemManager* im) { _im = im; }
 	void setObjectManagerLink(objectManager* om) { _om = om; }
+
+	void setPixelDataLink(image* pixelData) { _pixelData = pixelData; }
 
 };
 

@@ -873,15 +873,16 @@ void player_Baleog::attackKey()
 	{
 		if (_state == PLAYER_MOVE_RIGHT || _state == PLAYER_IDLE_RIGHT)
 		{
+			_isFire = true;
 			_state = PLAYER_ARROW_RIGHT;
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "arrowRight");
 			_playerAni->start();
 			_isChangeAni = false;
 			//불렛의 시작점이 rect.right
-
 		}
 		if(_state == PLAYER_MOVE_LEFT || _state == PLAYER_IDLE_LEFT)
 		{
+			_isFire = true;
 			_state = PLAYER_ARROW_LEFT;
 			_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "arrowLeft");
 			_playerAni->start();
@@ -910,7 +911,7 @@ void player_Baleog::attackKey()
 
 bool player_Baleog::getIsFire()
 {
-	return false;
+	return _isFire;
 }
 
 void player_Baleog::setIsFire(bool isFire)

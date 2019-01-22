@@ -29,6 +29,9 @@ HRESULT playerManager::init()
 	CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 
+	
+	
+
 	return S_OK;
 }
 
@@ -84,6 +87,23 @@ void playerManager::update()
 			}
 		}
 	}
+	attackKey();
+	for (vector<bullet*>::iterator iter = _vArrow.begin(); iter != _vArrow.end(); )
+	{
+		bullet* arrow = (*iter);
+		if (arrow->isAlive())
+		{
+			arrow->update();
+			++iter;
+		}
+		else
+		{
+			iter = _vArrow.erase(iter);
+			
+			SAFE_RELEASE(arrow);
+			SAFE_DELETE(arrow);
+		}
+	}
 }
 
 void playerManager::render()
@@ -91,6 +111,10 @@ void playerManager::render()
 	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
 	{
 		_vPlayer[i]->render();
+	}
+	for (int i = 0; i < _vArrow.size(); ++i)
+	{
+		_vArrow[i]->render();
 	}
 }
 
@@ -172,5 +196,23 @@ void playerManager::keyPressCtrl()
 			CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
 			CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 		}
+	}
+}
+
+void playerManager::attackKey()
+{
+	if (_vPlayer[PLAYER_NAME_BALEOG]->getIsFire())
+	{
+		POINTF baleogPos;
+		baleogPos.x = *_vPlayer[PLAYER_NAME_BALEOG]->getPosX();
+		baleogPos.y = *_vPlayer[PLAYER_NAME_BALEOG]->getPosY();
+		
+		image* arrowImg = IMAGEMANAGER->addFrameImage("arrow", "image/arrow.bmp", 136, 40, 4, 2, true, RGB(255, 0, 255));
+		_arrow = new bullet;
+		_arrow->init(arrowImg, _pixelData, true, baleogPos);			//todo 일단 한방향으로만 발사해보자
+		
+		_vPlayer[PLAYER_NAME_BALEOG]->setIsFire(false);
+		_vArrow.push_back(_arrow);
+
 	}
 }
