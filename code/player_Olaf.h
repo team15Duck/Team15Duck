@@ -18,6 +18,8 @@ private:
 	float _minSpeed;			//최저속도
 	float _maxSpeed;			//최고속도
 	float _shieldGravity;		//방패중력
+	
+	float _specialTime;
 
 public:
 	player_Olaf();
@@ -42,6 +44,8 @@ public:
 
 	//올라프 상태
 	void stateOlaf();
+
+	void specialMotion_Olaf();
 
 	//방패 초기화
 	void initShield();
