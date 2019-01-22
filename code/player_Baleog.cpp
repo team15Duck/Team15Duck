@@ -55,7 +55,7 @@ void player_Baleog::render()
 
 void player_Baleog::keyPressMove()
 {
-	//다시 움직여 보고 싶어서 넣은 키 나중에 지우기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//다시 움직여 보고 싶어서 넣은 키 나중에 지우기!!
 	if (KEYMANAGER->isOnceKeyDown('R'))
 	{
 		_isAlive = true;
@@ -111,10 +111,21 @@ void player_Baleog::keyPressMove()
 			_fallStartY = _y;				//떨어지기 시작할때의 높이를 변수에 저장
 			_isLadder = false;
 		}
+
 		pixelBottomCollision();
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_LEFT))			//왼쪽으로 움직임(지속)
 	{
+		if (_isRight)
+		{
+			_speed += _acceleration * TIMEMANAGER->getElpasedTime();
+			if (_speed >= _maxSpeed)
+			{
+				_speed = _maxSpeed;
+			}
+			_x += _speed;
+			
+		}
 		_speed += _acceleration * TIMEMANAGER->getElpasedTime();
 		if (_speed >= _maxSpeed)
 		{
@@ -137,9 +148,11 @@ void player_Baleog::keyPressMove()
 				}
 			}
 		}
+
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_LEFT;
+			_isLadder = false;
 		}
 		//왼쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
 		if (_playerRect.left <= 0)
@@ -179,6 +192,7 @@ void player_Baleog::keyPressMove()
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_LEFT;
+			_isLadder = false;
 		}
 	}
 	//============== <오 른 쪽> ================
@@ -211,6 +225,16 @@ void player_Baleog::keyPressMove()
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))		//오른쪽으로 움직임 지속
 	{
+		if (!_isRight)
+		{
+			_speed += _acceleration * TIMEMANAGER->getElpasedTime();
+			if (_speed >= _maxSpeed)
+			{
+				_speed = _maxSpeed;
+			}
+			_x += _speed;
+
+		}
 		//속도에 가속도를 넣어보자아아
 		_speed += _acceleration * TIMEMANAGER->getElpasedTime();
 		if (_speed >= _maxSpeed)
@@ -237,6 +261,7 @@ void player_Baleog::keyPressMove()
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_RIGHT;
+			_isLadder = false;
 		}
 		//오른쪽으로 움직이다가 image 밖으로 나가려고 하면 speed 값을 0으로 줌
 		if (_playerRect.right >= _pixelData->GetWidth())
@@ -276,71 +301,12 @@ void player_Baleog::keyPressMove()
 		if (!_isGround)
 		{
 			_state = PLAYER_FALL_RIGHT;
+			_isLadder = false;
 		}
 	}
 	
 	//공격키 함수
 	attackKey();
-
-
-	
-	/*
-	//============== 위 로 ===============
-	if (KEYMANAGER->isOnceKeyDown(VK_UP))
-	{
-
-		_state = PLAYER_LADDER_UP;
-		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderUp");
-		_playerAni->start();
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_UP))
-	{
-		pixelBottomCollision();
-		
-		//사다리와 충돌 됐는지 여부를 체크할 임시 RECT
-		//RECT collisionTempRect;
-		//int tempIndex = _object->getFieldLadders().size();
-		//for (int i = 0; i < tempIndex; ++i)
-		{
-			//if (IntersectRect(&collisionTempRect, (&_object->getFieldLadders()[i]->getObjectRect()), &_playerRect))
-			//{
-			//만약에 사다리를 탔으면(나중에 추가)
-			//if (!_isGround)
-			//{
-			_y -= _speed;
-			//}
-				//_isGround = false;
-
-			
-		}
-	}
-	if (KEYMANAGER->isOnceKeyUp(VK_UP))
-	{
-		_playerAni->pause();
-	}
-
-	//============== 아 래 로 ===============
-	if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
-	{
-		_state = PLAYER_LADDER_DOWN;
-		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderDown");
-		_playerAni->start();
-	}
-	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-	{
-		pixelBottomCollision();
-		if (_state == PLAYER_LADDER_DOWN && _isGround)
-		{
-			_speed = 0;
-		}
-		_y += _speed;
-	}
-	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
-	{
-		_playerAni->pause();
-	}
-	*/
-
 
 	if (_state == PLAYER_FALL_LEFT  || _state == PLAYER_FALL_RIGHT)
 	{
@@ -727,9 +693,10 @@ void player_Baleog::collisionLadder(vector<RECT*> ladder)
 		{
 			if (IntersectRect(&tempColLadder, ladder[i], &_playerRect))		//플레이어와 사다리의 렉트가 충돌했을 때 
 			{
-				_ladderIndex = i;
-				_speed = 2.0f;				//_y 에 스피드가 생겼어영
 				_isLadder = true;			//사다리를 타고 있어영
+				_ladderIndex = i;
+
+				_speed = 2.0f;				//_y 에 스피드가 생겼어영
 
 				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "ladderUp");		
 				_playerAni->start();		//올라가는 모션을 재생해보아요
@@ -766,7 +733,6 @@ void player_Baleog::collisionLadder(vector<RECT*> ladder)
 		{
 			_isLadder = false;
 			_isLadderTop = false;
-			
 		}
 	}
 
