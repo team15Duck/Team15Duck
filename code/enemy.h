@@ -11,9 +11,6 @@ enum ENEMY_STATE
 };
 
 
-
-
-
 class enemy
 {
 private:

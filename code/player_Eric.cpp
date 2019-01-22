@@ -19,7 +19,7 @@ HRESULT player_Eric::init()
 
 	//플레이어 기본 설정 초기화
 	_size = { 64, 64 };		//플레이어 사이즈
-	_x = 450;				//플레이어 x좌표
+	_x = 400;				//플레이어 x좌표
 	_y = 1350;				//플레이어 y좌표
 
 	_speed = MIN_SPEED;		//플레이어 기본 스피드
@@ -49,11 +49,18 @@ HRESULT player_Eric::init()
 
 	//사다리타기용 불값
 
-	_isLadder = false;		//사다리 타고있는지 확인용 불값
-	_isladderchk = false;		//사다리 오브젝트 확인용 불값
-	_isladderup = false;		//사다리 타고 올라가는지 확인용 불값
-	_isladderdown = false;		//사다리 타고 내려오는지 확인용 불값 
-	_isLadderTop = false;		//사다리 맨위에 있는지 확인용 불값
+	_isladderup = false;
+	_isladderdown = false;
+	_isUsladder = false;
+	_isUeladder = false;
+	_isDsladder = false;
+	_isDeladder = false;
+	_isladderUse = false;
+
+	//스킬사용 불값
+
+	_isRSkill = false;
+	_isLSkill = false;
 
 	//애니메이션 초기화
 	EricAniinit();
@@ -112,7 +119,7 @@ void player_Eric::render()
 	TextOut(CAMERA->getMemDC(), 0, 200, str, strlen(str));
 	sprintf_s(str, "state : %d", _state);
 	TextOut(CAMERA->getMemDC(), 0, 250, str, strlen(str));
-	sprintf_s(str, "state : %d", _aniCount);
+	sprintf_s(str, "anicount : %d", _aniCount);
 	TextOut(CAMERA->getMemDC(), 0, 225, str, strlen(str));
 }
 
@@ -121,6 +128,7 @@ void player_Eric::keyPressMove()
 	rightMove();
 	leftMove();
 	upMove(_ladder);
+	downMove(_ladder);
 }
 
 void player_Eric::keyPressSpace()
@@ -171,12 +179,13 @@ void player_Eric::keyPressD()
 				//상태를 오른쪽 박치기로 바꿔주고 애니메이션 출력
 				_state = PLAYER_HEAD_BUTT_RIGHT;
 				EricAniStart("head_butt_right");
-
+				_isRSkill = true;
 			}
 			else if (_state == PLAYER_MOVE_LEFT)
 			{
 				_state = PLAYER_HEAD_BUTT_LEFT;
 				EricAniStart("head_butt_left");
+				_isLSkill = true;
 			}
 		}
 	}
@@ -184,6 +193,10 @@ void player_Eric::keyPressD()
 
 void player_Eric::keyPressE()
 {
+	if (KEYMANAGER->isOnceKeyDown('E'))
+	{
+
+	}
 }
 
 void player_Eric::keyPressS()
@@ -218,7 +231,8 @@ void player_Eric::pixelTopWallCollision()
 void player_Eric::pixelBottomCollision()
 {
 	//================================================================= 예외처리
-	if (_state == PLAYER_JUMP_RIGHT || _state == PLAYER_JUMP_LEFT)
+	if (_state == PLAYER_JUMP_RIGHT || _state == PLAYER_JUMP_LEFT ||
+		_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_DOWN)
 	{
 		return;
 	}
@@ -249,6 +263,10 @@ void player_Eric::pixelBottomCollision()
 				{
 					_state = PLAYER_IDLE_LEFT;
 				}
+				else if (_state == PLAYER_LADDER_DOWN)
+				{
+					_state = PLAYER_IDLE_RIGHT;
+				}
 
 				break;									//더이상 x축의 검사를 안한다.
 			}
@@ -265,16 +283,6 @@ void player_Eric::pixelBottomCollision()
 		_gravity = GRAVITY;											//중력값 세팅
 		_y += _gravity * TIMEMANAGER->getElpasedTime();				//중력값 만큼 떨어진다.
 	}
-}
-
-void player_Eric::playerCollisionLadder(object* ladder)
-{
-	if (!ladder)
-	{
-		return;
-	}
-	_ladder = ladder;
-	_isladderchk = true;
 }
 
 void player_Eric::pixelDieCollision()
@@ -322,10 +330,13 @@ void player_Eric::leftMove()
 		//================================================ 기본속도 및 이동 세팅
 		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
 		{
-			_isLeftMove = true;					//왼쪽으로 이동한다.
-			_speed = MIN_SPEED;					//스피드는 미니멈 스피드로 시작
-			_state = PLAYER_MOVE_LEFT;			//상태는 왼쪽 이동하는 애니메이션 출력
-			EricAniStart("move_left");
+			if (!_isladderUse)						//사다리에 매달려 있지 않는다면
+			{
+				_isLeftMove = true;					//왼쪽으로 이동한다.
+				_speed = MIN_SPEED;					//스피드는 미니멈 스피드로 시작
+				_state = PLAYER_MOVE_LEFT;			//상태는 왼쪽 이동하는 애니메이션 출력
+				EricAniStart("move_left");
+			}
 		}
 		//================================================ 실제 움직임 세팅
 		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
@@ -438,9 +449,9 @@ void player_Eric::rightMove()
 		//================================================ 기본속도 및 이동 세팅
 		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
 		{
-			_isRightMove = true;					//오른쪽으로 이동한다.
-			_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 시작
-			_state = PLAYER_MOVE_RIGHT;	//상태는 오른쪽 이동하는 애니메이션 출력
+			_isRightMove = true;				//오른쪽으로 이동한다.
+			_speed = MIN_SPEED;					//스피드는 미니멈 스피드로 시작
+			_state = PLAYER_MOVE_RIGHT;			//상태는 오른쪽 이동하는 애니메이션 출력
 			EricAniStart("move_right");
 		}
 		//================================================ 실제 움직임 세팅
@@ -492,7 +503,7 @@ void player_Eric::rightMove()
 						_isRCollision = true;						//충돌했음을 확인
 						_x = i - (_size.x / 2);						//플레이어 x 값 보정
 
-						if (_isRCollision && _isRightMove)
+						if (_isRCollision && _isRightMove && !_isRSkill)
 						{
 							_state = PLAYER_PUSH_WALL_RIGHT;
 							_EricMotion = KEYANIMANAGER->findAnimation("player_eric", "push_wall_right");
@@ -501,6 +512,16 @@ void player_Eric::rightMove()
 							{
 								KEYANIMANAGER->start("player_eric", "push_wall_right");
 							}
+						}
+						//만약에 벽에 충돌하고 이동중이고 오른쪽 스킬을 사용했다면 
+						if (_isRCollision && _isRightMove && _isRSkill)
+						{
+							if (_state != PLAYER_STUN_RIGHT)
+							{
+								_state = PLAYER_STUN_RIGHT;
+								EricAniStart("stun_right");
+							}
+
 						}
 					}
 					else
@@ -516,17 +537,25 @@ void player_Eric::rightMove()
 			_isRightMove = false;				//오른쪽으로 이동안함.
 			_speed = MIN_SPEED;			//스피드는 미니멈 스피드로 리셋
 
+			//만약에 박치기 달리기중이라면
 			if (_state == PLAYER_HEAD_BUTT_RIGHT)
 			{
+				//상태를 한숨쉬는걸로 바꿔주고 애니메이션 출력후 애니카운트+1
 				_state = PLAYER_SIGN_RIGHT;
 				EricAniStart("sign_right");
 				_aniCount += 1;
+			}
+			//만약에 스턴에 걸린 상태일때
+			else if (_state == PLAYER_STUN_RIGHT)
+			{
+				//너는 왜 되니?
 			}
 			else
 			{
 				_state = PLAYER_IDLE_RIGHT;	//상태는 오른쪽 바라보는 애니메이션 출력
 			}
 		}
+		//================================================ 예외처리
 		if (_state == PLAYER_SIGN_RIGHT)
 		{
 			if (_EricMotion->isPlay() == false)
@@ -544,51 +573,168 @@ void player_Eric::rightMove()
 				}
 			}
 		}
+		else if (_state == PLAYER_STUN_RIGHT)
+		{
+			if (_EricMotion->isPlay() == false)
+			{
+				_isRSkill = false;
+				_state = PLAYER_IDLE_RIGHT;
+				EricAniStart("idleright");
+			}
+		}
 	}
 }
 
 void player_Eric::upMove(object * ladder)
 {
 	_ladder = ladder;
-
-	//=================================================== 상태 및 좌표세팅
+	RECT temp;
+	//=================================================== 상태 및 좌표 세팅
 	if (KEYMANAGER->isOnceKeyDown(VK_UP))
 	{
-		_state = PLAYER_LADDER_UP;
-		EricAniStart("ladder_up");
+		//만약에 캐릭터의 상태가 아래와 같을때
+		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT ||
+			_state == PLAYER_MOVE_LEFT || _state == PLAYER_MOVE_RIGHT ||
+			_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT ||
+			_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_DOWN)
+		{
+			for (int i = 0; i < _ladderRc.size(); ++i)
+			{
+				//만약에 사다리렉트와 캐릭터 렉트가 부딪혔을때
+				if (IntersectRect(&temp, _ladderRc[i], &_playerRect))
+				{
+					// 플레이어가 사다리로 올라가고 있지 않다면 
+					if (!_isladderup)
+					{
+						//몇번째의 사다리인지 체크하기위해 인덱스 설정
+						_ladderIndex = i;
+						//캐릭터의 x 좌표를 사다리의 x좌표로 맞추어준다.
+						float ladderX = _ladderRc[i]->left + (_ladderRc[i]->right - _ladderRc[i]->left) / 2;
+						_x = ladderX;
+						//캐릭터의 상태를 사다리 타는중으로 변경하면서 사다리에 매달리는 애니메이션을 출력해주자
+						_state = PLAYER_LADDER_UP;
+						EricAniStart("ladder_up");
+						//캐릭터는 사다리에 매달려 있고, 올라가고 있으므로 체크용 불값도 변경
+						_isladderUse = true;
+						_isladderup = true;
+					}
+				}
+			}
+		}
 	}
-	//=================================================== 실제 움직임 세팅
+	//=================================================== 실제 움직임 구현
 	if (KEYMANAGER->isStayKeyDown(VK_UP))
 	{
-		_y -= _speed;
+		//만약에 사다리에 캐릭터가 매달려있고, 위로 올라가는 중이라면
+		if (_isladderUse && _isladderup)
+		{
+			_y -= _speed;
+			//만약에 사다리의 인덱스가 0보다 크거나 같고, 최대 개수보다는 작을때
+			if (0 <= _ladderIndex && _ladderIndex < _ladderRc.size())
+			{
+				//만약에 사다리의 윗쪽 값보다 캐릭터의 하단값이 같거나 작다면
+				if (_ladderRc[_ladderIndex]->top >= _playerRect.bottom)
+				{
+					//캐릭터의 상태는 사다리 끝이 되고, 사다리 끝 체크 불값을 true로 바꿔준다.
+					_state = PLAYER_LADDER_END;
+					_isUeladder = true;
+					EricAniStart("ladder_end");
+				}
+			}
+		}
 	}
 	//=================================================== 리셋
 	if (KEYMANAGER->isOnceKeyUp(VK_UP))
 	{
-		KEYANIMANAGER->resume("player_eric", "ladder_up");
+		//키를 때면 올라가고있지 않으므로 변수를 false처리한다.
+		_isladderup = false;
+		KEYANIMANAGER->pause("player_eric", "ladder_up");
+	}
+	//=================================================== 예외처리
+	if (_state == PLAYER_LADDER_END)
+	{
+		if (_EricMotion->isPlay() == false)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			EricAniStart("idleright");
+		}
+		//캐릭터의 상태가 사다리끝에 도착했으니 사다리에 매달려 있는것도 아니고, 올라가지도 않고 있으니 체크변수를 false로 변경
+		_isladderup = false;
+		_isladderUse = false;
 	}
 }
 
+
 void player_Eric::downMove(object * ladder)
 {
-	/*
-	if (_isladderchk)
+	_ladder = ladder;
+	RECT temp;
+	//=================================================== 상태 및 좌표 세팅
+	if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
 	{
-		if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
+		//만약에 캐릭터의 상태가 아래와 같을때
+		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT ||
+			_state == PLAYER_MOVE_LEFT || _state == PLAYER_MOVE_RIGHT ||
+			_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT ||
+			_state == PLAYER_LADDER_UP || _state == PLAYER_LADDER_DOWN)
 		{
-			_x = ladder->getX();
-		}
-		if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-		{
-			_speed = MIN_SPEED;
-			_y += _speed;
+			for (int i = 0; i < _ladderRc.size(); ++i)
+			{
+				//만약에 사다리렉트와 캐릭터 렉트가 부딪혔을때
+				if (IntersectRect(&temp, _ladderRc[i], &_playerRect))
+				{
+					// 플레이어가 사다리로 내려가고 있지 않다면 
+					if (!_isladderdown)
+					{
+						//몇번째의 사다리인지 체크하기위해 인덱스 설정
+						_ladderIndex = i;
+						//캐릭터의 x 좌표를 사다리의 x좌표로 맞추어준다.
+						float ladderX = _ladderRc[i]->left + (_ladderRc[i]->right - _ladderRc[i]->left) / 2;
+						_x = ladderX;
+						//캐릭터의 상태를 사다리 타는중으로 변경하면서 사다리에 매달리는 애니메이션을 출력해주자
+						_state = PLAYER_LADDER_DOWN;
+						EricAniStart("ladder_down");
+						//캐릭터는 사다리에 매달려 있고, 올라가고 있으므로 체크용 불값도 변경
+						_isladderUse = true;
+						_isladderdown = true;
+					}
+				}
+			}
 		}
 	}
-	*/
-	//만약에 아래쪽키를 누르면 아래로 이동해
+	//=================================================== 실제 움직임 구현
 	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
 	{
-		_y += _speed;
+		//만약에 사다리에 캐릭터가 매달려있고, 위로 올라가는 중이라면
+		if (_isladderUse && _isladderdown)
+		{
+			_y += _speed;
+			//만약에 사다리의 인덱스가 0보다 크거나 같고, 최대 개수보다는 작을때
+			if (0 <= _ladderIndex && _ladderIndex < _ladderRc.size())
+			{
+				//만약에 사다리의 윗쪽 값보다 캐릭터의 하단값이 같거나 크다면
+				if (_ladderRc[_ladderIndex]->bottom <= _playerRect.bottom)
+				{
+					//캐릭터의 상태는 사다리 끝이 되고, 사다리 끝 체크 불값을 true로 바꿔준다.
+					_state = PLAYER_IDLE_RIGHT;
+					_isDeladder = true;
+					EricAniStart("idleright");
+				}
+			}
+		}
+	}
+	//=================================================== 리셋
+	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
+	{
+		//키를 때면 올라가고있지 않으므로 변수를 false처리한다.
+		_isladderdown = false;
+		KEYANIMANAGER->pause("player_eric", "ladder_down");
+	}
+	//=================================================== 예외처리
+	if (_state == PLAYER_IDLE_RIGHT)
+	{
+		_isladderup = false;
+		_isladderUse = false;
 	}
 }
 
@@ -656,6 +802,8 @@ void player_Eric::EricAniinit()
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "ladder_up", "player_eric", ladder_up, 4, 10, true);
 	int ladder_down[] = { 69,68,67,66 };
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "ladder_down", "player_eric", ladder_down, 4, 10, true);
+	int ladder_end[] = { 70, 71 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "ladder_end", "player_eric", ladder_end, 2, 2, false);
 	int head_butt_right[] = { 33,34,35,36,37,38,39,40 };
 	KEYANIMANAGER->addArrayFrameAnimation("player_eric", "head_butt_right", "player_eric", head_butt_right, 8, 10, false);
 	int head_butt_left[] = { 44,45,46,47,48,49,50,51 };
