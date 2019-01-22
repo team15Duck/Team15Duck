@@ -1,28 +1,36 @@
 #pragma once
 #include "playerBase.h"
 
-//class objectManager;
 
 class player_Baleog : public playerBase
 {
 private:
-
 	animation*		_playerAni;
 	const char*		_imageKey;
 	const char*		_aniImageKey;
 
-	float			_gravity;				//떨어질때 중력값이 필요해영
+	//float			_gravity;				//떨어질때 중력값이 필요해영
+	float			_acceleration;			//가속도
+	float			_minSpeed;				//최저속도
+	float			_maxSpeed;				//최고속도
+
+	float			_fallStartY;			//떨어지기 시작할때 높이를 저장할 변수
+	float			_curFallingY;				//착지한 곳의 높이	
+	float			_damageHeight;			//데미지를 입는 높이
 
 
 	bool			_isGround;				//바닥에 붙어있숑?
 	bool			_isChangeAni;			//애니메이션 바뀜?
 	bool			_isPushWall;			//벽 미는 중임?
 	bool			_isLadder;				//사다리 탔음?
+	//bool			_isLadderDownEnd;		//사다리 아래쪽임?
+
 	bool			_isRight;				//사다리 올라가고 나서 나오는 아이들 모션때문에 들어간 bool 값
+	bool			_isFire;				//발사했냐?
 
+	int				_ladderIndex;			//충돌된 사다리 인덱스 번호
 
-
-	//objectManager*	_object;
+	
 
 public:
 	player_Baleog();
@@ -64,7 +72,8 @@ public:
 	virtual void collisionLadder(vector<RECT*> ladder);
 	virtual void attackKey();
 
-	//링크할 함수
-	//void setObjectAdderssLink(objectManager* obj) { _object = obj; }
+	bool getIsRight() { return _isRight; }
+	virtual bool getIsFire() override;
+	virtual void setIsFire(bool isFire) override;
 };
 
