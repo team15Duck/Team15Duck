@@ -11,14 +11,13 @@ private:
 	bool _isLeftCollision;		//왼쪽 부딪혔는지?
 	bool _isRightCollision;		//오른쪽 부딪혔는지?
 	bool _isAniStart;			//모션 시작했는지?
-
-	bool _isFloor;
-	bool _isLadderBottom;
-
-	float _accleration;
-	float _minSpeed;
-	float _maxSpeed;
-	float _shieldGravity;
+	bool _isFloor;				//바닥인지?
+	bool _isLadderBottom;		//사다리 밑인지?
+								
+	float _accleration;			//가속도
+	float _minSpeed;			//최저속도
+	float _maxSpeed;			//최고속도
+	float _shieldGravity;		//방패중력
 
 public:
 	player_Olaf();
