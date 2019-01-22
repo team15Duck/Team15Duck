@@ -47,6 +47,7 @@ HRESULT testScene::init()
 	_em->setPixelDataAdressLink(_pixelMap);
 	_em->setPlayerManagerAdressLink(_pm);
 
+	_pm->setPixelDataLink(_pixelMap);
 	_pm->setMainUIAdressLink(_mainUI);
 	_pm->setItemManagerLink(_itemManager);
 	_pm->setObjectManagerLink(_objManager);
