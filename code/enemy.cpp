@@ -71,7 +71,7 @@ void enemy::move()
 	_rc = RectMakeCenter(_pos.x, _pos.y, 62, 62);
 }
 
-bool enemy::isFire(float x, float y)
+int enemy::isFire(float x, float y)
 {
 	_fireTimeCount += TIMEMANAGER->getElpasedTime();
 	if (_fireTimeCount >= _fireTimeDelay)
@@ -84,7 +84,7 @@ bool enemy::isFire(float x, float y)
 		_state = ENEMY_LEFT_ATTACK;
 		_ani = KEYANIMANAGER->findAnimation(_aniType, "enemyLeftAttack");
 		_ani->start();
-		return true;
+		return 1;
 	}
 	else if (_state == ENEMY_RIGHT_MOVE && x > _pos.x && x - _pos.x < 300 && y - 35 < _pos.y && _pos.y < y + 35 && _isAttack)
 	{
@@ -92,9 +92,9 @@ bool enemy::isFire(float x, float y)
 		_state = ENEMY_RIGHT_ATTACK;
 		_ani = KEYANIMANAGER->findAnimation(_aniType, "enemyRightAttack");
 		_ani->start();
-		return true;
+		return 2;
 	}
-	else return false;
+	else return 0;
 }
 
 void enemy::enemyAniInit()

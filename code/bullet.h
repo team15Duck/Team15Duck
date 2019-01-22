@@ -36,13 +36,18 @@ public:
 	//HRESULT init(POINTF pos);
 	
 	HRESULT init(image* img, image* pixelData, bool isRight, POINTF p);
+	HRESULT init2(image* img, image* pixelData, bool isRight, POINTF p);
 	void release();
 	void update();
+	void update2();
 	void render();
+	void render2();
 
 	//void fire();
 	void move();
+	void move2();
 	void pixelCollition();
+	void pixelCollition2();
 	bool isAlive() { return _isAlive; }
 
 	POINTF getPos() { return _pos; }

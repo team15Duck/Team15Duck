@@ -44,7 +44,7 @@ public:
 	void render();
 
 	void move();
-	bool isFire(float x, float y);			//총알 발사할지 말지 판단해줄 함수 트루로 뱉는순간 공격애니메이션 재생해주고  원래 애니메이션 틀어주면됨
+	int isFire(float x, float y);			//총알 발사할지 말지 판단해줄 함수 트루로 뱉는순간 공격애니메이션 재생해주고  원래 애니메이션 틀어주면됨
 	
 	void enemyAniInit();
 
@@ -53,6 +53,7 @@ public:
 	bool getIsAlive() { return _isAlive; }
 	void setIsAlive(bool alive) { _isAlive = alive; }
 
+	ENEMY_STATE getState() { return _state; }
 	void setState(ENEMY_STATE state) { _state = state; }
 	
 	animation* getAni() { return _ani; }

@@ -54,6 +54,17 @@ HRESULT bullet::init(image * img, image * pixelData, bool isRight, POINTF p)
 	return S_OK;
 }
 
+HRESULT bullet::init2(image * img, image * pixelData, bool isRight, POINTF p)
+{
+	_bulletImage = img;
+	_pixelData = pixelData;
+	_isRight = isRight;
+	_pos = p;
+	_isAlive = true;
+	_bulletRc = RectMakeCenter(_pos.x, _pos.y, _bulletImage->GetWidth(), _bulletImage->GetHeight());
+	return S_OK;
+}
+
 void bullet::release()
 {
 }
@@ -72,10 +83,21 @@ void bullet::update()
 	_bulletRc = RectMakeCenter(_pos.x, _pos.y, ARROW_WIDTH, ARROW_HEIGHT);
 }
 
+void bullet::update2()
+{
+	move2();
+	_bulletRc = RectMakeCenter(_pos.x, _pos.y, _bulletImage->GetWidth(), _bulletImage->GetHeight());
+}
+
 void bullet::render()
 {
 	Rectangle(CAMERA->getMemDC(), _bulletRc, false);
 	_bulletImage->aniRender(CAMERA->getMemDC(), _pos.x - _bulletImage->getFrameWidth() / 2, _pos.y - _bulletImage->getFrameHeight() / 2, _animation);
+}
+
+void bullet::render2()
+{
+	_bulletImage->render(CAMERA->getMemDC(), _pos.x, _pos.y);
 }
 
 
@@ -84,11 +106,24 @@ void bullet::move()
 	pixelCollition();
 	if (_isRight)
 	{
-		_pos.x += _bulletSpeed;
+		_pos.x += BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
 	}
 	else
 	{
-		_pos.x -= _bulletSpeed;		
+		_pos.x -= BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+	}
+}
+
+void bullet::move2()
+{
+	pixelCollition2();
+	if (_isRight)
+	{
+		_pos.x += BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
+	}
+	else
+	{
+		_pos.x -= BULLET_SPEED * TIMEMANAGER->getElpasedTime();;
 	}
 }
 
@@ -108,7 +143,7 @@ void bullet::pixelCollition()
 			int g = GetGValue(color);
 			int b = GetBValue(color);
 
-			if ((r == 0 && g == 255 && b == 255) || (r == 255 && g == 0 && b == 255))
+			if ((r == 0 && g == 255 && b == 255) || (r == 255 && g == 0 && b == 255) || (r == 255 && g == 255 && b == 0))
 			{
 				_isBroking = true;
 				_bulletSpeed = 0.f;
@@ -130,12 +165,52 @@ void bullet::pixelCollition()
 			int b = GetBValue(color);
 
 			if (   (r == 0 && g == 255 && b == 255)
-				|| (r == 255 && g == 0 && b == 255))
+				|| (r == 255 && g == 0 && b == 255) || (r == 255 && g == 255 && b == 0))
 			{
 				_isBroking = true;
 				_bulletSpeed = 0.f;
 				_animation = KEYANIMANAGER->findAnimation("bullet", "brokenBulletLeft");
 				_animation->start();
+				break;
+			}
+		}
+	}
+}
+
+void bullet::pixelCollition2()
+{
+	if (_isRight)
+	{
+		//오른쪽갈떄 픽셀검사	(벽)
+		for (int i = _bulletRc.right - 5; i < _bulletRc.right; ++i)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _pos.y);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+
+			if ((r == 0 && g == 255 && b == 255) || (r == 255 && g == 0 && b == 255) || (r == 255 && g == 255 && b == 0))
+			{
+				_isAlive = false;
+				break;
+			}
+		}
+	}
+	else
+	{
+		//왼쪽갈때 픽셀검사(벽)
+		for (int i = _bulletRc.left + 5; i > _bulletRc.left; --i)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _pos.y);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+
+			if ((r == 0 && g == 255 && b == 255) || (r == 255 && g == 0 && b == 255) || (r == 255 && g == 255 && b == 0))
+			{
+				_isAlive = false;
 				break;
 			}
 		}

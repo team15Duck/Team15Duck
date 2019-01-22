@@ -22,8 +22,6 @@ public:
 	void update();
 	void render();
 
-	void bulletFire();
-
 	vector<enemy*> getVEnemy() { return _vEnemy; }
 
 	void setPlayerManagerAdressLink(playerManager* pm) { _pm = pm; }
