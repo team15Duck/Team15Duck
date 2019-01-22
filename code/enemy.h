@@ -25,7 +25,7 @@ private:
 
 	image*		_img;
 	animation*  _ani;				//애니메이션
-
+	string		_aniType;
 	bool		_isAlive;			//살았니 죽었니
 
 	POINTF*		_playerPos[3];		//플레이어 좌표의 주소를 연결시켜서 판단하면 됨
@@ -38,7 +38,7 @@ public:
 	enemy();
 	~enemy();
 
-	HRESULT init(float posX, float posY, float startX, float endX);
+	HRESULT init(int num, float posX, float posY, float startX, float endX);
 	void release();
 	void update();
 	void render();
@@ -58,6 +58,8 @@ public:
 	animation* getAni() { return _ani; }
 	void setAni(animation* ani) { _ani = ani; }
 
+	string getAniType() { return _aniType; }
+	
 	static void enemyRightAttack(void* obj);
 	static void enemyLeftAttack(void* obj);
 };

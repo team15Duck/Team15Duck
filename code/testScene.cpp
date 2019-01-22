@@ -17,6 +17,7 @@ HRESULT testScene::init()
 	_pixelMap = IMAGEMANAGER->addImage("stage1PixelMap", "image/stage1PixelMap.bmp", 2048, 1528, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
 
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("mapV2_topLayer", "image/mapV2_top.bmp", 2048, 1528, true, RGB(255, 0, 255));
 
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
 	
@@ -100,16 +101,19 @@ void testScene::render()
 	//주의사항 : 여태 우리는 getMemDC()에 그려왔습니다
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
-	if (KEYMANAGER->isToggleKey(VK_F6))
-	{
-		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
-	}
+
 	_itemManager->render();
 	_objManager->render();
 	_em->render();
 	_pm->render();
-	_mainUI->render();
+	IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
+		_pm->render();
+	}
 
+	_mainUI->render();
 
 	char str[256];
 	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
