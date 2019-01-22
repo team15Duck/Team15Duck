@@ -27,8 +27,10 @@ private:
 	bool _isFCollision;		//죽는 바닥 충돌 체크용
 
 	//이동 예외처리용 불값
-	bool _isRightMove;
-	bool _isLeftMove;
+	bool _isRightMove;		//오른쪽이동
+	bool _isLeftMove;		//왼쪽이동
+	bool _isUpMove;			//위로이동
+	bool _isDownMove;		//아래로 이동
 
 	//스킬 확인용 불값
 	bool _isRSkill;
