@@ -13,11 +13,12 @@ private:
 	float			_bulletSpeed;	//스피드
 	
 	bool			_isRight;		//오른쪽임?
-	bool			_isAlive;		// 살아있냐?
-	
+	bool			_isAlive;		//살아있냐?
+	bool			_isBroking;		//부서지고있니?
+
 	image*			_bulletImage;	//화살 이미지
 	image*			_pixelData;		//픽셀데이터
-
+	animation*		_animation;
 
 public:
 	bullet();

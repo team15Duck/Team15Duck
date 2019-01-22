@@ -2,6 +2,7 @@
 #include "player_Baleog.h"
 
 player_Baleog::player_Baleog()
+: _isFire(false)
 {
 }
 
