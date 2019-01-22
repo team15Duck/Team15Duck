@@ -110,7 +110,11 @@ void testScene::render()
 	_em->render();
 	_pm->render();
 
-	IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+	if (!KEYMANAGER->isToggleKey(VK_F6))
+	{
+		IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
+	}
+
 	_mainUI->render();
 
 	char str[256];
