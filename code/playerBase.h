@@ -1,6 +1,7 @@
 #pragma once
 #include "item.h"
-#include "object.h"
+//#include "mainUI.h"
+//#include "objectManager.h"
 
 //알아서 조절하셈
 #define MAX_SPEED	350.0f
@@ -80,6 +81,9 @@ enum PLAYER_STATE
 
 };
 
+class objectManager;
+class object;
+class mainUI;
 class playerBase
 {
 protected:
@@ -106,8 +110,7 @@ protected:
 
 	bool			_isLadder;					//사다리 타고있니?
 	bool			_isLadderTop;				//사다리 맨위에 있니?
-	bool			_isAttackRight;					//오른쪽이냐?
-
+	bool			_isAttackRight;
 
 	int				_lifeCount;					//체력
 	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
@@ -116,7 +119,11 @@ protected:
 
 	item*			_invenItem[4];
 
+	mainUI*			_mainUI;					//유아이뇨속 아이템처리할거임 
+	objectManager* _objm;						//오브젝트 매니저뇨속 아이템 사용처리할거임 
+
 	vector<RECT*>	_ladderRc;
+	vector<object*>	_objectRc;
 
 public:
 	playerBase();
@@ -155,6 +162,10 @@ public:
 	virtual void setLadderRectAdressLink(RECT* rc);
 	virtual void shieldRender(HDC hdc);
 
+	//오브젝트 사용 충돌 체크용
+	virtual void setObjectRectAdressLink(object* rc);
+	virtual void setObjectManagerAdressLink(objectManager* objm);
+
 	//처맞는함수
 
 	//살았니 죽었니 죽는중이니?
@@ -168,6 +179,7 @@ public:
 	float* getPosX() { return &_x; }
 	float* getPosY() { return &_y; }
 
+	void setMainUILink(mainUI* ui) { _mainUI = ui; }
 	PLAYER_NAME getPlayerName() { return _name; }
 
 	void setPixelDataLink(image* img) { _pixelData = img; }

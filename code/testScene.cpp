@@ -17,10 +17,9 @@ HRESULT testScene::init()
 	_pixelMap = IMAGEMANAGER->addImage("stage1PixelMap", "image/stage1PixelMap.bmp", 2048, 1528, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
 
 	IMAGEMANAGER->addImage("mapV2", "image/mapV2.bmp", 2048, 1528, false, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("mapV2_topLayer", "image/mapV2_top.bmp", 2048, 1528, true, RGB(255, 0, 255));
 
 	CAMERA->setMaxMapSize(2048, 1528 + 128);
-	
+
 	_pm = new playerManager;
 	_pm->init();
 
@@ -52,12 +51,26 @@ HRESULT testScene::init()
 	_pm->setItemManagerLink(_itemManager);
 	_pm->setObjectManagerLink(_objManager);
 
+	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setMainUILink(_mainUI);
+	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectManagerAdressLink(_objManager);
+
 	for (int i = 0; i < _objManager->getFieldLadders().size(); ++i)
 	{
 		RECT* adress = _objManager->getFieldLadders()[i]->getObjectRect();
 		_pm->getVPlayer()[PLAYER_NAME_ERIC]->setLadderRectAdressLink(adress);
 		_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setLadderRectAdressLink(adress);
 		_pm->getVPlayer()[PLAYER_NAME_OLAF]->setLadderRectAdressLink(adress);
+	}
+
+	for (int i = 0; i < _objManager->getFieldObjects().size(); ++i)
+	{
+		OBJECT_TYPE type = _objManager->getFieldObjects()[i]->geObjectType();
+
+		if ((OBJECT_TYPE_LOCK_RED <= type) && (type <= OBJECT_TYPE_LOCK_BLUE))
+		{
+			object* adress = _objManager->getFieldObjects()[i];
+			_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectRectAdressLink(adress);
+		}
 	}
 
 	return S_OK;
@@ -82,7 +95,7 @@ void testScene::update()
 	{
 		_pm->keyUpdate();
 	}
-	
+
 	_mainUI->update();
 
 	_objManager->update();
@@ -102,26 +115,23 @@ void testScene::render()
 	//주의사항 : 여태 우리는 getMemDC()에 그려왔습니다
 	//하지만 우리는 이제 카메라 개념을 쓰기 때문에 CAMERA->getMemDC()에 그리도록 합시다
 	IMAGEMANAGER->findImage("mapV2")->render(CAMERA->getMemDC(), 0, 0);
-
+	if (KEYMANAGER->isToggleKey(VK_F6))
+	{
+		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
+	}
 	_itemManager->render();
 	_objManager->render();
 	_em->render();
 	_pm->render();
-	IMAGEMANAGER->findImage("mapV2_topLayer")->render(CAMERA->getMemDC(), 0, 0);
-	if (KEYMANAGER->isToggleKey(VK_F6))
-	{
-		_pixelMap->render(CAMERA->getMemDC(), 0, 0);
-		_pm->render();
-	}
-
 	_mainUI->render();
+
 
 	char str[256];
 	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
 	sprintf_s(str, "cameraposX : %.1f", CAMERA->getPosX());
 	TextOut(CAMERA->getMemDC(), 0, 60, str, strlen(str));
 	sprintf_s(str, "cameraposY : %.1f", CAMERA->getPosY());
-	TextOut(CAMERA->getMemDC(),0, 80, str, strlen(str));
+	TextOut(CAMERA->getMemDC(), 0, 80, str, strlen(str));
 	sprintf_s(str, "cameraAngle : %.1f", CAMERA->getAngle());
 	TextOut(CAMERA->getMemDC(), 0, 100, str, strlen(str));
 	//------------------------------------------------------------------------------

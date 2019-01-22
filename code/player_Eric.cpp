@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "player_Eric.h"
 #include "objectManager.h"
+#include "mainUI.h"
 
 
 player_Eric::player_Eric()
@@ -220,7 +221,76 @@ void player_Eric::keyPressE()
 {
 	if (KEYMANAGER->isOnceKeyDown('E'))
 	{
+		int index = _mainUI->getInvenPos(PLAYER_NAME_ERIC);
 
+		if (_invenItem[index] != nullptr)
+		{
+			switch (_invenItem[index]->getItemType())
+			{
+			case ITEM_TYPE_FRUIT_SMALL: case ITEM_TYPE_FRUIT_BIG:
+			{
+				if (_lifeCount == 3)
+				{
+					return;
+				}
+				else
+				{
+					_lifeCount += 1;
+					SAFE_RELEASE(_invenItem[index]);
+					SAFE_DELETE(_invenItem[index]);
+					_mainUI->setEricItemInfo(_invenItem);
+				}
+				break;
+			}
+			case ITEM_TYPE_MEAT:
+			{
+				if (_lifeCount == 3)
+				{
+					return;
+				}
+				else
+				{
+					if (_lifeCount == 2)
+					{
+						_lifeCount += 1;
+					}
+					else
+					{
+						_lifeCount += _invenItem[index]->getItemValue();
+					}
+					SAFE_RELEASE(_invenItem[index]);
+					SAFE_DELETE(_invenItem[index]);
+					_mainUI->setEricItemInfo(_invenItem);
+				}
+				break;
+			}
+			case ITEM_TYPE_SHIELD:
+			{
+				break;
+			}
+			case ITEM_TYPE_KEY_RED:
+			case ITEM_TYPE_KEY_YELLOW:
+			case ITEM_TYPE_KEY_BLUE:
+			{
+				RECT temp;
+				for (int i = 0; i < _objectRc.size(); ++i)
+				{
+					if (IntersectRect(&temp, _objectRc[i]->getObjectRect(), &_playerRect))
+					{
+						if (_objectRc[i]->getObjectValue() == _invenItem[index]->getItemValue())
+						{
+							_objm->interactionObject(_objectRc[i]);
+							SAFE_RELEASE(_invenItem[index]);
+							SAFE_DELETE(_invenItem[index]);
+							_mainUI->setEricItemInfo(_invenItem);
+						}
+					}
+				}
+				break;
+			}
+
+			}
+		}
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "playerBase.h"
+#include "objectManager.h"
 
 
 playerBase::playerBase()
@@ -110,4 +111,14 @@ void playerBase::setLadderRectAdressLink(RECT * rc)
 
 void playerBase::shieldRender(HDC hdc)
 {
+}
+
+void playerBase::setObjectRectAdressLink(object * rc)
+{
+	_objectRc.push_back(rc);
+}
+
+void playerBase::setObjectManagerAdressLink(objectManager * objm)
+{
+	_objm = objm;
 }

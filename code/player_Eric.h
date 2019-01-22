@@ -42,6 +42,7 @@ private:
 	animation* _EricMotion;	//에릭모션
 	object* _ladder;
 
+
 public:
 	player_Eric();
 	~player_Eric();
