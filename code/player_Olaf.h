@@ -13,9 +13,12 @@ private:
 	bool _isAniStart;			//모션 시작했는지?
 
 	bool _isFloor;
+	bool _isLadderBottom;
 
-	float _shieldX;				//방패 X좌표
-	float _shieldY;				//방패 Y좌표
+	float _accleration;
+	float _minSpeed;
+	float _maxSpeed;
+	float _shieldGravity;
 
 public:
 	player_Olaf();
@@ -33,7 +36,7 @@ public:
 	virtual void keyPressD() override;
 
 
-	// ========== 함수추가 ==========
+	// ========== 올라프와 방패 ==========
 
 	//올라프 초기화
 	void initOlaf();
