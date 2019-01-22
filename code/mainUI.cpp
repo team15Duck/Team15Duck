@@ -186,3 +186,8 @@ int mainUI::getInvenPos(PLAYER_NAME name)
 {
 	return _itemSelect[name].invenPos;
 }
+
+void mainUI::setInvenPos(PLAYER_NAME name, int pos)
+{
+	_itemSelect[name].invenPos = pos;
+}

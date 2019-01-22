@@ -58,6 +58,7 @@ public:
 	void setOlafUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_OLAF] = alive; }
 
 	int getInvenPos(PLAYER_NAME name);
+	void setInvenPos(PLAYER_NAME name, int pos);
 
 };
 
