@@ -3,6 +3,7 @@
 #include "itemManager.h"
 #include "objectManager.h"
 #include "playerManager.h"
+#include "enemyManager.h"
 #include "mainUI.h"
 
 #define STAGE1_MAPSIZEX 2048
@@ -20,7 +21,7 @@ private:
 	playerManager*	_pm;
 	itemManager*	_itemManager;
 	objectManager*	_objManager;
-
+	enemyManager*	_em;
 public:
 	testScene();
 	~testScene();

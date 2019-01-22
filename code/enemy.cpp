@@ -11,9 +11,15 @@ enemy::~enemy()
 {
 }
 
-HRESULT enemy::init(float startX, float endX)
+HRESULT enemy::init(float posX, float posY, float startX, float endX)
 {
-
+	_pos.x = posX;
+	_pos.y = posY;
+	_startX = startX;
+	_endX = endX;
+	_fireTimeCount = 0;
+	_fireTimeDelay = 5.0f;
+	enemyAniInit();
 	return S_OK;
 }
 
@@ -23,11 +29,13 @@ void enemy::release()
 
 void enemy::update()
 {
+	KEYANIMANAGER->update("enemy");
 	move();
 }
 
 void enemy::render()
 {
+	_img->aniRender(CAMERA->getMemDC(), _pos.x - 31, _pos.y - 31, _ani);
 }
 
 void enemy::move()
@@ -35,29 +43,92 @@ void enemy::move()
 	switch (_state)
 	{
 		case ENEMY_LEFT_MOVE:
-			//이동 + 이동조건 작성
+			if (_pos.x > _startX)
+			{
+				_pos.x -= TIMEMANAGER->getElpasedTime() * ENEMY_SPEED;
+				if (_pos.x <= _startX)
+				{
+					_state = ENEMY_RIGHT_MOVE;
+					_ani = KEYANIMANAGER->findAnimation("enemy", "enemyRightMove");
+					_ani->start();
+				}
+			}
 		break;
 		case ENEMY_RIGHT_MOVE:
-			//이동 + 이동조건 작성
+			if (_pos.x < _endX)
+			{
+				_pos.x += TIMEMANAGER->getElpasedTime() * ENEMY_SPEED;
+				if (_pos.x >= _endX)
+				{
+					_state = ENEMY_LEFT_MOVE;
+					_ani = KEYANIMANAGER->findAnimation("enemy", "enemyLeftMove");
+					_ani->start();
+				}
+			}
 		break;
 	}
+	_rc = RectMakeCenter(_pos.x, _pos.y, 62, 62);
 }
 
-bool enemy::isFire()
+bool enemy::isFire(float x, float y)
 {
-	//적은 방향에 따라 그범위안에 캐릭터가 들어오면
-//반응하고 공격한뒤 다시 움직인다
-//ex) _fireTimeCount += TIMEMANAGER->getElpasedTime();
-//if(_fireTimeCount == _fireTimeDelay)
-//{
-//	_isAttack = true; _fireTimeCount = 0;
-//}
-//if(_state == ENEMY_LEFT_MOVE && 플레이어X < _posX && _posX - 플레이어X < 공격거리 && 플레이어Y - 렉트크기절반  < _posY && _posY < 플레이어Y + 렉트크기절반 && attack)
-//{
-//  	 _isAttack = false;
-//		//공격애니메이션 발동
-//		return true;
-//}
-//else return false;
-	return false;
+	_fireTimeCount += TIMEMANAGER->getElpasedTime();
+	if (_fireTimeCount >= _fireTimeDelay)
+	{
+		_isAttack = true; _fireTimeCount = 0;
+	}
+	if(_state == ENEMY_LEFT_MOVE && x < _pos.x && _pos.x - x < 300 && y - 35  < _pos.y && _pos.y < y + 35 && _isAttack)
+	{
+	  	_isAttack = false;
+		_state = ENEMY_LEFT_ATTACK;
+		_ani = KEYANIMANAGER->findAnimation("enemy", "enemyLeftAttack");
+		_ani->start();
+		return true;
+	}
+	else if (_state == ENEMY_RIGHT_MOVE && x > _pos.x && x - _pos.x < 300 && y - 35 < _pos.y && _pos.y < y + 35 && _isAttack)
+	{
+		_isAttack = false;
+		_state = ENEMY_RIGHT_ATTACK;
+		_ani = KEYANIMANAGER->findAnimation("enemy", "enemyRightAttack");
+		_ani->start();
+		return true;
+	}
+	else return false;
+}
+
+void enemy::enemyAniInit()
+{
+	_img = IMAGEMANAGER->addFrameImage("enemy", "image/enemy.bmp", 620, 62, 10, 1, true, RGB(255, 0, 255));
+	KEYANIMANAGER->addAnimationType("enemy");
+
+	int arrEnemyRightMove[] = { 0, 1, 2 };
+	KEYANIMANAGER->addArrayFrameAnimation("enemy", "enemyRightMove", "enemy", arrEnemyRightMove, 3, 8, true);
+	int arrEnemyLeftMove[] = { 9, 8, 7 };
+	KEYANIMANAGER->addArrayFrameAnimation("enemy", "enemyLeftMove", "enemy", arrEnemyLeftMove, 3, 8, true);
+
+
+	int arrEnemyRightAttack[] = { 3, 4 };
+	KEYANIMANAGER->addArrayFrameAnimation("enemy", "enemyRightAttack", "enemy", arrEnemyRightAttack, 2, 10, false, enemyRightAttack, this);
+	int arrEnemyLeftAttack[] = { 6, 5 };
+	KEYANIMANAGER->addArrayFrameAnimation("enemy", "enemyLeftAttack", "enemy", arrEnemyLeftAttack, 2, 10, false, enemyLeftAttack, this);
+
+	_state = ENEMY_LEFT_MOVE;
+	_ani = KEYANIMANAGER->findAnimation("enemy", "enemyLeftMove");
+	_ani->start();
+}
+
+void enemy::enemyRightAttack(void* obj)
+{
+	enemy* e = (enemy*)obj;
+	e->setState(ENEMY_RIGHT_MOVE);
+	e->setAni(KEYANIMANAGER->findAnimation("enemy", "enemyRightMove"));
+	e->getAni()->start();
+}
+
+void enemy::enemyLeftAttack(void* obj)
+{
+	enemy* e = (enemy*)obj;
+	e->setState(ENEMY_LEFT_MOVE);
+	e->setAni(KEYANIMANAGER->findAnimation("enemy", "enemyLeftMove"));
+	e->getAni()->start();
 }
