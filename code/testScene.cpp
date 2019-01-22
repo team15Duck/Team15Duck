@@ -13,6 +13,8 @@ testScene::~testScene()
 
 HRESULT testScene::init()
 {
+	_vBullets.clear();
+
 	IMAGEMANAGER->addImage("stage1PixelData", "image/stage1PixelData.bmp", 2048, 1528, false, RGB(255, 0, 255));
 	_pixelMap = IMAGEMANAGER->addImage("stage1PixelMap", "image/stage1PixelMap.bmp", 2048, 1528, false, RGB(255, 0, 255));		//이녀석의 정보를 가져와서 판정할 것.
 
@@ -73,6 +75,11 @@ HRESULT testScene::init()
 		}
 	}
 
+
+	// 벽에서 발사되는 총알
+	_fireTime = 0.f;
+	_fireReloadTime = 2.5f;
+
 	return S_OK;
 }
 
@@ -81,6 +88,18 @@ void testScene::release()
 	_itemManager->release();
 	_objManager->release();
 	_em->release();
+
+	for (_iterBullet = _vBullets.begin(); _vBullets.end() != _iterBullet; )
+	{
+		bullet* blt = (*_iterBullet);
+		{
+			_iterBullet = _vBullets.erase(_iterBullet);
+
+			SAFE_RELEASE(blt);
+			SAFE_DELETE(blt);
+		}
+	}
+	_vBullets.clear();
 }
 
 void testScene::update()
@@ -100,6 +119,9 @@ void testScene::update()
 
 	_objManager->update();
 	_em->update();
+
+	fireBullet();
+	updateBullet();
 }
 
 void testScene::render()
@@ -122,9 +144,9 @@ void testScene::render()
 	_itemManager->render();
 	_objManager->render();
 	_em->render();
+	renderBullet();
 	_pm->render();
 	_mainUI->render();
-
 
 	char str[256];
 	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
@@ -135,4 +157,49 @@ void testScene::render()
 	sprintf_s(str, "cameraAngle : %.1f", CAMERA->getAngle());
 	TextOut(CAMERA->getMemDC(), 0, 100, str, strlen(str));
 	//------------------------------------------------------------------------------
+}
+
+void testScene::fireBullet()
+{
+	_fireTime += TIMEMANAGER->getElpasedTime();
+	if (_fireReloadTime <= _fireTime)
+	{
+		_fireTime = 0.f;
+
+		bullet* blt = new bullet;
+		POINTF pos = {1400.f, 970.f};
+		image* bltImg = IMAGEMANAGER->findImage("bullet");
+		blt->init2(bltImg, _pixelMap, false, pos);
+
+		_vBullets.push_back(blt);
+	}
+}
+
+void testScene::updateBullet()
+{
+	for (_iterBullet = _vBullets.begin(); _vBullets.end() != _iterBullet;)
+	{
+		bullet* blt = (*_iterBullet);
+		if (blt->isAlive())
+		{
+			blt->update2();
+			++_iterBullet;
+		}
+		else
+		{
+			_iterBullet = _vBullets.erase(_iterBullet);
+
+			SAFE_RELEASE(blt);
+			SAFE_DELETE(blt);
+		}
+	}
+}
+
+void testScene::renderBullet()
+{
+	vector<bullet*>::iterator end = _vBullets.end();
+	for (_iterBullet = _vBullets.begin(); end != _iterBullet; ++_iterBullet)
+	{
+		(*_iterBullet)->render2();
+	}
 }
