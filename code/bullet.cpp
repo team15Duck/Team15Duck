@@ -94,9 +94,12 @@ void bullet::move()
 
 void bullet::pixelCollition()
 {
-	if (_isRight && !_isBroking)
+	if (_isBroking)
+		return;
+
+	if (_isRight)
 	{
-		//오른쪽갈떄 픽셀검사
+		//오른쪽갈떄 픽셀검사	(벽)
 		for (int i = _bulletRc.right - 5; i < _bulletRc.right; ++i)
 		{
 			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _pos.y);
@@ -105,19 +108,36 @@ void bullet::pixelCollition()
 			int g = GetGValue(color);
 			int b = GetBValue(color);
 
-			if (r == 0 && g == 255 && b == 255)
+			if ((r == 0 && g == 255 && b == 255) || (r == 255 && g == 0 && b == 255))
 			{
 				_isBroking = true;
-				_bulletSpeed = 0.0f;
+				_bulletSpeed = 0.f;
 				_animation = KEYANIMANAGER->findAnimation("bullet", "brokenBulletRight");
 				_animation->start();
-
 				break;
 			}
 		}
 	}
 	else
 	{
-		//왼쪽갈때 픽셀검사
+		//왼쪽갈때 픽셀검사(벽)
+		for (int i = _bulletRc.left + 5; i > _bulletRc.left; --i)
+		{
+			COLORREF color = GetPixel(_pixelData->getMemDC(), i, _pos.y);
+
+			int r = GetRValue(color);
+			int g = GetGValue(color);
+			int b = GetBValue(color);
+
+			if (   (r == 0 && g == 255 && b == 255)
+				|| (r == 255 && g == 0 && b == 255))
+			{
+				_isBroking = true;
+				_bulletSpeed = 0.f;
+				_animation = KEYANIMANAGER->findAnimation("bullet", "brokenBulletLeft");
+				_animation->start();
+				break;
+			}
+		}
 	}
 }
