@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "player_Olaf.h"
+#include "objectManager.h"
+#include "mainUI.h"
 
 player_Olaf::player_Olaf()
 	:_isAniStart(false)
@@ -59,6 +61,7 @@ void player_Olaf::render()
 	if (KEYMANAGER->isToggleKey(VK_F9))
 	{
 		Rectangle(CAMERA->getMemDC(), _playerRect, false);
+		Rectangle(CAMERA->getMemDC(), _shieldRect, false);
 	}
 	if (KEYMANAGER->isToggleKey(VK_F9))
 	{
@@ -227,7 +230,7 @@ void player_Olaf::keyPressSpace()
 			}
 		}
 	}
-	else
+	else 
 	{
 		if (!_isShieldUp)
 		{
@@ -275,7 +278,222 @@ void player_Olaf::keyPressSpace()
 
 void player_Olaf::keyPressD()
 {
-	//얘는 스페이스기능과 동일하니 스페이스 다 하면 수정하자.. 코드가 넘 길어서 헷갈린다...
+	if (!_isLadder)
+		//사타리를 탄 상태에서는 SPACE 눌러도 상태가 바뀌지 않는다.
+		//방패를 위로 들고 있지 않다면
+	{
+		if (!_isShieldUp)
+		{
+			//스페이스바를 눌렀을때 방패의 위치가 변경된다.
+			if (KEYMANAGER->isOnceKeyDown('D'))
+			{
+				//상태가 변경된다.
+				_isShieldUp = true;
+
+				//플레이어 상태가 오른쪽을 보고 있다면
+				if (_state == PLAYER_IDLE_RIGHT)
+				{
+					_state = PLAYER_SHIELD_IDLE_RIGHT;					//방패를 위로 들고 오른쪽을 본다.
+					startAniOlaf("idle_Shield_Right");
+				}
+				//왼쪽을 보고 있다면
+				if (_state == PLAYER_IDLE_LEFT)
+				{
+					_state = PLAYER_SHIELD_IDLE_LEFT;					//방패를 위로 들고 왼쪽을 본다.
+					startAniOlaf("idle_Shield_Left");
+				}
+				//오른쪽으로 이동하고 있다면
+				if (_state == PLAYER_MOVE_RIGHT)
+				{
+					_state = PLAYER_SHIELD_MOVE_RIGHT;					//방패를 위로 들고 오른쪽으로 이동한다.
+					startAniOlaf("move_Shield_Right");
+				}
+				//왼쪽으로 이동하고 있다면
+				if (_state == PLAYER_MOVE_LEFT)
+				{
+					_state = PLAYER_SHIELD_MOVE_LEFT;					//방패를 위로 들고 왼쪽으로 이동한다.
+					startAniOlaf("move_Shield_Left");
+				}
+				//오른쪽으로 떨어지고 있다면
+				if (_state == PLAYER_FALL_RIGHT)
+				{
+					_state = PLAYER_SHIELD_FALL_RIGHT;					//방패를 위로 들고 오른쪽으로 천천히 떨어진다.
+					startAniOlaf("fall_Shield_Right");
+				}
+				//왼쪽으로 떨어지고 있다면
+				if (_state == PLAYER_FALL_LEFT)
+				{
+					_state = PLAYER_SHIELD_FALL_LEFT;					//방패를 위로 들고 왼쪽으로 천천히 떨어진다.
+					startAniOlaf("fall_Shield_Left");
+				}
+			}
+		}
+		else
+		{
+			//스페이스바를 눌렀을때 방패의 위치가 변경된다.
+			if (KEYMANAGER->isOnceKeyDown('D'))
+			{
+				//상태가 변경된다.
+				_isShieldUp = false;
+
+				//플레이어 상태가 방패를 위로 들고 오른쪽을 보고 있다면
+				if (_state == PLAYER_SHIELD_IDLE_RIGHT)
+				{
+					_state = PLAYER_IDLE_RIGHT;							//오른쪽을 본다.
+					startAniOlaf("idle_Right");
+				}
+				//방패를 위로 들고 왼쪽을 보고 있다면
+				if (_state == PLAYER_SHIELD_IDLE_LEFT)
+				{
+					_state = PLAYER_IDLE_LEFT;							//왼쪽을 본다.
+					startAniOlaf("idle_Left");
+				}
+				//방패를 위로 들고 오른쪽으로 이동하고 있다면
+				if (_state == PLAYER_SHIELD_MOVE_RIGHT)
+				{
+					_state = PLAYER_MOVE_RIGHT;							//오른쪽으로 이동한다.
+					startAniOlaf("move_Right");
+				}
+				//방패를 위로 들고 왼쪽으로 이동하고 있다면
+				if (_state == PLAYER_SHIELD_MOVE_LEFT)
+				{
+					_state = PLAYER_MOVE_LEFT;							//왼쪽으로 이동한다.
+					startAniOlaf("move_Left");
+				}
+				//방패를 위로 들고 오른쪽으로 떨어지고 있다면
+				if (_state == PLAYER_SHIELD_FALL_RIGHT)
+				{
+					_state = PLAYER_FALL_RIGHT;							//오른쪽으로 떨어진다.
+					startAniOlaf("fall_Right");
+				}
+				//방패를 위로 들고 왼쪽으로 떨어지고 있다면
+				if (_state == PLAYER_SHIELD_FALL_LEFT)
+				{
+					_state = PLAYER_FALL_LEFT;							//왼쪽으로 떨어진다.
+					startAniOlaf("fall_Left");
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!_isShieldUp)
+		{
+			//스페이스바를 눌렀을때 방패의 위치가 변경된다.
+			if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+			{
+				//상태가 변경된다.
+				_isShieldUp = true;
+				//오른쪽으로 떨어지고 있다면
+				if (_state == PLAYER_FALL_RIGHT)
+				{
+					_state = PLAYER_SHIELD_FALL_RIGHT;					//방패를 위로 들고 오른쪽으로 천천히 떨어진다.
+					startAniOlaf("fall_Shield_Right");
+				}
+				//왼쪽으로 떨어지고 있다면
+				if (_state == PLAYER_FALL_LEFT)
+				{
+					_state = PLAYER_SHIELD_FALL_LEFT;					//방패를 위로 들고 왼쪽으로 천천히 떨어진다.
+					startAniOlaf("fall_Shield_Left");
+				}
+			}
+		}
+		else
+		{	//스페이스바를 눌렀을때 방패의 위치가 변경된다.
+			if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+			{
+				//상태가 변경된다.
+				_isShieldUp = false;
+				//방패를 위로 들고 오른쪽으로 떨어지고 있다면
+				if (_state == PLAYER_SHIELD_FALL_RIGHT)
+				{
+					_state = PLAYER_FALL_RIGHT;							//오른쪽으로 떨어진다.
+					startAniOlaf("fall_Right");
+				}
+				//방패를 위로 들고 왼쪽으로 떨어지고 있다면
+				if (_state == PLAYER_SHIELD_FALL_LEFT)
+				{
+					_state = PLAYER_FALL_LEFT;							//왼쪽으로 떨어진다.
+					startAniOlaf("fall_Left");
+				}
+			}
+		}
+	}
+}
+
+void player_Olaf::keyPressE()
+{
+	if (KEYMANAGER->isOnceKeyDown('E'))
+	{
+		int num = _mainUI->getInvenPos(PLAYER_NAME_OLAF);
+
+		if (_invenItem[num] != nullptr)
+		{
+			switch (_invenItem[num]->getItemType())
+			{
+				case ITEM_TYPE_FRUIT_SMALL:
+				case ITEM_TYPE_FRUIT_BIG:
+				{
+					if (_lifeCount == 3) 
+						return;
+					else
+					{
+						_lifeCount += 1;
+						SAFE_RELEASE(_invenItem[num]);
+						SAFE_DELETE(_invenItem[num]);
+						_mainUI->setOlafItemInfo(_invenItem);
+					}
+					break;
+				}
+				case ITEM_TYPE_MEAT:
+				{
+					if (_lifeCount == 3)
+						return;
+					else
+					{
+						if(_lifeCount == 2)
+							_lifeCount += 1;
+						else
+						{
+							_lifeCount += 2;
+							SAFE_RELEASE(_invenItem[num]);
+							SAFE_DELETE(_invenItem[num]);
+							_mainUI->setOlafItemInfo(_invenItem);
+						}
+					}
+
+					break;
+				}
+				case ITEM_TYPE_SHIELD:
+				{
+
+					break;
+				}
+				case ITEM_TYPE_KEY_RED:
+				case ITEM_TYPE_KEY_YELLOW:
+				case ITEM_TYPE_KEY_BLUE:
+				{
+					RECT temp;
+					int size = _objectRc.size();
+					for (int i = 0; i < size; i++)
+					{
+						if(IntersectRect(&temp, _objectRc[i]->getObjectRect(), &_playerRect))
+						{
+							if (_objectRc[i]->getObjectValue() == _invenItem[num]->getItemValue())
+							{
+								_objm->interactionObject(_objectRc[i]);
+								SAFE_RELEASE(_invenItem[num]);
+								SAFE_DELETE(_invenItem[num]);
+								_mainUI->setOlafItemInfo(_invenItem);
+							}
+						}
+					}
+					break;
+				}
+
+			}
+		}
+	}
 }
 
 void player_Olaf::noLadder_KeyRight()
@@ -427,13 +645,14 @@ void player_Olaf::ladder_KeyUp()
 {
 	if (KEYMANAGER->isOnceKeyUp(VK_UP))
 	{
-		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		if (!_isLadderTop && !_isLadderBottom && !_isFloor)					// 사다리 타있는 상태
 		{
 			_state = PLAYER_IDLE_RIGHT;
 			_olafMotion->pause();
 		}
 		if (_isLadderTop && !_isLadderBottom)
 		{
+			_isLadderTop = false;
 			_state = PLAYER_IDLE_RIGHT;
 			startAniOlaf("idle_Right");
 		}
@@ -568,6 +787,11 @@ void player_Olaf::ladder_KeyRight()
 	}
 	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
 	{
+		if (_state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+			startAniOlaf("move_Right");
+		}
 		if (!_isLadderTop && !_isLadderBottom)
 		{
 			if (!_isAniStart)
@@ -596,7 +820,12 @@ void player_Olaf::ladder_KeyRight()
 	}
 	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
 	{
-		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT)
+		if (_state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+			startAniOlaf("move_Right");
+		}
+		if (!_isLadderTop && !_isLadderBottom && _isFloor)
 		{
 			_state = PLAYER_MOVE_RIGHT;
 			startAniOlaf("move_Right");
@@ -626,6 +855,7 @@ void player_Olaf::ladder_KeyRight()
 			_state = PLAYER_FALL_RIGHT;
 			startAniOlaf("fall_Right");
 		}
+		
 
 	}
 }
@@ -1730,9 +1960,10 @@ void player_Olaf::playerCollisionLadder()
 			//사다리 맨위에 있을때
 			if (_playerRect.bottom - 5 <= (*_ladderRc[i]).top)
 			{
-				_isLadderTop = true;
-				_isLadderBottom = false;
-				_isLadder = true;
+				
+					_isLadderTop = true;
+					_isLadderBottom = false;
+					_isLadder = true;
 			}
 			//사다리 밑에 있을때
 			else if (_playerRect.bottom + 5 >= (*_ladderRc[i]).bottom)

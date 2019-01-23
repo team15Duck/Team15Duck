@@ -39,6 +39,7 @@ public:
 	virtual void keyPressMove() override;
 	virtual void keyPressSpace() override;
 	virtual void keyPressD() override;
+	virtual void keyPressE() override;
 
 	//상세키입력
 	// 1. 방패 X + 사다리 X
