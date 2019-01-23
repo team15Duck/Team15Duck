@@ -35,6 +35,7 @@ private:
 	//스킬 확인용 불값
 	bool _isRSkill;
 	bool _isLSkill;
+	bool _isSign;
 
 
 	POINT _size;
@@ -68,12 +69,15 @@ public:
 	//바닥체크
 	virtual void pixelBottomCollision()				override; // << 바닥 픽셀 충돌 
 
+	void jumpRightPixelCollision();
+	void jumpLeftPixelCollision();
 	//죽는 함수	
 	void pixelDieCollision();
 
-	// 이동관련 함수
-	void leftMove();
-	void rightMove();
+	//초기화 함수
+	void ericInit();
+	void collisioninit();
+	//이동관련 함수
 	void upMove(object * ladder);
 	void downMove(object * ladder);
 
