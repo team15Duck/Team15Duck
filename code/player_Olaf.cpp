@@ -31,6 +31,7 @@ void player_Olaf::release()
 
 void player_Olaf::update()
 {
+	_mainUI->setOlafUIHP(_lifeCount);
 	//애니메이션업데이트
 	KEYANIMANAGER->update("player_Olaf");
 	specialMotion_Olaf();
@@ -485,6 +486,7 @@ void player_Olaf::keyPressE()
 								SAFE_RELEASE(_invenItem[num]);
 								SAFE_DELETE(_invenItem[num]);
 								_mainUI->setOlafItemInfo(_invenItem);
+								break;
 							}
 						}
 					}
@@ -1477,7 +1479,7 @@ void player_Olaf::initOlaf()
 	_x = 100;								   //X좌표
 	_y = 1370;								   //Y좌표
 	_speed = 0.f;							   //스피드
-	_lifeCount = 3;							   //체력
+	_lifeCount = 2;							   //체력
 
 	_isAlive = true;						   //살았니?
 	_isFloor = true;						   //바닥이니?
