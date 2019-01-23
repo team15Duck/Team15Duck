@@ -305,6 +305,23 @@ void playerManager::colArrowEnemy()
 	}
 }
 
+void playerManager::colEnemyPlayer()
+{
+	RECT colEnemyPlayer;
+	int enemySize = _em->getVEnemy().size();
+	for (int i = 0; i < PLAYER_NAME_COUNT; i++)
+	{
+	
+		for (int j = 0; j < enemySize; ++j)
+		{
+			if (IntersectRect(&colEnemyPlayer, &_em->getVEnemy()[j]->getEnemyRc(), &_vPlayer[i]->getPlayerRect()))
+			{
+				(*_vPlayer[i]).takeDamage(1);
+			}
+		}
+	}
+}
+
 
 void playerManager::uiKeyControl()
 {

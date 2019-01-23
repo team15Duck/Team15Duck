@@ -1,7 +1,7 @@
 #pragma once
 #include "playerBase.h"
 
-
+class  mainUI;
 class player_Baleog : public playerBase
 {
 private:
@@ -29,7 +29,7 @@ private:
 	bool			_isFire;				//발사했냐?
 
 	int				_ladderIndex;			//충돌된 사다리 인덱스 번호
-
+	mainUI*			_ui;
 	
 
 public:
@@ -68,6 +68,10 @@ public:
 	//keyAni 이미지 출력할 함수
 	void keyAniSetting();
 
+	//몬스터와 충돌했을 경우 생명 깎는 함수
+	virtual void takeDamage(int damage) override;
+
+
 	//사다리 충돌 체크할 함수
 	virtual void collisionLadder(vector<RECT*> ladder);
 	virtual void attackKey();
@@ -75,6 +79,9 @@ public:
 	virtual bool getIsAttackRight() override;
 	virtual bool getIsFire() override;
 	virtual void setIsFire(bool isFire) override;
+
+	void setMainUILink(mainUI* ui) { _ui = ui; }
+
 	
 };
 

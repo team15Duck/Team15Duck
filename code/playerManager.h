@@ -45,6 +45,7 @@ public:
 	void keyPressCtrl();
 	void attackKey();
 	void colArrowEnemy();
+	void colEnemyPlayer();
 	void uiKeyControl();
 
 

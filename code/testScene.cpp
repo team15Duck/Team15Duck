@@ -59,6 +59,7 @@ HRESULT testScene::init()
 
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setMainUILink(_mainUI);
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectManagerAdressLink(_objManager);
+	_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setMainUILink(_mainUI);
 
 	for (int i = 0; i < _objManager->getFieldLadders().size(); ++i)
 	{

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "player_Baleog.h"
+#include "mainUI.h"
 
 player_Baleog::player_Baleog()
 : _isFire(false)
@@ -341,11 +342,12 @@ void player_Baleog::keyPressD()
 
 void player_Baleog::initBaleog()
 {
-	//_x = 1500;
-	_x = WINSIZEX / 2 + 100;
+	//_x = 100;
+	_x = WINSIZEX / 2 + 300;
 	_y = 1370;
 	_speed = 0.f;
-	
+	_lifeCount = MAX_LIFE;
+
 	_acceleration = 3.5f;		//가속도
 	_minSpeed = 1.f;			//최저속도
 	_maxSpeed = 4.5f;			//최고속도
@@ -367,7 +369,7 @@ void player_Baleog::initBaleog()
 	_isPushWall = false;		//벽 밀고 있어?
 	_deathMotion = false;		//죽는 모션이 나와야댐?
 	_isRight = true;
-
+	_isAlive = true;
 
 	_ladderIndex = 0;
 	keyAniSetting();
@@ -679,6 +681,17 @@ void player_Baleog::keyAniSetting()
 	//_state = PLAYER_IDLE_RIGHT;
 	_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "normalIdleRight");
 	_playerAni->start();
+}
+
+void player_Baleog::takeDamage(int damage)
+{
+	_lifeCount -= damage;
+	if (_lifeCount <= 0)
+	{
+		_isAlive = false;
+		_mainUI->setBaleogUIIsAlive(false);
+	}
+	_mainUI->setBaleogUIHP(_lifeCount);
 }
 
 
