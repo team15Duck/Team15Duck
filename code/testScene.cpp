@@ -187,13 +187,38 @@ void testScene::fireBullet()
 
 void testScene::updateBullet()
 {
+	RECT temp = {};
+	bool isCollision = false;
 	for (_iterBullet = _vBullets.begin(); _vBullets.end() != _iterBullet;)
 	{
 		bullet* blt = (*_iterBullet);
 		if (blt->getIsAlive())
 		{
 			blt->update2();
-			++_iterBullet;
+
+			isCollision = false;
+			for (int i = 0; i < PLAYER_NAME_COUNT; ++i)
+			{
+				// Á×¾îÀÖ´Ù¸é continue;
+				if(!_pm->getVPlayer()[i]->getIsAlive())
+					continue;
+
+				if (IntersectRect(&temp, &_pm->getVPlayer()[i]->getPlayerRect(), &blt->getRect()))
+				{
+					_pm->getVPlayer()[i]->takeDamage(1);
+
+					_iterBullet = _vBullets.erase(_iterBullet);
+
+					SAFE_RELEASE(blt);
+					SAFE_DELETE(blt);
+
+					isCollision = true;
+					break;
+				}
+			}
+
+			if(!isCollision)
+				++_iterBullet;
 		}
 		else
 		{

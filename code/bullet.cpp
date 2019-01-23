@@ -97,7 +97,9 @@ void bullet::render()
 
 void bullet::render2()
 {
-	_bulletImage->render(CAMERA->getMemDC(), _pos.x, _pos.y);
+	if (KEYMANAGER->isToggleKey(VK_F6))
+		Rectangle(CAMERA->getMemDC(), _bulletRc, false);
+	_bulletImage->render(CAMERA->getMemDC(), _pos.x - _bulletImage->GetWidth() / 2, _pos.y - _bulletImage->GetHeight() / 2);
 }
 
 
