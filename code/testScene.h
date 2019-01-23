@@ -22,6 +22,13 @@ private:
 	itemManager*	_itemManager;
 	objectManager*	_objManager;
 	enemyManager*	_em;
+
+	// ¸Ê¿¡¼­ ½î´Â ÃÑ¾Ë¾Ë¾Ë
+	vector<bullet*> _vBullets;				// ÃÑ¾Ëµé
+	vector<bullet*>::iterator _iterBullet;	// iter
+	float _fireTime;						// ¹ß»ç ½Ã°¢ Ä«¿îÆ®
+	float _fireReloadTime;					// ¹ß»ç ½Ã°¢ ¸®·Îµå
+
 public:
 	testScene();
 	~testScene();
@@ -30,4 +37,13 @@ public:
 	void release();
 	void update();
 	void render();
+
+
+private:
+	// ÃÑ¾Ë ¹ß½Î¾Æ¾Æ
+	void fireBullet();
+	// ÃÑ¾Ë ¾÷µ¥ÀÌÆ®
+	void updateBullet();
+	// ÃÑ¾Ë ·»´õ¾î
+	void renderBullet();
 };
