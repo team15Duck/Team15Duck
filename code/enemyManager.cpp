@@ -81,12 +81,13 @@ void enemyManager::update()
 			bool isCollision = false;					// 충돌되었는지 확인
 			RECT bulletRc = _vBullet[i]->getRect();		// 총알 렉트
 
-			//todo 울라프가 살아있다면 울라프 방패 충돌 처리 먼저
+			//울라프가 살아있다면 울라프 방패 충돌 처리 먼저
 			if (_pm->getVPlayer()[PLAYER_NAME_OLAF]->getIsAlive())
 			{
-				//if(IntersectRect(&temp, &_pm->getVPlayer()[PLAYER_NAME_OLAF]->getShieldRect(), &bulletRc))
+				// 방패에 맞음
+				if(IntersectRect(&temp, &_pm->getVPlayer()[PLAYER_NAME_OLAF]->getShieldRect(), &bulletRc))
 				{
-					//isCollision = true;
+					isCollision = true;
 				}
 			}
 
@@ -101,7 +102,8 @@ void enemyManager::update()
 
 					if (IntersectRect(&temp, &_pm->getVPlayer()[j]->getPlayerRect(), &bulletRc))
 					{
-						// todo 플레이어 데미지 입는 함수 호출
+						// 플레이어 데미지 입는 함수 호출
+						_pm->getVPlayer()[j]->takeDamage(1);
 
 						// 충돌함
 						isCollision = true;
