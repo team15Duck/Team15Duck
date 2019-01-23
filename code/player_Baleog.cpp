@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "player_Baleog.h"
 #include "mainUI.h"
+#include "objectManager.h"
 
 player_Baleog::player_Baleog()
 : _isFire(false)
@@ -47,9 +48,7 @@ void player_Baleog::update()
 
 void player_Baleog::render()
 {
-	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255, 0, 0), false);
 	_player->aniRender(CAMERA->getMemDC(), _x - _playerAni->getFrameWidth() / 2, _y - _playerAni->getFrameHeight() / 2, _playerAni);
-	
 }
 
 
@@ -340,10 +339,77 @@ void player_Baleog::keyPressD()
 	//활쏘기
 }
 
+void player_Baleog::keyPressE()
+{
+	if (KEYMANAGER->isOnceKeyDown('E'))
+	{
+		int itemPlayerIndex = _mainUI->getInvenPos(PLAYER_NAME_BALEOG);
+		if (_invenItem[itemPlayerIndex] != nullptr)
+		{
+			switch (_invenItem[itemPlayerIndex]->getItemType())
+			{
+				case ITEM_TYPE_FRUIT_SMALL:	case ITEM_TYPE_FRUIT_BIG:
+					if (_lifeCount == 3)
+					{
+						break;
+					}
+					else
+					{
+						_lifeCount += 1;
+						SAFE_RELEASE(_invenItem[itemPlayerIndex]);
+						SAFE_DELETE(_invenItem[itemPlayerIndex]);
+						_mainUI->setBaleogItemInfo(_invenItem);
+					}
+					break;
+				case ITEM_TYPE_MEAT:
+					if (_lifeCount == 3)
+					{
+						break;
+					}
+					if (_lifeCount >= 2)
+					{
+						_lifeCount = 3;
+						SAFE_RELEASE(_invenItem[itemPlayerIndex]);
+						SAFE_DELETE(_invenItem[itemPlayerIndex]);
+						_mainUI->setBaleogItemInfo(_invenItem);
+					}
+					else if (_lifeCount < 2)
+					{
+						_lifeCount += 2;
+						SAFE_RELEASE(_invenItem[itemPlayerIndex]);
+						SAFE_DELETE(_invenItem[itemPlayerIndex]);
+						_mainUI->setBaleogItemInfo(_invenItem);
+					}
+					break;
+				case ITEM_TYPE_KEY_RED: case ITEM_TYPE_KEY_YELLOW: case ITEM_TYPE_KEY_BLUE:
+					RECT tempRC;
+					for (int i = 0; i < _objectRc.size(); ++i)
+					{
+						if (IntersectRect(&tempRC, _objectRc[i]->getObjectRect(), &_playerRect))
+						{
+							if (_objectRc[i]->getObjectValue() == _invenItem[i]->getItemValue())
+							{
+								_objm->interactionObject(_objectRc[i]);
+								SAFE_RELEASE(_invenItem[i]);
+								SAFE_DELETE(_invenItem[i]);
+								_mainUI->setBaleogItemInfo(_invenItem);
+							}
+						}
+					}
+
+					break;
+
+				default:
+					break;
+			}
+		}
+	}
+}
+
 void player_Baleog::initBaleog()
 {
-	//_x = 100;
-	_x = WINSIZEX / 2 + 300;
+	_x = 100;
+	//_x = WINSIZEX / 2 + 300;		//test용 x좌표
 	_y = 1370;
 	_speed = 0.f;
 	_lifeCount = MAX_LIFE;
@@ -461,50 +527,50 @@ void player_Baleog::pixelBottomCollision()
 	}
 
 	//떨어질때
-	if (_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT)
-	{
-		
-		if (_curFallingY - _fallStartY >= _damageHeight)		//떨어져서 데미지를 입을 높이면
-		{
-			_lifeCount -= 1;			//데미지 입음
-			if (_lifeCount == 0)
-			{
-				_isAlive = false;		//목숨이 없어짐
-				//애니 : 
-			}
+	//if (_state == PLAYER_FALL_LEFT || _state == PLAYER_FALL_RIGHT)
+	//{
+	//	
+	//	if (_curFallingY - _fallStartY >= _damageHeight)		//떨어져서 데미지를 입을 높이면
+	//	{
+	//		_lifeCount -= 1;			//데미지 입음
+	//		if (_lifeCount == 0)
+	//		{
+	//			_isAlive = false;		//목숨이 없어짐
+	//			//애니 : 
+	//		}
 
-			//애니 :
-			if (_state == PLAYER_FALL_LEFT)
-			{
-				if (!_isChangeAni)
-				{
-					_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndLeft");
-					_playerAni->start();
-					//_isChangeAni = true;
-				}
-			}
-			else if (_state == PLAYER_FALL_RIGHT)
-			{
-				if (!_isChangeAni)
-				{
-					_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndRight");
-					_playerAni->start();
-					//_isChangeAni = true;
-				}
-			}
-		}
-		//else if (_curFallingY - _fallStartY < _damageHeight)	//떨어져도 데미지 없는 높이면
-		//{
-		//	if (_state == PLAYER_FALL_LEFT)
-		//	{
-		//		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndLeft");
-		//	}
-		//	else if (_state == PLAYER_FALL_RIGHT)
-		//	{
+	//		//애니 :
+	//		if (_state == PLAYER_FALL_LEFT)
+	//		{
+	//			if (!_isChangeAni)
+	//			{
+	//				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndLeft");
+	//				_playerAni->start();
+	//				//_isChangeAni = true;
+	//			}
+	//		}
+	//		else if (_state == PLAYER_FALL_RIGHT)
+	//		{
+	//			if (!_isChangeAni)
+	//			{
+	//				_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndRight");
+	//				_playerAni->start();
+	//				//_isChangeAni = true;
+	//			}
+	//		}
+	//	}
+	//	//else if (_curFallingY - _fallStartY < _damageHeight)	//떨어져도 데미지 없는 높이면
+	//	//{
+	//	//	if (_state == PLAYER_FALL_LEFT)
+	//	//	{
+	//	//		_playerAni = KEYANIMANAGER->findAnimation(_aniImageKey, "highFallEndLeft");
+	//	//	}
+	//	//	else if (_state == PLAYER_FALL_RIGHT)
+	//	//	{
 
-		//	}
-		//}
-	}
+	//	//	}
+	//	//}
+	//}
 }
 
 void player_Baleog::pixelFireCollision()

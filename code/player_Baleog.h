@@ -47,7 +47,7 @@ public:
 	virtual void keyPressMove() override;
 	virtual void keyPressSpace() override;
 	virtual void keyPressD() override;
-
+	virtual void keyPressE() override;
 	//플레이어 초기화 정보 함수
 	void initBaleog();
 
