@@ -73,6 +73,7 @@ void enemy::move()
 
 int enemy::isFire(float x, float y)
 {
+	if (_isAlive == false) return false;
 	_fireTimeCount += TIMEMANAGER->getElpasedTime();
 	if (_fireTimeCount >= _fireTimeDelay)
 	{
