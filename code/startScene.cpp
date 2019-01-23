@@ -21,6 +21,9 @@ HRESULT startScene::init()
 	IMAGEMANAGER->addImage("startImg2", "image/startImg2.bmp", 640, 480, false, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("startImg3", "image/startImg3.bmp", 640, 480, false, RGB(255, 0, 255));
 
+	SOUNDMANAGER->addSound("startBGM", "sound/startBGM.mp3", true, true);
+	SOUNDMANAGER->play("startBGM", 1);
+
 	return S_OK;
 }
 
@@ -64,6 +67,7 @@ void startScene::update()
 	if (_isBlack && _alpha == 255 && _imgNum == 2)
 	{
 		//게임시작
+		SOUNDMANAGER->stop("startBGM");
 		SCENEMANAGER->changeScene("테스트씬");
 	}
 }

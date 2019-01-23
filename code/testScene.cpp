@@ -85,6 +85,9 @@ HRESULT testScene::init()
 	_fireTime = 0.f;
 	_fireReloadTime = 2.5f;
 
+	SOUNDMANAGER->addSound("mainBGM", "sound/mainBGM.mp3", true, true);
+	SOUNDMANAGER->play("mainBGM", 1);
+
 	return S_OK;
 }
 
