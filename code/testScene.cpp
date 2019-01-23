@@ -114,20 +114,16 @@ void testScene::update()
 		_pm->keyUpdate();
 		_em->update();
 		_objManager->update();
+		fireBullet();
+		updateBullet();
 	}
 	_mainUI->update();
-<<<<<<< HEAD
 	_pm->uiKeyControl();
 	
-	
-=======
-
 	_objManager->update();
 	_em->update();
 
-	fireBullet();
-	updateBullet();
->>>>>>> a3675cc7bb80312ccd84277f65d026b7769a5dcb
+	
 }
 
 void testScene::render()
