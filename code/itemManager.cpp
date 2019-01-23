@@ -70,11 +70,11 @@ HRESULT itemManager::init()
 		_vFieldItems.push_back(keyYellow);
 
 		// shield
-		item* shield = new item;
-		pos = { 1022, 600};
-		shield->init("fieldItem", pos, 1, ITEM_TYPE_SHIELD);
-
-		_vFieldItems.push_back(shield);
+		//item* shield = new item;
+		//pos = { 1022, 600};
+		//shield->init("fieldItem", pos, 1, ITEM_TYPE_SHIELD);
+		//
+		//_vFieldItems.push_back(shield);
 	}
 
 	return S_OK;
