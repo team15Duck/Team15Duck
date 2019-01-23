@@ -283,11 +283,47 @@ void playerManager::attackKey()
 
 void playerManager::uiKeyControl()
 {
-	if (KEYMANAGER->isOnceKeyDown(VK_TAB))
+	if (_mainUI->getIsItemSelectOn())
 	{
-		_mainUI->setIsItemSelectOn(!_mainUI->getIsItemSelectOn());
-		_mainUI->setIsItemMove(false);
+		if (KEYMANAGER->isOnceKeyDown(VK_TAB))
+		{
+			if (_mainUI->getItemMoveIndex() == 3)
+			{
+				delete _vPlayer[_currentSelectPlayer]->getInvenItem()[_mainUI->getInvenPos(_currentSelectPlayer)];
+				_vPlayer[_currentSelectPlayer]->setInvenItem(_mainUI->getInvenPos(_currentSelectPlayer), nullptr);
+				_mainUI->setNameItemInfo(_currentSelectPlayer, _vPlayer[_currentSelectPlayer]->getInvenItem());
+			}
+			else
+			{
+				if (_currentSelectPlayer != _mainUI->getItemMoveIndex())
+				{
+					if (_itemSelectNum != -1)
+					{
+						//½º¿Ò
+						item* temp = _vPlayer[_currentSelectPlayer]->getInvenItem()[_mainUI->getInvenPos(_currentSelectPlayer)];
+						_vPlayer[_currentSelectPlayer]->setInvenItem(_mainUI->getInvenPos(_currentSelectPlayer), _vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem()[_itemSelectNum]);
+						_vPlayer[_mainUI->getItemMoveIndex()]->setInvenItem(_itemSelectNum, temp);
+
+						_mainUI->setNameItemInfo(_currentSelectPlayer, _vPlayer[_currentSelectPlayer]->getInvenItem());
+						_mainUI->setNameItemInfo(_mainUI->getItemMoveIndex(), _vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem());
+					}
+				}
+			}
+			_mainUI->setIsItemSelectOn(false);
+			_mainUI->setItemMoveIndex(_currentSelectPlayer);
+			_mainUI->setIsItemMove(false);
+		}
 	}
+	else
+	{
+		if (KEYMANAGER->isOnceKeyDown(VK_TAB))
+		{
+			_mainUI->setItemMoveIndex(_currentSelectPlayer);
+			_mainUI->setIsItemSelectOn(true);
+			_mainUI->setIsItemMove(false);
+		}
+	}
+	
 
 	if (!_mainUI->getIsItemSelectOn()) return;
 
