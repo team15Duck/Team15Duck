@@ -120,4 +120,10 @@ public:
 	//사다리충돌(렉트용)
 	void playerCollisionLadder();
 
+
+
+	//처맞는함수
+	virtual void takeDamage(int damage) override;
+
+
 };

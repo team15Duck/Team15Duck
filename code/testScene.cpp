@@ -60,6 +60,7 @@ HRESULT testScene::init()
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setMainUILink(_mainUI);
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectManagerAdressLink(_objManager);
 	_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setMainUILink(_mainUI);
+	_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setObjectManagerAdressLink(_objManager);
 	_pm->getVPlayer()[PLAYER_NAME_OLAF]->setObjectManagerAdressLink(_objManager);
 	_pm->getVPlayer()[PLAYER_NAME_OLAF]->setMainUILink(_mainUI);
 
@@ -79,6 +80,7 @@ HRESULT testScene::init()
 		{
 			object* adress = _objManager->getFieldObjects()[i];
 			_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectRectAdressLink(adress);
+			_pm->getVPlayer()[PLAYER_NAME_BALEOG]->setObjectRectAdressLink(adress);
 			_pm->getVPlayer()[PLAYER_NAME_OLAF]->setObjectRectAdressLink(adress);
 		}
 	}

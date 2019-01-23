@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "playerBase.h"
 #include "objectManager.h"
+#include "mainUI.h"
 
 
 playerBase::playerBase()
@@ -126,4 +127,5 @@ void playerBase::setObjectManagerAdressLink(objectManager * objm)
 
 void playerBase::takeDamage(int damage)
 {
+	
 }

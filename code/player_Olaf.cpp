@@ -1991,3 +1991,14 @@ void player_Olaf::playerCollisionLadder()
 		}
 	}
 }
+
+void player_Olaf::takeDamage(int damage)
+{
+	_lifeCount -= damage;
+	if (_lifeCount <= 0)
+	{
+		_isAlive = false;
+		_mainUI->setOlafUIIsAlive(false);
+	}
+	_mainUI->setOlafUIHP(_lifeCount);
+}
