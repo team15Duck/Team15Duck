@@ -51,5 +51,10 @@ public:
 	
 	// 렌더 여부 세팅
 	void	  setIsRender(bool render) { _isRender = render; }
+
+	float getX() { return _x; }
+	void setX(float x) { _x = x; }
+	float getY() { return _y; }
+	void setY(float y) { _y = y; }
 };
 

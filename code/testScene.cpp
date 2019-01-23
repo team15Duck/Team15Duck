@@ -108,21 +108,22 @@ void testScene::update()
 	CAMERA->update();
 
 	_pm->keyPressCtrl();
-
-	_pm->update();
-
-	//if (ÅÇÀ» ¾È´­·µÀ»¶§)
+	if (!_mainUI->getIsItemSelectOn())
 	{
+		_pm->update();
 		_pm->keyUpdate();
+		_em->update();
+		_objManager->update();
+		fireBullet();
+		updateBullet();
 	}
-
 	_mainUI->update();
-
+	_pm->uiKeyControl();
+	
 	_objManager->update();
 	_em->update();
 
-	fireBullet();
-	updateBullet();
+	
 }
 
 void testScene::render()

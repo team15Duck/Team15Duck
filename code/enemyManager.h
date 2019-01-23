@@ -26,5 +26,7 @@ public:
 
 	void setPlayerManagerAdressLink(playerManager* pm) { _pm = pm; }
 	void setPixelDataAdressLink(image* pixelData) { _pixelData = pixelData; }
+
+
 };
 

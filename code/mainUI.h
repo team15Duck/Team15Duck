@@ -15,7 +15,7 @@ class mainUI
 private:
 	image* _main;					//메인 UI 이미지
 	int _currentMainFrameIndex;		//메인 UI 프레임 돌릴숫자 == 플레이어 매니저에서 현재 선택된애를 받아서 넣을것임
-
+	int _itemMoveIndex;				//아이템무브시키는 인덱스
 	
 	bool _isItemSelectOn;			//현재 아이템 선택중이니?
 	bool _isItemMove;				//아이템 옮기는 중이니?
@@ -37,9 +37,14 @@ public:
 	void update();
 	void render();
 
+	item* getItemInfo(int name, int pos);
+
 	void setEricItemInfo(item** it);
 	void setBaleogItemInfo(item** it);
 	void setOlafItemInfo(item** it);
+	void setNameItemInfo(int name, item** it);
+	void setItemInfo(int name, int pos, item* it);
+
 
 	bool getIsItemSelectOn() { return _isItemSelectOn; }
 	void setIsItemSelectOn(bool isItemSelectOn);
@@ -53,12 +58,18 @@ public:
 	void setBaleogUIHP(int hp) { _playerHP[PLAYER_NAME_BALEOG] = hp; }
 	void setOlafUIHP(int hp) { _playerHP[PLAYER_NAME_OLAF] = hp; }
 
+
 	void setEricUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_ERIC] = alive; }
 	void setBaleogUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_BALEOG] = alive; }
 	void setOlafUIIsAlive(bool alive) { _isPlayerAlive[PLAYER_NAME_OLAF] = alive; }
 
+
 	int getInvenPos(PLAYER_NAME name);
 	void setInvenPos(PLAYER_NAME name, int pos);
 
+	void setIsRender(PLAYER_NAME name, bool isRender);
+
+	int getItemMoveIndex() { return _itemMoveIndex; }
+	void setItemMoveIndex(int num) { _itemMoveIndex = num; }
 };
 

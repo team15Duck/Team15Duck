@@ -26,6 +26,8 @@ private:
 
 	vector<bullet*>		_vArrow;
 
+	int _itemSelectNum;
+
 public:
 	playerManager();
 	~playerManager();
@@ -40,6 +42,9 @@ public:
 	void keyUpdate();
 	void keyPressCtrl();
 	void attackKey();
+	void uiKeyControl();
+
+
 
 	vector<playerBase*> getVPlayer() { return _vPlayer; }
 

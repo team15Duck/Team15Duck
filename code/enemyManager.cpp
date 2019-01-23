@@ -32,18 +32,6 @@ HRESULT enemyManager::init()
 
 void enemyManager::release()
 {
-	int vSize = _vBullet.size();
-	for (int i = 0; i < vSize; i++)
-	{
-		bullet* blt = _vBullet[i];
-		if (blt)
-		{
-			SAFE_RELEASE(blt);
-			SAFE_DELETE(blt);
-		}
-	}
-
-	_vBullet.clear();
 }
 
 void enemyManager::update()
@@ -74,71 +62,15 @@ void enemyManager::update()
 		}
 	}
 	vSize = _vBullet.size();
-	RECT temp;
 	for (int i = 0; i < vSize; i++)
 	{
-		////////////////////////// 픽셀 충돌
+		_vBullet[i]->update2();
 		if (!_vBullet[i]->isAlive())
 		{
 			_vBullet.erase(_vBullet.begin() + i);
 			i--;
 			vSize--;
-
-			continue;
 		}
-
-		////////////////////////// 렉트 충돌
-		{
-			bool isCollision = false;					// 충돌되었는지 확인
-			RECT bulletRc = _vBullet[i]->getRect();		// 총알 렉트
-
-			//todo 울라프가 살아있다면 울라프 방패 충돌 처리 먼저
-			if (_pm->getVPlayer()[PLAYER_NAME_OLAF]->getIsAlive())
-			{
-				//if(IntersectRect(&temp, &_pm->getVPlayer()[PLAYER_NAME_OLAF]->getShieldRect(), &bulletRc))
-				{
-					//isCollision = true;
-				}
-			}
-
-			if (!isCollision)
-			{
-				//플레이어랑 렉트 충돌
-				for (int j = 0; j < PLAYER_NAME_COUNT; ++j)
-				{
-					// 죽어있다면 continue;
-					if (!_pm->getVPlayer()[j]->getIsAlive())
-						continue;
-
-					if (IntersectRect(&temp, &_pm->getVPlayer()[j]->getPlayerRect(), &bulletRc))
-					{
-						// todo 플레이어 데미지 입는 함수 호출
-
-						// 충돌함
-						isCollision = true;
-
-						break;
-					}
-				}
-			}
-
-			if (isCollision)
-			{
-				bullet* blt = _vBullet[i];
-
-				_vBullet.erase(_vBullet.begin() + i);
-				i--;
-				vSize--;
-
-				SAFE_RELEASE(blt);
-				SAFE_DELETE(blt);
-
-				break;
-			}
-		}
-
-		_vBullet[i]->update2();
-		
 	}
 }
 

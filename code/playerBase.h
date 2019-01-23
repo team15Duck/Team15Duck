@@ -190,4 +190,7 @@ public:
 	virtual bool getIsFire() { return false; }
 	virtual	void setIsFire(bool isFire) {}
 	virtual bool getIsAttackRight() { return _isAttackRight; }
+
+	void setInvenItem(int pos, item* it) { _invenItem[pos] = it; }
+
 };

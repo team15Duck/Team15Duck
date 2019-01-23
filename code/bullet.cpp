@@ -67,9 +67,6 @@ HRESULT bullet::init2(image * img, image * pixelData, bool isRight, POINTF p)
 
 void bullet::release()
 {
-	_bulletImage = nullptr;
-	_pixelData = nullptr;
-	_animation = nullptr;
 }
 
 void bullet::update()
@@ -94,16 +91,13 @@ void bullet::update2()
 
 void bullet::render()
 {
-	if(KEYMANAGER->isToggleKey(VK_F6))
-		Rectangle(CAMERA->getMemDC(), _bulletRc, false);
+	//Rectangle(CAMERA->getMemDC(), _bulletRc, false);
 	_bulletImage->aniRender(CAMERA->getMemDC(), _pos.x - _bulletImage->getFrameWidth() / 2, _pos.y - _bulletImage->getFrameHeight() / 2, _animation);
 }
 
 void bullet::render2()
 {
-	if (KEYMANAGER->isToggleKey(VK_F6))
-		Rectangle(CAMERA->getMemDC(), _bulletRc, false);
-	_bulletImage->render(CAMERA->getMemDC(), _pos.x - _bulletImage->GetWidth() / 2, _pos.y - _bulletImage->GetHeight() / 2);
+	_bulletImage->render(CAMERA->getMemDC(), _pos.x, _pos.y);
 }
 
 

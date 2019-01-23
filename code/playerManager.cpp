@@ -30,7 +30,7 @@ HRESULT playerManager::init()
 	CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
 
 	
-	
+	_itemSelectNum = -1;
 
 	return S_OK;
 }
@@ -104,6 +104,69 @@ void playerManager::update()
 			SAFE_DELETE(arrow);
 		}
 	}
+	if (!_vPlayer[_currentSelectPlayer]->getIsAlive())
+	{
+		_mainUI->setIsRender(_currentSelectPlayer, true);
+		//다음놈이 살아있는놈일때까지 바꿈
+		while (true)
+		{
+			_currentSelectPlayer = PLAYER_NAME(_currentSelectPlayer + 1);
+			if (_currentSelectPlayer == PLAYER_NAME_NONE)
+			{
+				_currentSelectPlayer = PLAYER_NAME_ERIC;
+			}
+			if (_vPlayer[_currentSelectPlayer]->getIsAlive()) break;
+		}
+
+
+		CAMERA->setMapMove(true);
+		POINTF playerPos;
+		playerPos.x = *_vPlayer[_currentSelectPlayer]->getPosX();
+		playerPos.y = *_vPlayer[_currentSelectPlayer]->getPosY();
+
+
+		if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+		{
+			CAMERA->setMapMove(false);
+		}
+		else if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y > playerPos.y)
+		{
+			CAMERA->setAngle(90);
+		}
+		else if (CAMERA->getCenterPos().x == playerPos.x && CAMERA->getCenterPos().y < playerPos.y)
+		{
+			CAMERA->setAngle(270);
+		}
+		else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+		{
+			CAMERA->setAngle(180);
+		}
+		else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y == playerPos.y)
+		{
+			CAMERA->setAngle(0);
+		}
+		else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y > playerPos.y)	//플레이어가 오른쪽위에 있을때
+		{
+			CAMERA->setAngle(45);
+		}
+		else if (CAMERA->getCenterPos().x < playerPos.x && CAMERA->getCenterPos().y < playerPos.y)	//플레이어가 오른쪽아래에 있을때
+		{
+			CAMERA->setAngle(315);
+		}
+		else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y > playerPos.y)	//플레이어가 왼쪽위에 있을때
+		{
+			CAMERA->setAngle(135);
+		}
+		else if (CAMERA->getCenterPos().x > playerPos.x && CAMERA->getCenterPos().y < playerPos.y)	//플레이어가 왼쪽아래에 있을때
+		{
+			CAMERA->setAngle(225);
+		}
+
+		_mainUI->setCurrentMainFrameIndex(_currentSelectPlayer);
+		CAMERA->setPlayerPosX(_vPlayer[_currentSelectPlayer]->getPosX());
+		CAMERA->setPlayerPosY(_vPlayer[_currentSelectPlayer]->getPosY());
+	}
+
 }
 
 void playerManager::render()
@@ -138,6 +201,7 @@ void playerManager::keyPressCtrl()
 		//컨트롤키를 누른다면
 		if (KEYMANAGER->isOnceKeyDown(VK_CONTROL))
 		{
+			_mainUI->setIsRender(_currentSelectPlayer, true);
 			//다음놈이 살아있는놈일때까지 바꿈
 			while (true)
 			{
@@ -148,6 +212,7 @@ void playerManager::keyPressCtrl()
 				}
 				if (_vPlayer[_currentSelectPlayer]->getIsAlive()) break;
 			}
+			
 			
 			CAMERA->setMapMove(true);
 			POINTF playerPos;
@@ -213,5 +278,188 @@ void playerManager::attackKey()
 		
 		_vPlayer[PLAYER_NAME_BALEOG]->setIsFire(false);
 		_vArrow.push_back(_arrow);
+	}
+}
+
+void playerManager::uiKeyControl()
+{
+	if (KEYMANAGER->isOnceKeyDown(VK_TAB))
+	{
+		_mainUI->setIsItemSelectOn(!_mainUI->getIsItemSelectOn());
+		_mainUI->setIsItemMove(false);
+	}
+
+	if (!_mainUI->getIsItemSelectOn()) return;
+
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+	{
+		if (_mainUI->getIsItemMove())
+		{
+			if (_mainUI->getItemMoveIndex() == 3)
+			{
+				delete _vPlayer[_currentSelectPlayer]->getInvenItem()[_mainUI->getInvenPos(_currentSelectPlayer)];
+				_vPlayer[_currentSelectPlayer]->setInvenItem(_mainUI->getInvenPos(_currentSelectPlayer), nullptr);
+				_mainUI->setNameItemInfo(_currentSelectPlayer, _vPlayer[_currentSelectPlayer]->getInvenItem());
+			}
+			else
+			{
+				if (_currentSelectPlayer != _mainUI->getItemMoveIndex())
+				{
+					if (_itemSelectNum != -1)
+					{
+						//스왑
+						item* temp = _vPlayer[_currentSelectPlayer]->getInvenItem()[_mainUI->getInvenPos(_currentSelectPlayer)];
+						_vPlayer[_currentSelectPlayer]->setInvenItem(_mainUI->getInvenPos(_currentSelectPlayer), _vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem()[_itemSelectNum]);
+						_vPlayer[_mainUI->getItemMoveIndex()]->setInvenItem(_itemSelectNum, temp);
+
+						_mainUI->setNameItemInfo(_currentSelectPlayer, _vPlayer[_currentSelectPlayer]->getInvenItem());
+						_mainUI->setNameItemInfo(_mainUI->getItemMoveIndex(), _vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem());
+					}
+				}
+			}
+		
+
+
+			_mainUI->setIsItemMove(false);
+			_mainUI->setItemMoveIndex(_currentSelectPlayer);
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (_vPlayer[_currentSelectPlayer]->getInvenItem()[i] != nullptr)
+				{
+					_mainUI->setIsItemMove(true);
+					_mainUI->setItemMoveIndex(_currentSelectPlayer);
+					_itemSelectNum = _mainUI->getInvenPos(_currentSelectPlayer);
+					break;
+				}
+			}
+		}
+	
+	}
+	
+	if (!_mainUI->getIsItemMove())
+	{
+		if (_mainUI->getInvenPos(_currentSelectPlayer) == 0 || _mainUI->getInvenPos(_currentSelectPlayer) == 1)
+		{
+			if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
+			{
+				_mainUI->setInvenPos(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer) + 2);
+			}
+		}
+		if (_mainUI->getInvenPos(_currentSelectPlayer) == 2 || _mainUI->getInvenPos(_currentSelectPlayer) == 3)
+		{
+			if (KEYMANAGER->isOnceKeyDown(VK_UP))
+			{
+				_mainUI->setInvenPos(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer) - 2);
+			}
+		}
+		if (_mainUI->getInvenPos(_currentSelectPlayer) == 1 || _mainUI->getInvenPos(_currentSelectPlayer) == 3)
+		{
+			if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+			{
+				_mainUI->setInvenPos(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer) - 1);
+			}
+		}
+		if (_mainUI->getInvenPos(_currentSelectPlayer) == 0 || _mainUI->getInvenPos(_currentSelectPlayer) == 2)
+		{
+			if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+			{
+				_mainUI->setInvenPos(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer) + 1);
+			}
+		}
+	}
+	else
+	{
+		//_playerItem[i][j]->setX((int)(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32);
+		//_playerItem[i][j]->setY((int)(CAMERA->getPosY()) + 388 + j / 2 * 32);
+		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+		{
+			bool invenFind = false;
+			while (!invenFind)
+			{
+			
+				if (_mainUI->getItemMoveIndex() == 0)
+				{
+					_mainUI->setItemMoveIndex(3);
+				}
+				else
+				{
+					_mainUI->setItemMoveIndex(_mainUI->getItemMoveIndex() - 1);
+				}
+				if (_mainUI->getItemMoveIndex() == 3) break;
+				if (_currentSelectPlayer == _mainUI->getItemMoveIndex())
+				{
+					_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setX((int)(CAMERA->getPosX()) + 158 + _mainUI->getItemMoveIndex() * 144 + _mainUI->getInvenPos(_currentSelectPlayer) % 2 * 32);
+					_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setY((int)(CAMERA->getPosY()) + 388 + _mainUI->getInvenPos(_currentSelectPlayer) / 2 * 32);
+					invenFind = true;
+					break;
+				}
+				RECT temp;
+				if (IntersectRect(&temp, &_vPlayer[_currentSelectPlayer]->getPlayerRect(), &_vPlayer[_mainUI->getItemMoveIndex()]->getPlayerRect()))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (_vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem()[i] == nullptr)
+						{
+							_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setX((int)(CAMERA->getPosX()) + 158 + _mainUI->getItemMoveIndex() * 144 + i % 2 * 32);
+							_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setY((int)(CAMERA->getPosY()) + 388 + i / 2 * 32);
+							_itemSelectNum = i;
+							invenFind = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+		{
+			bool invenFind = false;
+			while (!invenFind)
+			{
+				if (_mainUI->getItemMoveIndex() == 3)
+				{
+					_mainUI->setItemMoveIndex(0);
+				}
+				else
+				{
+					_mainUI->setItemMoveIndex(_mainUI->getItemMoveIndex() + 1);
+				}
+				if (_mainUI->getItemMoveIndex() == 3) break;
+				if (_currentSelectPlayer == _mainUI->getItemMoveIndex())
+				{
+					_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setX((int)(CAMERA->getPosX()) + 158 + _mainUI->getItemMoveIndex() * 144 + _mainUI->getInvenPos(_currentSelectPlayer) % 2 * 32);
+					_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setY((int)(CAMERA->getPosY()) + 388 + _mainUI->getInvenPos(_currentSelectPlayer) / 2 * 32);
+					invenFind = true;
+					break;
+				}
+				RECT temp;
+				if (IntersectRect(&temp, &_vPlayer[_currentSelectPlayer]->getPlayerRect(), &_vPlayer[_mainUI->getItemMoveIndex()]->getPlayerRect()))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (_vPlayer[_mainUI->getItemMoveIndex()]->getInvenItem()[i] == nullptr)
+						{
+							_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setX((int)(CAMERA->getPosX()) + 158 + _mainUI->getItemMoveIndex() * 144 + i % 2 * 32);
+							_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setY((int)(CAMERA->getPosY()) + 388 + i / 2 * 32);
+							_itemSelectNum = i;
+							invenFind = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (_mainUI->getItemMoveIndex() == 3)
+		{
+			_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setX((int)(CAMERA->getPosX()) + 158 + 2 * 144 + 2 * 32);
+			_mainUI->getItemInfo(_currentSelectPlayer, _mainUI->getInvenPos(_currentSelectPlayer))->setY((int)(CAMERA->getPosY()) + 388);
+		}
+		
+
+
+
 	}
 }

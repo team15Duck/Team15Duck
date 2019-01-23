@@ -19,7 +19,7 @@ HRESULT mainUI::init()
 	IMAGEMANAGER->addFrameImage("dieProfile", "image/dieProfile.bmp", 204, 52, 3, 1, false, RGB(255, 0, 255));
 	IMAGEMANAGER->addFrameImage("invenItem", "image/invenItemImage.bmp", 224, 32, 7, 1, false, RGB(255, 0, 255));
 	_currentMainFrameIndex = 0;
-
+	_itemMoveIndex = 0;
 	for (int i = 0; i < 3; i++)
 	{
 		_itemSelect[i].name = (PLAYER_NAME)i;
@@ -51,7 +51,7 @@ void mainUI::update()
 	if (_isItemSelectOn)
 	{
 		_blinkedCount += TIMEMANAGER->getElpasedTime();
-		if (_isItemMove) //선택중으로 들어와서 옮기기 키를 누르면 깜박이면 안된다!? 아니져 아이템만 깜박여야죠
+		if (_isItemMove) //선택중으로 들어와서 옮기기 키를 누르면 깜박이면 안된다 아이템만 깜박여야죠
 		{
 			for (int i = 0; i < 3; i++)
 			{
@@ -92,6 +92,8 @@ void mainUI::update()
 					if (_playerItem[i][j] != nullptr)
 					{
 						_playerItem[i][j]->setIsRender(true);
+						_playerItem[i][j]->setX((int)(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32);
+						_playerItem[i][j]->setY((int)(CAMERA->getPosY()) + 388 + j / 2 * 32);
 					}
 				}
 				_itemSelect[i].renderPos.x = (int)(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
@@ -105,6 +107,15 @@ void mainUI::update()
 		{
 			_itemSelect[i].renderPos.x = (int)(CAMERA->getPosX()) + 158 + _itemSelect[i].name * 144 + _itemSelect[i].invenPos % 2 * 32;
 			_itemSelect[i].renderPos.y = (int)(CAMERA->getPosY()) + 388 + _itemSelect[i].invenPos / 2 * 32;
+			for (int j = 0; j < 4; j++)
+			{
+				if (_playerItem[i][j] != nullptr)
+				{
+					_playerItem[i][j]->setIsRender(true);
+					_playerItem[i][j]->setX((int)(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32);
+					_playerItem[i][j]->setY((int)(CAMERA->getPosY()) + 388 + j / 2 * 32);
+				}
+			}
 		}
 	}
 }
@@ -120,8 +131,8 @@ void mainUI::render()
 			{
 				if (_playerItem[i][j]->getIsRender())
 				{
-					IMAGEMANAGER->findImage("invenItem")->frameRender(CAMERA->getMemDC(), (int)(CAMERA->getPosX()) + 158 + i * 144 + j % 2 * 32,
-																						  (int)(CAMERA->getPosY()) + 388 + j / 2 * 32,
+					IMAGEMANAGER->findImage("invenItem")->frameRender(CAMERA->getMemDC(), _playerItem[i][j]->getX(),
+																						  _playerItem[i][j]->getY(),
 																						  _playerItem[i][j]->getItemType(), 0);
 				}
 			}
@@ -144,6 +155,11 @@ void mainUI::render()
 		}
 		
 	}
+}
+
+item * mainUI::getItemInfo(int name, int pos)
+{
+	return _playerItem[name][pos];
 }
 
 void mainUI::setEricItemInfo(item ** it)
@@ -170,6 +186,20 @@ void mainUI::setOlafItemInfo(item ** it)
 	}
 }
 
+void mainUI::setNameItemInfo(int name, item ** it)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		_playerItem[name][i] = it[i];
+	}
+}
+
+void mainUI::setItemInfo(int name, int pos, item* it)
+{
+	_playerItem[name][pos] = it;
+}
+
+
 void mainUI::setIsItemSelectOn(bool isItemSelectOn)
 {
 	_isItemSelectOn = isItemSelectOn;
@@ -190,4 +220,9 @@ int mainUI::getInvenPos(PLAYER_NAME name)
 void mainUI::setInvenPos(PLAYER_NAME name, int pos)
 {
 	_itemSelect[name].invenPos = pos;
+}
+
+void mainUI::setIsRender(PLAYER_NAME name, bool isRender)
+{
+	_itemSelect[name].isRender = isRender;
 }
