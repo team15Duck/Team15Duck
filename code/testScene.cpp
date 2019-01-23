@@ -53,6 +53,9 @@ HRESULT testScene::init()
 	_pm->setMainUIAdressLink(_mainUI);
 	_pm->setItemManagerLink(_itemManager);
 	_pm->setObjectManagerLink(_objManager);
+	_pm->setEnemyManagerLink(_em);					//이줄 추가했당
+
+
 
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setMainUILink(_mainUI);
 	_pm->getVPlayer()[PLAYER_NAME_ERIC]->setObjectManagerAdressLink(_objManager);
@@ -187,7 +190,7 @@ void testScene::updateBullet()
 	for (_iterBullet = _vBullets.begin(); _vBullets.end() != _iterBullet;)
 	{
 		bullet* blt = (*_iterBullet);
-		if (blt->isAlive())
+		if (blt->getIsAlive())
 		{
 			blt->update2();
 			++_iterBullet;

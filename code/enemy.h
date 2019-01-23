@@ -63,5 +63,7 @@ public:
 	
 	static void enemyRightAttack(void* obj);
 	static void enemyLeftAttack(void* obj);
+
+	RECT getEnemyRc() { return _rc; }
 };
 

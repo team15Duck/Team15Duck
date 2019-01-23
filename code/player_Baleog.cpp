@@ -47,7 +47,7 @@ void player_Baleog::update()
 void player_Baleog::render()
 {
 	RectangleBrush(CAMERA->getMemDC(), _playerRect, RGB(255, 0, 0), false);
-	_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _playerAni);
+	_player->aniRender(CAMERA->getMemDC(), _x - _playerAni->getFrameWidth() / 2, _y - _playerAni->getFrameHeight() / 2, _playerAni);
 	
 }
 
@@ -790,7 +790,6 @@ void player_Baleog::collisionLadder(vector<RECT*> ladder)
 		{
 			_playerAni->pause();
 		}
-
 	}
 }
 

@@ -8,6 +8,7 @@
 class mainUI;
 class itemManager;
 class objectManager;
+class enemyManager;
 
 class playerManager
 {
@@ -21,6 +22,7 @@ private:
 	mainUI*				_mainUI;
 	itemManager*		_im;
 	objectManager*		_om;
+	enemyManager*		_em;
 
 	image*				_pixelData;
 
@@ -42,6 +44,7 @@ public:
 	void keyUpdate();
 	void keyPressCtrl();
 	void attackKey();
+	void colArrowEnemy();
 	void uiKeyControl();
 
 
@@ -51,6 +54,8 @@ public:
 	void setMainUIAdressLink(mainUI* ui) { _mainUI = ui; }
 	void setItemManagerLink(itemManager* im) { _im = im; }
 	void setObjectManagerLink(objectManager* om) { _om = om; }
+	void setEnemyManagerLink(enemyManager* em) { _em = em; }
+
 
 	void setPixelDataLink(image* pixelData) { _pixelData = pixelData; }
 

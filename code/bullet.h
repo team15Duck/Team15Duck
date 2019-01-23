@@ -48,7 +48,8 @@ public:
 	void move2();
 	void pixelCollition();
 	void pixelCollition2();
-	bool isAlive() { return _isAlive; }
+	bool getIsAlive() { return _isAlive; }
+	void setIsAlive(bool isAlive) { _isAlive = isAlive; }
 
 	POINTF getPos() { return _pos; }
 	RECT getRect() { return _bulletRc; }

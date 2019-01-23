@@ -65,7 +65,7 @@ void enemyManager::update()
 	for (int i = 0; i < vSize; i++)
 	{
 		_vBullet[i]->update2();
-		if (!_vBullet[i]->isAlive())
+		if (!_vBullet[i]->getIsAlive())
 		{
 			_vBullet.erase(_vBullet.begin() + i);
 			i--;

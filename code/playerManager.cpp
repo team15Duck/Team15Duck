@@ -3,6 +3,7 @@
 #include "mainUI.h"
 #include "itemManager.h"
 #include "objectManager.h"
+#include "enemyManager.h"
 
 playerManager::playerManager()
 {
@@ -87,11 +88,12 @@ void playerManager::update()
 			}
 		}
 	}
-	attackKey();
+	attackKey();		//활 키를 눌렀을 때 실행할 함수
+	colArrowEnemy();	//활과 적의 충돌처리
 	for (vector<bullet*>::iterator iter = _vArrow.begin(); iter != _vArrow.end(); )
 	{
 		bullet* arrow = (*iter);
-		if (arrow->isAlive())
+		if (arrow->getIsAlive())
 		{
 			arrow->update();
 			++iter;
@@ -280,6 +282,29 @@ void playerManager::attackKey()
 		_vArrow.push_back(_arrow);
 	}
 }
+
+
+void playerManager::colArrowEnemy()
+{
+	//적과 충돌을 위한 반복문
+	RECT	colEnemyArrow;
+	int enemySize = _em->getVEnemy().size();
+	for (int i = 0; i < enemySize; ++i)
+	{
+		for (int j = 0; j < _vArrow.size(); ++j)
+		{
+			//플레이어의 화살과 적이 충돌하면 적 죽임
+			if (IntersectRect(&colEnemyArrow, &_em->getVEnemy()[i]->getEnemyRc(), &_vArrow[j]->getRect()))
+			{
+				_em->getVEnemy()[i]->setIsAlive(false);
+				_vArrow[j]->setIsAlive(false);
+			}
+
+		}
+
+	}
+}
+
 
 void playerManager::uiKeyControl()
 {
