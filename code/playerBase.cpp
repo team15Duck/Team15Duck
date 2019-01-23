@@ -14,6 +14,7 @@ playerBase::~playerBase()
 
 HRESULT playerBase::init()
 {
+	_shieldRect = {};
 	_proveBottom = (float)_playerRect.bottom;
 	for (int i = 0; i < 4; i++)
 	{
@@ -121,4 +122,8 @@ void playerBase::setObjectRectAdressLink(object * rc)
 void playerBase::setObjectManagerAdressLink(objectManager * objm)
 {
 	_objm = objm;
+}
+
+void playerBase::takeDamage(int damage)
+{
 }

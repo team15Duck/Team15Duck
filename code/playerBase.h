@@ -116,6 +116,7 @@ protected:
 	int				_currentSelectItemSlot;		//현재 선택된 아이템슬롯번호 0~3
 	PLAYER_STATE	_state;
 	RECT			_playerRect;
+	RECT			_shieldRect;				//옆일때 방패
 
 	item*			_invenItem[4];
 
@@ -167,6 +168,7 @@ public:
 	virtual void setObjectManagerAdressLink(objectManager* objm);
 
 	//처맞는함수
+	virtual void takeDamage(int damage);
 
 	//살았니 죽었니 죽는중이니?
 
@@ -183,8 +185,10 @@ public:
 	PLAYER_NAME getPlayerName() { return _name; }
 
 	void setPixelDataLink(image* img) { _pixelData = img; }
-	RECT getPlayerRect() { return _playerRect; }
-	item** getInvenItem() { return _invenItem; }
+	
+	RECT getPlayerRect()	{ return _playerRect; }
+	RECT getShieldRect()	{ return _shieldRect; }
+	item** getInvenItem()	{ return _invenItem;  }
 
 	bool getIsAlive() { return _isAlive; }
 	virtual bool getIsFire() { return false; }

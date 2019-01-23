@@ -74,7 +74,7 @@ void player_Olaf::render()
 void player_Olaf::shieldRender(HDC hdc)
 {
 	if (_isShieldUp && _isFloor && !_isLadder)
-		RectangleBrushPen(hdc, _shield, RGB(255, 0, 255), true);
+		RectangleBrushPen(hdc, _shieldRect, RGB(255, 0, 255), true);
 }
 
 void player_Olaf::keyPressMove()
@@ -1336,7 +1336,7 @@ void player_Olaf::initImgOlaf()
 void player_Olaf::initShield()
 {
 	_isShieldUp = false;																//방패들었니?
-	_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);				//방패렉트생성
+	_shieldRect = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);				//방패렉트생성
 }
 
 void player_Olaf::stateOlaf()
@@ -1571,12 +1571,12 @@ void player_Olaf::stateShield()
 		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);			//오른쪽으로 방패렉트를 갱신한다.
+			_shieldRect = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);			//오른쪽으로 방패렉트를 갱신한다.
 		}
 		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_MOVE_LEFT)
 		{
-			_shield = RectMake(_playerRect.left, _playerRect.top, 10, 70);				//왼쪽으로 방패렉트를 갱신한다.
+			_shieldRect = RectMake(_playerRect.left, _playerRect.top, 10, 70);				//왼쪽으로 방패렉트를 갱신한다.
 		}
 	}
 	//방패를 위로 들었다면
@@ -1585,12 +1585,12 @@ void player_Olaf::stateShield()
 		//플레이어가 오른쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_MOVE_RIGHT)
 		{
-			_shield = RectMake(_playerRect.right - 60, _playerRect.top + 5, 55, 10);			//오른쪽으로 방패렉트를 갱신한다.
+			_shieldRect = RectMake(_playerRect.right - 60, _playerRect.top + 5, 55, 10);			//오른쪽으로 방패렉트를 갱신한다.
 		}
 		//플레이어가 왼쪽을 보고 있다면
 		if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_MOVE_LEFT)
 		{
-			_shield = RectMake(_playerRect.left + 5, _playerRect.top + 5, 55, 10);				//왼쪽으로 방패렉트를 갱신한다.
+			_shieldRect = RectMake(_playerRect.left + 5, _playerRect.top + 5, 55, 10);				//왼쪽으로 방패렉트를 갱신한다.
 		}
 	}
 }

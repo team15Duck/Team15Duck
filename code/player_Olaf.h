@@ -3,7 +3,6 @@
 class player_Olaf : public playerBase
 {
 private:
-	RECT _shield;				//옆일때 방패
 	image* _pixelShield;		//방패를 위로 들었을때 픽셀충돌용
 	animation* _olafMotion;		//올라프모션
 
