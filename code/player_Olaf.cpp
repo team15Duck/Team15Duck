@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "player_Olaf.h"
 
-
 player_Olaf::player_Olaf()
+	:_isAniStart(false)
 {
 }
-
 
 player_Olaf::~player_Olaf()
 {
@@ -36,11 +35,6 @@ void player_Olaf::update()
 
 	//충돌처리
 	stateOlaf();
-	if (_state == PLAYER_FALL_RIGHT || _state == PLAYER_FALL_LEFT)
-	{
-		pixelLeftWallCollision();
-		pixelRightWallCollision();
-	}
 	pixelBottomCollision();
 	pixelFireCollision();
 	playerCollisionLadder();
@@ -52,10 +46,8 @@ void player_Olaf::update()
 	_proveLeft = _playerRect.left;
 	_specialTime += 90 * TIMEMANAGER->getElpasedTime();
 
-
 	//방패갱신
 	stateShield();
-
 }
 
 void player_Olaf::render()
@@ -64,7 +56,7 @@ void player_Olaf::render()
 		_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _olafMotion);
 
 	//테슷흐
-	if (KEYMANAGER->isToggleKey(VK_TAB))
+	if (KEYMANAGER->isToggleKey(VK_F9))
 	{
 		Rectangle(CAMERA->getMemDC(), _playerRect, false);
 	}
@@ -79,824 +71,58 @@ void player_Olaf::render()
 	}
 }
 
+void player_Olaf::shieldRender(HDC hdc)
+{
+	if (_isShieldUp && _isFloor && !_isLadder)
+		RectangleBrushPen(hdc, _shield, RGB(255, 0, 255), true);
+}
+
 void player_Olaf::keyPressMove()
 {
-	//살아있고
 	if (!_deathMotion)
-	{//방패를 위로 들고 있지 않다면
+	{
 		if (!_isShieldUp)
 		{
-			if (_isFloor)
+			if (!_isLadder)
 			{
-				// ============================ 우(NO방패) ============================
-				if (_state != PLAYER_MOVE_LEFT && _state != PLAYER_PUSH_WALL_LEFT && _state != PLAYER_SHIELD_MOVE_LEFT &&
-					_state != PLAYER_LADDER_UP && _state != PLAYER_LADDER_DOWN)
-				{
-					if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_FALL_RIGHT;
-							startAniOlaf("fall_Right");
-						}
-						else if (_isFloor)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-					{
-						if (!_isFloor && !_isLadder && !_isAniStart)
-						{
-							_state = PLAYER_FALL_RIGHT;
-							startAniOlaf("fall_Right");
-							_isAniStart = true;
-						}
-						else
-						{
-							pixelRightWallCollision();
-							if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)
-							{
-								if (!_isAniStart)
-								{
-									_speed = 0;
-									_state = PLAYER_PUSH_WALL_RIGHT;
-									startAniOlaf("push_Wall_Right");
-									_isAniStart = true;
-								}
-							}
-							else
-							{
-								_state = PLAYER_MOVE_RIGHT;
-							}
-						}
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
-					{
-
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_FALL_RIGHT;
-							startAniOlaf("fall_Right");
-						}
-						else
-						{
-							if (_isRightCollision)
-							{
-								_state = PLAYER_PUSH_WALL_RIGHT;
-								startAniOlaf("push_Wall_Right");
-							}
-							else
-							{
-								_isAniStart = false;
-								_state = PLAYER_MOVE_RIGHT;
-								startAniOlaf("move_Right");
-							}
-						}
-
-					}
-				}
-				// ============================ 좌(NO방패) ============================
-				if (_state != PLAYER_MOVE_RIGHT && _state != PLAYER_PUSH_WALL_RIGHT && _state != PLAYER_SHIELD_MOVE_RIGHT &&
-					_state != PLAYER_LADDER_UP && _state != PLAYER_LADDER_DOWN)
-				{
-					if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_FALL_LEFT;
-							startAniOlaf("fall_Left");
-						}
-						else
-						{
-							_state = PLAYER_IDLE_LEFT;
-							startAniOlaf("idle_Left");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-					{
-						pixelLeftWallCollision();
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_FALL_LEFT;
-						}
-						else
-						{
-							
-							if (_isLeftCollision || _playerRect.left <= 0)
-							{
-								if (!_isAniStart)
-								{
-									_speed = 0;
-									_state = PLAYER_PUSH_WALL_LEFT;
-									startAniOlaf("push_Wall_Left");
-									_isAniStart = true;
-								}
-							}
-							else
-							{
-								if (_isLadderBottom && (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT || _state == PLAYER_FALL_LEFT))
-								{
-									_state = PLAYER_MOVE_LEFT;
-									startAniOlaf("move_Left");
-								}
-							}
-						}
-
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_FALL_LEFT;
-							startAniOlaf("fall_Left");
-						}
-						else
-						{
-							if (_isLeftCollision || _playerRect.left <= 0)
-							{
-								_state = PLAYER_PUSH_WALL_LEFT;
-								startAniOlaf("push_Wall_Left");
-							}
-							else
-							{
-								_isAniStart = false;
-								_state = PLAYER_MOVE_LEFT;
-								startAniOlaf("move_Left");
-
-							}
-						}
-
-
-					}
-				}
+				noLadder_KeyRight();
+				noLadder_KeyLeft();
 			}
-			//사다리 이용할때만 상하이동이 가능하다
-			if (_isLadder)
+			else
 			{
-				// ============================ 상(방패상관없이 사다리) ============================
-				if (KEYMANAGER->isOnceKeyUp(VK_UP))
-				{
-					//사다리에 서있고 올라가있지 않은 상태
-					if (!_isLadderTop)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						_olafMotion->pause();
-					}
-					if (_isLadderTop)					//사다리 위
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-				}
-				if (KEYMANAGER->isStayKeyDown(VK_UP))
-				{
-					//사다리에 있을때
-					if (!_isLadderTop &&
-						(_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
-							_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
-					{
-						_state = PLAYER_LADDER_UP;
-						startAniOlaf("ladder_Up");
-
-					}
-					else if (_isLadderTop && !_isAniStart)	//사다리 위이고 다음 동작 애니메이션이 실행하지 않았다면
-					{
-						_speed = 0;
-						_state = PLAYER_LADDER_END;
-						startAniOlaf("ladder_End");
-						_isAniStart = true;
-					}
-				}
-				if (KEYMANAGER->isOnceKeyDown(VK_UP))
-				{
-					_isAniStart = false;
-					if (!_isLadderTop)
-					{
-						_state = PLAYER_LADDER_UP;
-						startAniOlaf("ladder_Up");
-					}
-				}
-				// ============================ 하(방패상관없이 사다리) ============================
-				if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
-				{
-					if (!_isLadderTop)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						_olafMotion->pause();			//사다리에서 멈췄을때
-					}
-					if (_isLadderTop && _isFloor)		//사다리 위
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-					if (_isLadderBottom)				//사다리 밑
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-				}
-				if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-				{
-					//사다리에 있을때
-					if (!_isLadderTop && !_isLadderBottom &&
-						(_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
-							_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
-					{
-
-						_state = PLAYER_LADDER_DOWN;
-						startAniOlaf("ladder_Down");
-
-					}
-					else if (_isLadderTop && _isFloor && !_isLadderBottom)
-						_state = PLAYER_LADDER_DOWN;
-					else if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-				}
-				if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
-				{
-					_isAniStart = false;
-					if (!_isLadderTop && !_isAniStart)
-					{
-						_state = PLAYER_LADDER_DOWN;
-						startAniOlaf("ladder_Down");
-					}
-					else if (_isLadderTop && _isFloor)
-					{
-						_state = PLAYER_LADDER_DOWN;
-						startAniOlaf("ladder_Down");
-					}
-					else if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-				}
-				// ============================ 우 ============================
-				// 조금만 좌우 누르면 사다리에서 떨어진다.
-				if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-				{
-					if (!_isLadderTop && !_isFloor)
-					{
-						_state = PLAYER_FALL_RIGHT;
-						startAniOlaf("fall_Right");
-					}
-					if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-				}
-				if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-				{
-					if (!_isLadderTop && !_isFloor && !_isAniStart)
-					{
-						_state = PLAYER_FALL_RIGHT;
-						startAniOlaf("fall_Right");
-					}
-					if (_isRightCollision)
-					{
-						_speed = 0;
-						_state = PLAYER_FALL_RIGHT;
-					}
-					if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-					}
-					if (_isFloor)
-					{
-						_state = PLAYER_MOVE_RIGHT;
-					}
-				}
-				if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
-				{
-					if (!_isLadderTop && !_isFloor)
-					{
-						_state = PLAYER_FALL_RIGHT;
-						startAniOlaf("fall_Right");
-					}
-					if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_RIGHT;
-						startAniOlaf("idle_Right");
-					}
-					if (_isFloor)
-					{
-						_state = PLAYER_MOVE_RIGHT;
-						startAniOlaf("move_Right");
-					}
-				}
-				// ============================ 좌 ============================
-				if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-				{
-					if (!_isLadderTop && !_isFloor)
-					{
-						_state = PLAYER_FALL_LEFT;
-						startAniOlaf("fall_Left");
-					}
-					if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_LEFT;
-						startAniOlaf("idle_Left");
-					}
-				}
-				if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-				{
-					if (!_isLadderTop && !_isFloor && !_isAniStart)
-					{
-						_state = PLAYER_FALL_LEFT;
-						startAniOlaf("fall_Left");
-					}
-					if (_isLeftCollision)
-					{
-						_speed = 0;
-						_state = PLAYER_FALL_LEFT;
-					}
-					if (_isLadderBottom)
-					{
-						_state = PLAYER_IDLE_LEFT;
-					}
-					if (_isFloor)
-					{
-						_state = PLAYER_MOVE_LEFT;
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
-					{
-						if (!_isLadderTop && !_isFloor)
-						{
-							_state = PLAYER_FALL_LEFT;
-							startAniOlaf("fall_Left");
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_LEFT;
-							startAniOlaf("idle_Right");
-						}
-						if (_isFloor)
-						{
-							_state = PLAYER_MOVE_LEFT;
-							startAniOlaf("move_Left");
-						}
-					}
-				}
+				ladder_KeyUp();
+				ladder_KeyDown();
+				ladder_KeyRight();
+				ladder_KeyLeft();
 			}
 		}
-		//방패를 위로 들고 있다면
-		else
+		else if (_isShieldUp)
 		{
-			//떨어지지 않을때
-			if (_state != PLAYER_SHIELD_FALL_RIGHT && _state != PLAYER_SHIELD_FALL_LEFT &&
-				_state != PLAYER_SHIELD_FALL_MOVE_RIGHT && _state != PLAYER_SHIELD_FALL_MOVE_LEFT)
+			if (!_isLadder)
 			{
-				//==================== 우 ====================
-				if (_state != PLAYER_MOVE_LEFT && _state != PLAYER_PUSH_WALL_LEFT && _state != PLAYER_SHIELD_MOVE_LEFT)
+				if (_state != PLAYER_SHIELD_FALL_RIGHT && _state != PLAYER_SHIELD_FALL_LEFT &&
+					_state != PLAYER_SHIELD_FALL_MOVE_RIGHT && _state != PLAYER_SHIELD_FALL_MOVE_LEFT)
 				{
-					if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_SHIELD_FALL_RIGHT;
-							startAniOlaf("fall_Shield_Right");
-						}
-						else
-						{
-							_speed = _minSpeed;
-							_state = PLAYER_SHIELD_IDLE_RIGHT;
-							startAniOlaf("idle_Shield_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-					{
-						if (!_isFloor && !_isLadder)
-							_state = PLAYER_SHIELD_FALL_RIGHT;
-						else
-						{
-							pixelRightWallCollision();
-							if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)
-							{
-								if (!_isAniStart)
-								{
-									_speed = 0;
-									_state = PLAYER_PUSH_WALL_RIGHT;
-									startAniOlaf("push_Wall_Right");
-									_isAniStart = true;
-								}
-							}
-							else
-							{
-								if (_isLadderBottom && (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_FALL_RIGHT))
-								{
-									_state = PLAYER_SHIELD_MOVE_RIGHT;
-									startAniOlaf("move_Shield_Right");
-								}
-							}
-						}
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_SHIELD_FALL_RIGHT;
-							startAniOlaf("fall_Shield_Right");
-						}
-						else
-						{
-							if (_isRightCollision)
-							{
-								_state = PLAYER_PUSH_WALL_RIGHT;
-								startAniOlaf("push_Wall_Right");
-							}
-							else
-							{
-								_isAniStart = false;
-								_state = PLAYER_SHIELD_MOVE_RIGHT;
-								startAniOlaf("move_Shield_Right");
-							}
-						}
-					}
-				}
-
-				//==================== 좌 ====================
-				if (_state != PLAYER_MOVE_RIGHT && _state != PLAYER_PUSH_WALL_RIGHT && _state != PLAYER_SHIELD_MOVE_RIGHT)
-				{
-					if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_SHIELD_FALL_LEFT;
-							startAniOlaf("fall_Shield_Left");
-						}
-						else
-						{
-							_speed = _minSpeed;
-							_state = PLAYER_SHIELD_IDLE_LEFT;
-							startAniOlaf("idle_Shield_Left");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_SHIELD_FALL_LEFT;
-						}
-						else
-						{
-							pixelLeftWallCollision();
-							if (_isLeftCollision || _playerRect.left <= 0)
-							{
-								if (!_isAniStart)
-								{
-									_speed = 0;
-									_state = PLAYER_PUSH_WALL_LEFT;
-									startAniOlaf("push_Wall_Left");
-									_isAniStart = true;
-								}
-							}
-							else
-							{
-								_state = PLAYER_SHIELD_MOVE_LEFT;
-							}
-						}
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
-					{
-						if (!_isFloor && !_isLadder)
-						{
-							_state = PLAYER_SHIELD_FALL_LEFT;
-							startAniOlaf("fall_Shield_Left");
-						}
-						else
-						{
-							if (_isLeftCollision)
-							{
-								_state = PLAYER_PUSH_WALL_LEFT;
-								startAniOlaf("push_Wall_Left");
-							}
-							else
-							{
-								_isAniStart = false;
-								_state = PLAYER_SHIELD_MOVE_LEFT;
-								startAniOlaf("move_Shield_Left");
-							}
-						}
-					}
-				}
-				// ============================ 상하 ============================
-				if (_isLadder)
-				{
-					if (KEYMANAGER->isOnceKeyUp(VK_UP))
-					{
-						//사다리에 서있고 올라가있지 않은 상태
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_IDLE_RIGHT;
-								_olafMotion->pause();			//사다리에서 멈췄을때
-							}
-						}
-						if (_isLadderTop)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_UP))
-					{
-						//사다리에 있을때
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-								_state = PLAYER_LADDER_UP;
-						}
-						else if (_isLadderTop && !_isAniStart)
-						{
-							_speed = 0;
-							_state = PLAYER_LADDER_END;
-							startAniOlaf("ladder_End");
-							_isAniStart = true;
-						}
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_UP))
-					{
-						_isAniStart = false;
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_LADDER_UP;
-								startAniOlaf("ladder_Up");
-							}
-						}
-						else if (_isLadderTop && !_isAniStart)
-						{
-							_speed = 0;
-							_state = PLAYER_LADDER_END;
-							startAniOlaf("ladder_End");
-						}
-					}
-					if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
-					{
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_IDLE_RIGHT;
-								_olafMotion->pause();			//사다리에서 멈췄을때
-							}
-						}
-						if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-					{
-						//사다리에 있을때
-						if (!_isLadderTop && !_isAniStart)
-						{
-							if (!_isFloor)
-							{
-								_state = PLAYER_LADDER_DOWN;
-								_isAniStart = true;
-							}
-						}
-						else if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_LADDER_DOWN;
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-						}
-
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
-					{
-						_isAniStart = false;
-						if (!_isLadderTop && !_isAniStart)
-						{
-							if (!_isFloor)
-							{
-								_state = PLAYER_LADDER_DOWN;
-								startAniOlaf("ladder_Down");
-							}
-						}
-						else if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_LADDER_DOWN;
-							startAniOlaf("ladder_Down");
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
+					noFall_Shield_KeyRight();
+					noFall_Shield_KeyLeft();
 				}
 			}
-
-			else //떨어질때
+			else
 			{
-				//==================== 우 ====================
-				if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
-				{
-					if (!_isFloor && !_isLadder)
-					{
-						_isAniStart = false;
-						_state = PLAYER_SHIELD_FALL_RIGHT;
-						startAniOlaf("fall_Shield_Right");
-					}
-					else if (_isFloor)
-					{
-						_speed = _minSpeed;
-						_state = PLAYER_SHIELD_IDLE_RIGHT;
-						startAniOlaf("idle_Shield_Right");
-					}
-				}
-
-				if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
-				{
-					if (!_isAniStart)
-					{
-						_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
-						startAniOlaf("fall_Shield_Move_Right");
-						_isAniStart = true;
-					}
-				}
-
-				if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
-				{
-					if (_state == PLAYER_SHIELD_FALL_RIGHT || _state == PLAYER_SHIELD_FALL_LEFT)
-					{
-						_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
-						startAniOlaf("fall_Shield_Move_Right");
-					}
-				}
-
-				//==================== 좌 ====================
-				if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
-				{
-					if (!_isFloor && !_isLadder)
-					{
-						_isAniStart = false;
-						_state = PLAYER_SHIELD_FALL_LEFT;
-						startAniOlaf("fall_Shield_Left");
-					}
-					else if (_isFloor)
-					{
-						_speed = _minSpeed;
-						_state = PLAYER_SHIELD_IDLE_LEFT;
-						startAniOlaf("idle_Shield_Left");
-					}
-				}
-				if (KEYMANAGER->isStayKeyDown(VK_LEFT))
-				{
-					if (!_isAniStart)
-					{
-						_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
-						startAniOlaf("fall_Shield_Move_Left");
-						_isAniStart = true;
-					}
-
-					if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
-					{
-						if (_state == PLAYER_SHIELD_FALL_RIGHT || _state == PLAYER_SHIELD_FALL_LEFT)
-						{
-							_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
-							startAniOlaf("fall_Shield_Move_Left");
-						}
-					}
-				}
-				// ============================ 상하 ============================
-				if (_isLadder)
-				{
-					if (KEYMANAGER->isOnceKeyUp(VK_UP))
-					{
-						//사다리에 서있고 올라가있지 않은 상태
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_IDLE_RIGHT;
-								_olafMotion->pause();			//사다리에서 멈췄을때
-							}
-						}
-						if (_isLadderTop)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_UP))
-					{
-						//사다리에 있을때
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-								_state = PLAYER_LADDER_UP;
-						}
-						else if (_isLadderTop && !_isAniStart)
-						{
-							_speed = 0;
-							_state = PLAYER_LADDER_END;
-							startAniOlaf("ladder_End");
-							_isAniStart = true;
-						}
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_UP))
-					{
-						_isAniStart = false;
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_LADDER_UP;
-								startAniOlaf("ladder_Up");
-							}
-						}
-						else if (_isLadderTop && !_isAniStart)
-						{
-							_speed = 0;
-							_state = PLAYER_LADDER_END;
-							startAniOlaf("ladder_End");
-						}
-					}
-					if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
-					{
-						if (!_isLadderTop)
-						{
-							if (_isFloor || !_isFloor)
-							{
-								_state = PLAYER_IDLE_RIGHT;
-								_olafMotion->pause();			//사다리에서 멈췄을때
-							}
-						}
-						if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-					if (KEYMANAGER->isStayKeyDown(VK_DOWN))
-					{
-						//사다리에 있을때
-						if (!_isLadderTop && !_isAniStart)
-						{
-							if (!_isFloor)
-							{
-								_state = PLAYER_LADDER_DOWN;
-								_isAniStart = true;
-							}
-						}
-						else if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_LADDER_DOWN;
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-						}
-
-					}
-					if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
-					{
-						_isAniStart = false;
-						if (!_isLadderTop && !_isAniStart)
-						{
-							if (!_isFloor)
-							{
-								_state = PLAYER_LADDER_DOWN;
-								startAniOlaf("ladder_Down");
-							}
-						}
-						else if (_isLadderTop && _isFloor)
-						{
-							_state = PLAYER_LADDER_DOWN;
-							startAniOlaf("ladder_Down");
-						}
-						if (_isLadderBottom)
-						{
-							_state = PLAYER_IDLE_RIGHT;
-							startAniOlaf("idle_Right");
-						}
-					}
-				}
+				noFall_Shield_KeyUp();
+				noFall_Shield_KeyDown();
+				fall_Shield_KeyRight();
+				fall_Shield_KeyLeft();
+			}
+			if (!_isLadder)
+			{
+				noLadder_Shield_KeyRight();
+				noLadder_Shield_KeyLeft();
+			}
+			else
+			{
+				fall_Shield_KeyRight();
+				fall_Shield_KeyLeft();
 			}
 		}
 	}
@@ -1052,6 +278,970 @@ void player_Olaf::keyPressD()
 	//얘는 스페이스기능과 동일하니 스페이스 다 하면 수정하자.. 코드가 넘 길어서 헷갈린다...
 }
 
+void player_Olaf::noLadder_KeyRight()
+{
+	pixelRightWallCollision();
+	if (_state != PLAYER_MOVE_LEFT && _state != PLAYER_PUSH_WALL_LEFT && _state != PLAYER_SHIELD_MOVE_LEFT &&
+		_state != PLAYER_LADDER_UP && _state != PLAYER_LADDER_DOWN && _state != PLAYER_LADDER_END)
+	{
+		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+		{
+			if (!_isFloor)									//낙하할때
+			{
+				_state = PLAYER_FALL_RIGHT;
+				startAniOlaf("fall_Right");
+			}
+			else 											//바닥에 있을때
+			{
+				_state = PLAYER_IDLE_RIGHT;
+				startAniOlaf("idle_Right");
+			}
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+		{
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT)
+			{
+				_state = PLAYER_MOVE_RIGHT;
+			}
+			if (!_isFloor)					//낙하할때
+			{
+				_state = PLAYER_FALL_RIGHT;
+			}
+			else if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)	// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				if (!_isAniStart)
+				{
+					_state = PLAYER_PUSH_WALL_RIGHT;
+					startAniOlaf("push_Wall_Right");
+					_isAniStart = true;
+				}
+			}
+			else		//바닥에 있을때
+			{
+				_state = PLAYER_MOVE_RIGHT;
+			}
+		}
+		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+		{
+			_isAniStart = false;
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT)
+			{
+				_state = PLAYER_MOVE_RIGHT;
+				startAniOlaf("move_Right");
+			}
+			if (!_isFloor && !_isAniStart)						//낙하할때
+			{
+				_state = PLAYER_FALL_RIGHT;
+				startAniOlaf("fall_Right");
+			}
+			else if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)	// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_RIGHT;
+				startAniOlaf("push_Wall_Right");
+			}
+			else		//바닥에 있을때
+			{
+				_state = PLAYER_MOVE_RIGHT;
+				startAniOlaf("move_Right");
+			}
+		}
+	}
+}
+
+void player_Olaf::noLadder_KeyLeft()
+{
+	pixelLeftWallCollision();
+	if (_state != PLAYER_MOVE_RIGHT && _state != PLAYER_PUSH_WALL_RIGHT && _state != PLAYER_SHIELD_MOVE_RIGHT &&
+		_state != PLAYER_LADDER_UP && _state != PLAYER_LADDER_DOWN && _state != PLAYER_LADDER_END)
+	{
+		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+		{
+			if (!_isFloor)									//낙하할때
+			{
+				_state = PLAYER_FALL_LEFT;
+				startAniOlaf("fall_Left");
+			}
+			else											//바닥에 있을때
+			{
+				_state = PLAYER_IDLE_LEFT;
+				startAniOlaf("idle_Left");
+			}
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT)
+			{
+				_state = PLAYER_MOVE_LEFT;
+			}
+			if (!_isFloor)										//낙하할때
+			{
+				_state = PLAYER_FALL_LEFT;
+			}
+			else if (!_isLeftCollision &&_isFloor)				//바닥에 있을때
+			{
+				_state = PLAYER_MOVE_LEFT;
+			}
+			if (_isLeftCollision || _playerRect.left <= 0)	//왼쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_LEFT;
+				if (!_isAniStart)
+				{
+					startAniOlaf("push_Wall_Left");
+					_isAniStart = true;
+				}
+			}
+		}
+		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+		{
+			_isAniStart = false;
+			if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT)
+			{
+				_state = PLAYER_MOVE_LEFT;
+				startAniOlaf("move_Left");
+			}
+			if (!_isLeftCollision && _isFloor)					//바닥에 있을때
+			{
+				_state = PLAYER_MOVE_LEFT;
+				startAniOlaf("move_Left");
+			}
+			else if (!_isLeftCollision && (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT))
+			{
+				_state = PLAYER_MOVE_LEFT;
+				startAniOlaf("move_Left");
+			}
+			else if (!_isFloor)											//낙하할때
+			{
+				_state = PLAYER_FALL_LEFT;
+				startAniOlaf("fall_Left");
+			}
+			else if (_isLeftCollision || _playerRect.left <= 0)		// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_LEFT;
+				startAniOlaf("push_Wall_Left");
+			}
+		}
+	}
+}
+
+void player_Olaf::ladder_KeyUp()
+{
+	if (KEYMANAGER->isOnceKeyUp(VK_UP))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			_olafMotion->pause();
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_UP))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
+				_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_UP;
+			}
+		}
+		else if (_isLadderTop && !_isLadderBottom)		// 사다리 위에 있는 상태
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_LADDER_END;
+				startAniOlaf("ladder_End");
+				_isAniStart = true;
+			}
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_UP))
+	{
+		_isAniStart = false;
+		if (!_isLadderTop && _isLadderBottom)							// 사다리 바닥에 있는 상태
+		{
+			_state = PLAYER_LADDER_UP;
+			startAniOlaf("ladder_Up");
+		}
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			if (_state != PLAYER_IDLE_RIGHT || _state != PLAYER_IDLE_LEFT ||
+				_state != PLAYER_SHIELD_IDLE_LEFT || _state != PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_UP;
+				startAniOlaf("ladder_Up");
+			}
+		}
+		if (_isLadderTop && !_isLadderBottom)							// 사다리 위에 있는 상태
+		{
+			_state = PLAYER_LADDER_END;
+			startAniOlaf("ladder_End");
+		}
+	}
+}
+
+void player_Olaf::ladder_KeyDown()
+{
+	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			_olafMotion->pause();
+		}
+		if (_isLadderTop && !_isLadderBottom)							// 사다리 위에 있는 상태
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태				
+		{
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
+				_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_DOWN;
+				startAniOlaf("ladder_Down");
+			}
+		}
+		if (_isLadderTop && !_isLadderBottom)					//사다리 위에 있는 상태
+		{
+			_state = PLAYER_LADDER_DOWN;
+		}
+		if (!_isLadderTop && _isLadderBottom)					//사다리 밑인 상태
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
+	{
+		_isAniStart = false;
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_LADDER_DOWN;
+			startAniOlaf("ladder_Down");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_LADDER_DOWN;
+			startAniOlaf("ladder_Down");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+	}
+}
+
+void player_Olaf::ladder_KeyRight()
+{
+	pixelRightWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_FALL_RIGHT;
+			startAniOlaf("fall_Right");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_FALL_RIGHT;
+				startAniOlaf("fall_Right");
+				_isAniStart = true;
+			}
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+		}
+		if (!_isLadderTop && _isFloor)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_FALL_RIGHT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+	{
+		if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+			startAniOlaf("move_Right");
+		}
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_FALL_RIGHT;
+			startAniOlaf("fall_Right");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_RIGHT;
+			startAniOlaf("idle_Right");
+		}
+		if (!_isLadderTop && _isFloor)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+			startAniOlaf("move_Right");
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_MOVE_RIGHT;
+			startAniOlaf("move_Right");
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_FALL_RIGHT;
+			startAniOlaf("fall_Right");
+		}
+
+	}
+}
+
+void player_Olaf::ladder_KeyLeft()
+{
+	pixelLeftWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_FALL_LEFT;
+			startAniOlaf("fall_Left");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_LEFT;
+			startAniOlaf("idle_Left");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_IDLE_LEFT;
+			startAniOlaf("idle_Left");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_FALL_LEFT;
+				startAniOlaf("fall_Left");
+				_isAniStart = true;
+			}
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_LEFT;
+		}
+		if (!_isLadderTop && _isFloor)
+		{
+			_state = PLAYER_MOVE_LEFT;
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_IDLE_LEFT)
+		{
+			_state = PLAYER_MOVE_LEFT;
+		}
+		if (_isLeftCollision)
+		{
+			_state = PLAYER_FALL_LEFT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+	{
+		if (_state == PLAYER_IDLE_LEFT || _state == PLAYER_IDLE_RIGHT)
+		{
+			_state = PLAYER_MOVE_LEFT;
+			startAniOlaf("move_Left");
+		}
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_FALL_LEFT;
+			startAniOlaf("fall_Left");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_IDLE_LEFT;
+			startAniOlaf("idle_Left");
+		}
+		if (!_isLadderTop && _isFloor)
+		{
+			_state = PLAYER_MOVE_LEFT;
+			startAniOlaf("move_Left");
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_IDLE_LEFT)
+		{
+			_state = PLAYER_MOVE_LEFT;
+			startAniOlaf("move_Left");
+		}
+		if (_isLeftCollision)
+		{
+			_state = PLAYER_FALL_LEFT;
+			startAniOlaf("fall_Left");
+		}
+	}
+}
+
+void player_Olaf::noFall_Shield_KeyRight()
+{
+	pixelRightWallCollision();
+	if (_state != PLAYER_MOVE_LEFT && _state != PLAYER_PUSH_WALL_LEFT && _state != PLAYER_SHIELD_MOVE_LEFT)
+	{
+		if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+		{
+			if (!_isFloor)									//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_RIGHT;
+				startAniOlaf("fall_Shield_Right");
+			}
+			else 										//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_IDLE_RIGHT;
+				startAniOlaf("idle_Shield_Right");
+			}
+		}
+
+		if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+		{
+			if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_IDLE_LEFT)
+			{
+				_state = PLAYER_SHIELD_MOVE_RIGHT;
+			}
+			if (!_isFloor && !_isAniStart)					//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_RIGHT;
+			}
+			else if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)	// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_RIGHT;
+				if (!_isRightMotion)
+				{
+					startAniOlaf("push_Wall_Right");
+					_isRightMotion = true;
+				}
+			}
+			else		//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_MOVE_RIGHT;
+			}
+		}
+
+		if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+		{
+			_isRightMotion = false;
+			if (_state == PLAYER_SHIELD_IDLE_RIGHT || _state == PLAYER_SHIELD_IDLE_LEFT)
+			{
+				_state = PLAYER_SHIELD_MOVE_RIGHT;
+				startAniOlaf("move_Shield_Right");
+			}
+			if (!_isFloor)											//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_RIGHT;
+				startAniOlaf("fall_Shield_Right");
+			}
+			else if (_isRightCollision || _pixelData->GetWidth() <= _playerRect.right)	// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_RIGHT;
+				startAniOlaf("push_Wall_Right");
+			}
+			else			//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_MOVE_RIGHT;
+				startAniOlaf("move_Shield_Right");
+			}
+		}
+	}
+}
+
+void player_Olaf::noFall_Shield_KeyLeft()
+{
+	pixelLeftWallCollision();
+	if (_state != PLAYER_MOVE_RIGHT && _state != PLAYER_PUSH_WALL_RIGHT && _state != PLAYER_SHIELD_MOVE_RIGHT)
+	{
+		if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+		{
+			if (!_isFloor)									//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_LEFT;
+				startAniOlaf("fall_Shield_Left");
+			}
+			else											//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_IDLE_LEFT;
+				startAniOlaf("idle_Shield_Left");
+			}
+		}
+		if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+		{
+			if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_SHIELD_MOVE_LEFT;
+			}
+			if (!_isFloor && !_isAniStart)						//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_LEFT;
+			}
+			else if (_isLeftCollision &&_isFloor)				//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_MOVE_LEFT;
+			}
+			else if (_isLeftCollision || _playerRect.left <= 0)	//왼쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_LEFT;
+				if (!_isAniStart)
+				{
+					startAniOlaf("push_Wall_Left");
+					_isAniStart = true;
+				}
+			}
+		}
+		if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+		{
+			_isAniStart = false;
+			if (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_SHIELD_MOVE_LEFT;
+				startAniOlaf("move_Shield_Left");
+			}
+			if (!_isFloor)											//낙하할때
+			{
+				_state = PLAYER_SHIELD_FALL_LEFT;
+				startAniOlaf("fall_Shield_Left");
+			}
+			else if (!_isLeftCollision && _isFloor)					//바닥에 있을때
+			{
+				_state = PLAYER_SHIELD_MOVE_LEFT;
+				startAniOlaf("move_Shield_Left");
+			}
+			else if (_isLeftCollision || _playerRect.left <= 0)		// 오른쪽 벽과 부딪히거나 맵 끝일때
+			{
+				_state = PLAYER_PUSH_WALL_LEFT;
+				startAniOlaf("push_Wall_Left");
+			}
+		}
+	}
+}
+
+void player_Olaf::noFall_Shield_KeyUp()
+{
+	if (KEYMANAGER->isOnceKeyUp(VK_UP))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			_olafMotion->pause();
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_UP))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
+				_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_UP;
+			}
+		}
+		else if (_isLadderTop && !_isLadderBottom && !_isAniStart)		// 사다리 위에 있는 상태
+		{
+			_state = PLAYER_LADDER_END;
+			startAniOlaf("ladder_End");
+			_isAniStart = true;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_UP))
+	{
+		_isAniStart = false;
+		if (!_isLadderTop && _isLadderBottom)							// 사다리 바닥에 있는 상태
+		{
+			_state = PLAYER_LADDER_UP;
+			startAniOlaf("ladder_Up");
+		}
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			if (_state != PLAYER_IDLE_RIGHT || _state != PLAYER_IDLE_LEFT ||
+				_state != PLAYER_SHIELD_IDLE_LEFT || _state != PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_UP;
+				startAniOlaf("ladder_Up");
+			}
+		}
+		if (_isLadderTop && !_isLadderBottom)							// 사다리 위에 있는 상태
+		{
+			_state = PLAYER_LADDER_END;
+			startAniOlaf("ladder_End");
+		}
+	}
+}
+
+void player_Olaf::noFall_Shield_KeyDown()
+{
+	if (KEYMANAGER->isOnceKeyUp(VK_DOWN))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			_olafMotion->pause();
+		}
+		if (_isLadderTop && !_isLadderBottom)							// 사다리 위에 있는 상태
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_DOWN))
+	{
+		if (!_isLadderTop && !_isLadderBottom)							// 사다리 타있는 상태				
+		{
+			if (_state == PLAYER_IDLE_RIGHT || _state == PLAYER_IDLE_LEFT ||
+				_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT)
+			{
+				_state = PLAYER_LADDER_DOWN;
+				startAniOlaf("ladder_Down");
+			}
+		}
+		if (_isLadderTop && !_isLadderBottom)					//사다리 위에 있는 상태
+		{
+			_state = PLAYER_LADDER_DOWN;
+		}
+		if (!_isLadderTop && _isLadderBottom)					//사다리 밑인 상태
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_DOWN))
+	{
+		_isAniStart = false;
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_LADDER_DOWN;
+			startAniOlaf("ladder_Down");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_LADDER_DOWN;
+			startAniOlaf("ladder_Down");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+	}
+}
+
+void player_Olaf::noLadder_Shield_KeyRight()
+{
+	pixelRightWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+	{
+		if (!_isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+			startAniOlaf("fall_Shield_Right");
+		}
+		else
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+	{
+		if (!_isFloor)
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
+				startAniOlaf("fall_Shield_Move_Right");
+				_isAniStart = true;
+			}
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+	{
+		if (!_isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
+			startAniOlaf("fall_Shield_Move_Right");
+		}
+		if (_state == PLAYER_SHIELD_FALL_RIGHT || _state == PLAYER_SHIELD_FALL_LEFT)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
+			startAniOlaf("fall_Shield_Move_Right");
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+			startAniOlaf("fall_Shield_Right");
+		}
+
+	}
+}
+
+void player_Olaf::noLadder_Shield_KeyLeft()
+{
+	pixelLeftWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+	{
+		if (!_isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+			startAniOlaf("fall_Shield_Left");
+		}
+		else
+		{
+			_state = PLAYER_SHIELD_IDLE_LEFT;
+			startAniOlaf("idle_Shield_Left");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	{
+		if (!_isFloor)
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
+				startAniOlaf("fall_Shield_Move_Left");
+				_isAniStart = true;
+			}
+		}
+		if (_isLeftCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+	{
+		if (!_isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
+			startAniOlaf("fall_Shield_Move_Left");
+		}
+		if (_state == PLAYER_SHIELD_FALL_LEFT || _state == PLAYER_SHIELD_FALL_LEFT)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
+			startAniOlaf("fall_Shield_Move_Left");
+		}
+		if (_isLeftCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+			startAniOlaf("fall_Shield_Left");
+		}
+
+	}
+}
+
+void player_Olaf::fall_Shield_KeyRight()
+{
+	pixelRightWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_RIGHT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+			startAniOlaf("fall_Shield_Right");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_RIGHT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			if (!_isAniStart)
+			{
+				_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
+				startAniOlaf("fall_Shield_Move_Right");
+				_isAniStart = true;
+			}
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+		}
+		if (_isFloor && (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
+		{
+			_state = PLAYER_SHIELD_MOVE_RIGHT;
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_SHIELD_IDLE_RIGHT)
+		{
+			_state = PLAYER_SHIELD_MOVE_RIGHT;
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_RIGHT;
+			startAniOlaf("fall_Shield_Move_Right");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_RIGHT;
+			startAniOlaf("idle_Shield_Right");
+		}
+		if (_isFloor && (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
+		{
+			_state = PLAYER_SHIELD_MOVE_RIGHT;
+			startAniOlaf("move_Shield_Right");
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_SHIELD_IDLE_RIGHT)
+		{
+			_state = PLAYER_SHIELD_MOVE_RIGHT;
+			startAniOlaf("move_Shield_Right");
+		}
+		if (_isRightCollision)
+		{
+			_state = PLAYER_SHIELD_FALL_RIGHT;
+			startAniOlaf("fall_Shield_Right");
+		}
+
+	}
+}
+
+void player_Olaf::fall_Shield_KeyLeft()
+{
+	pixelLeftWallCollision();
+	if (KEYMANAGER->isOnceKeyUp(VK_LEFT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+			startAniOlaf("fall_Shield_Left");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_LEFT;
+			startAniOlaf("idle_Shield_Left");
+		}
+		if (_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_LEFT;
+			startAniOlaf("idle_Shield_Left");
+		}
+	}
+	if (KEYMANAGER->isStayKeyDown(VK_LEFT))
+	{
+		if (!_isLadderTop && !_isLadderBottom && !_isAniStart)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
+			startAniOlaf("fall_Shield_Left");
+			_isAniStart = true;
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_LEFT;
+		}
+		if (_isFloor && (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
+		{
+			_state = PLAYER_SHIELD_MOVE_LEFT;
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_SHIELD_IDLE_LEFT)
+		{
+			_state = PLAYER_SHIELD_MOVE_LEFT;
+		}
+		if (_isLeftCollision && _isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+		}
+		if ((_state == PLAYER_SHIELD_FALL_MOVE_LEFT || _state == PLAYER_SHIELD_FALL_LEFT) && _isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+		}
+	}
+	if (KEYMANAGER->isOnceKeyDown(VK_LEFT))
+	{
+		if (!_isLadderTop && !_isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_FALL_MOVE_LEFT;
+			startAniOlaf("fall_Shield_Move_Left");
+		}
+		if (!_isLadderTop && _isLadderBottom)
+		{
+			_state = PLAYER_SHIELD_IDLE_LEFT;
+			startAniOlaf("idle_Left");
+		}
+		if (_isFloor && (_state == PLAYER_SHIELD_IDLE_LEFT || _state == PLAYER_SHIELD_IDLE_RIGHT))
+		{
+			_state = PLAYER_SHIELD_MOVE_LEFT;
+			startAniOlaf("move_Shield_Left");
+		}
+		if (_isLadderTop && _isFloor && _state == PLAYER_SHIELD_IDLE_LEFT)
+		{
+			_state = PLAYER_SHIELD_MOVE_LEFT;
+			startAniOlaf("move_Shield_Left");
+		}
+		if (_isLeftCollision && _isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+			startAniOlaf("fall_Shield_Left");
+		}
+		if ((_state == PLAYER_SHIELD_FALL_MOVE_LEFT || _state == PLAYER_SHIELD_FALL_LEFT) && _isFloor)
+		{
+			_state = PLAYER_SHIELD_FALL_LEFT;
+			startAniOlaf("fall_Shield_Left");
+		}
+	}
+}
+
 void player_Olaf::initOlaf()
 {
 	_x = 100;								   //X좌표
@@ -1066,6 +1256,7 @@ void player_Olaf::initOlaf()
 	_isLadderBottom = false;				   //사다리 밑에 있니?
 	_deathMotion = false;					   //죽는모션했니?
 	_isAniStart = false;					   //모션시작했니?
+	_isRightMotion = false;
 
 
 	_accleration = 3.5f;					   //가속도
@@ -1081,6 +1272,73 @@ void player_Olaf::initOlaf()
 	_playerRect = RectMakeCenter(_x, _y, 70, 70); //올라프렉트생성
 }
 
+void player_Olaf::initImgOlaf()
+{
+	KEYANIMANAGER->addAnimationType("player_Olaf");
+	_player = IMAGEMANAGER->addFrameImage("olaf", "image/olaf.bmp", 1960, 420, 28, 6, true, RGB(255, 0, 255));
+	_state = PLAYER_IDLE_RIGHT;
+
+	int idle_Right[] = { 1 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Right", "olaf", idle_Right, 1, 10, true);
+	int idle_Left[] = { 29 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Left", "olaf", idle_Left, 1, 10, true);
+	int move_Right[] = { 13, 14, 15, 16, 17, 18, 19, 20 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Right", "olaf", move_Right, 8, 10, true);
+	int move_Left[] = { 41, 42, 43, 44, 45, 46, 47, 48 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Left", "olaf", move_Left, 8, 10, true);
+	int idle_Shield_Right[] = { 99 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Right", "olaf", idle_Shield_Right, 1, 10, true);
+	int idle_Shield_Left[] = { 127 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Left", "olaf", idle_Shield_Left, 1, 10, true);
+	int move_Shield_Right[] = { 103, 104, 105, 106, 107, 108, 109, 110 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Shield_Right", "olaf", move_Shield_Right, 8, 10, true);
+	int move_Shield_Left[] = { 131, 132, 133, 134, 135, 136, 137, 138 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Shield_Left", "olaf", move_Shield_Left, 8, 10, true);
+	int push_Wall_Right[] = { 58, 59, 60, 61 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "push_Wall_Right", "olaf", push_Wall_Right, 4, 5, true);
+	int push_Wall_Left[] = { 62, 63, 64, 65 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "push_Wall_Left", "olaf", push_Wall_Left, 4, 5, true);
+	int ladder_Up[] = { 66, 67, 68, 69 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_Up", "olaf", ladder_Up, 4, 10, true);
+	int ladder_Down[] = { 69, 68, 67, 66 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_Down", "olaf", ladder_Down, 4, 10, true);
+	int ladder_End[] = { 70, 71 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_End", "olaf", ladder_End, 2, 5, false);
+	int fall_Right[] = { 21, 22 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Right", "olaf", fall_Right, 2, 10, false);
+	int fall_Left[] = { 49, 50 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Left", "olaf", fall_Left, 2, 10, false);
+	int fire_Death_Right[] = { 91, 92, 93, 94, 95, 96, 97, 98 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fire_Death_Right", "olaf", fire_Death_Right, 8, 10, false);
+	int fire_Death_Left[] = { 119, 120, 121, 122, 123, 124, 125, 126 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fire_Death_Left", "olaf", fire_Death_Left, 8, 10, false);
+	int fall_Shield_Right[] = { 141, 142 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Right", "olaf", fall_Shield_Right, 2, 5, true);
+	int fall_Shield_Left[] = { 145, 146 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Left", "olaf", fall_Shield_Left, 2, 5, true);
+	int fall_Shield_Move_Right[] = { 143, 144 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Move_Right", "olaf", fall_Shield_Move_Right, 2, 5, true);
+	int fall_Shield_Move_Left[] = { 147, 148 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Move_Left", "olaf", fall_Shield_Move_Left, 2, 5, true);
+	int idle_Special_Right[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Special_Right", "olaf", idle_Special_Right, 11, 5, false);
+	int idle_Special_Left[] = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Special_Left", "olaf", idle_Special_Left, 11, 5, false);
+	int idle_Shield_Special_Right[] = { 100, 101, 102 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Special_Right", "olaf", idle_Shield_Special_Right, 3, 5, false);
+	int idle_Shield_Special_Left[] = { 128, 129, 130 };
+	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Special_Left", "olaf", idle_Shield_Special_Left, 3, 5, false);
+
+
+	_olafMotion = KEYANIMANAGER->findAnimation("player_Olaf", "idle_Right");
+}
+
+void player_Olaf::initShield()
+{
+	_isShieldUp = false;																//방패들었니?
+	_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);				//방패렉트생성
+}
+
 void player_Olaf::stateOlaf()
 {
 	switch (_state)
@@ -1090,6 +1348,13 @@ void player_Olaf::stateOlaf()
 		case PLAYER_SHIELD_IDLE_RIGHT:
 		case PLAYER_SHIELD_IDLE_LEFT:
 			break;
+
+		case PLAYER_PUSH_WALL_RIGHT:
+		case PLAYER_PUSH_WALL_LEFT:
+		{
+			_speed = 0.f;
+			break;
+		}
 
 		case PLAYER_MOVE_RIGHT:
 		case PLAYER_SHIELD_MOVE_RIGHT:
@@ -1131,7 +1396,7 @@ void player_Olaf::stateOlaf()
 		}
 		case PLAYER_FALL_RIGHT:
 		{
-			
+
 			if (_isRightCollision)
 				_speed = 0;
 			else
@@ -1174,12 +1439,12 @@ void player_Olaf::stateOlaf()
 		case PLAYER_SHIELD_FALL_RIGHT:
 		case PLAYER_SHIELD_FALL_LEFT:
 		{
-			if (!_isFloor && !_isLadder)
+			if (!_isFloor)
 			{
 				_gravity = _shieldGravity;
 				_y += _gravity * TIMEMANAGER->getElpasedTime();
 			}
-			if (_isFloor)
+			else if (_isFloor)
 			{
 				if (_state == PLAYER_SHIELD_FALL_RIGHT)
 				{
@@ -1269,6 +1534,7 @@ void player_Olaf::specialMotion_Olaf()
 	else if (_isAniStart && _olafMotion->isPlay() == false)
 	{
 		_specialTime = 0;
+		_isAniStart = false;
 		if (_state == PLAYER_IDLE_SPECIAL_RIGHT)
 		{
 			_state = PLAYER_IDLE_RIGHT;
@@ -1295,86 +1561,6 @@ void player_Olaf::specialMotion_Olaf()
 			_isAniStart = false;
 		}
 	}
-}
-
-void player_Olaf::initImgOlaf()
-{
-	KEYANIMANAGER->addAnimationType("player_Olaf");
-	_player = IMAGEMANAGER->addFrameImage("olaf", "image/olaf.bmp", 1960, 420, 28, 6, true, RGB(255, 0, 255));
-	_state = PLAYER_IDLE_RIGHT;
-
-	int idle_Right[] = { 1 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Right", "olaf", idle_Right, 1, 10, true);
-	int idle_Left[] = { 29 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Left", "olaf", idle_Left, 1, 10, true);
-	int move_Right[] = { 13, 14, 15, 16, 17, 18, 19, 20 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Right", "olaf", move_Right, 8, 10, true);
-	int move_Left[] = { 41, 42, 43, 44, 45, 46, 47, 48 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Left", "olaf", move_Left, 8, 10, true);
-	int idle_Shield_Right[] = { 99 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Right", "olaf", idle_Shield_Right, 1, 10, true);
-	int idle_Shield_Left[] = { 127 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Left", "olaf", idle_Shield_Left, 1, 10, true);
-	int move_Shield_Right[] = { 103, 104, 105, 106, 107, 108, 109, 110 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Shield_Right", "olaf", move_Shield_Right, 8, 10, true);
-	int move_Shield_Left[] = { 131, 132, 133, 134, 135, 136, 137, 138 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "move_Shield_Left", "olaf", move_Shield_Left, 8, 10, true);
-	int push_Wall_Right[] = { 58, 59, 60, 61 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "push_Wall_Right", "olaf", push_Wall_Right, 4, 5, true);
-	int push_Wall_Left[] = { 62, 63, 64, 65 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "push_Wall_Left", "olaf", push_Wall_Left, 4, 5, true);
-	int ladder_Up[] = { 66, 67, 68, 69 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_Up", "olaf", ladder_Up, 4, 10, true);
-	int ladder_Down[] = { 69, 68, 67, 66 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_Down", "olaf", ladder_Down, 4, 10, true);
-	int ladder_End[] = { 70, 71 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "ladder_End", "olaf", ladder_End, 2, 5, false);
-	int fall_Right[] = { 21, 22 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Right", "olaf", fall_Right, 2, 10, false);
-	int fall_Left[] = { 49, 50 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Left", "olaf", fall_Left, 2, 10, false);
-	int fire_Death_Right[] = { 91, 92, 93, 94, 95, 96, 97, 98 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fire_Death_Right", "olaf", fire_Death_Right, 8, 10, false);
-	int fire_Death_Left[] = { 119, 120, 121, 122, 123, 124, 125, 126 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fire_Death_Left", "olaf", fire_Death_Left, 8, 10, false);
-	int fall_Shield_Right[] = { 141, 142 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Right", "olaf", fall_Shield_Right, 2, 5, true);
-	int fall_Shield_Left[] = { 145, 146 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Left", "olaf", fall_Shield_Left, 2, 5, true);
-	int fall_Shield_Move_Right[] = { 143, 144 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Move_Right", "olaf", fall_Shield_Move_Right, 2, 5, true);
-	int fall_Shield_Move_Left[] = { 147, 148 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "fall_Shield_Move_Left", "olaf", fall_Shield_Move_Left, 2, 5, true);
-	int idle_Special_Right[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Special_Right", "olaf", idle_Special_Right, 11, 5, false);
-	int idle_Special_Left[] = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Special_Left", "olaf", idle_Special_Left, 11, 5, false);
-	int idle_Shield_Special_Right[] = { 100, 101, 102 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Special_Right", "olaf", idle_Shield_Special_Right, 3, 5, false);
-	int idle_Shield_Special_Left[] = { 128, 129, 130 };
-	KEYANIMANAGER->addArrayFrameAnimation("player_Olaf", "idle_Shield_Special_Left", "olaf", idle_Shield_Special_Left, 3, 5, false);
-
-
-	_olafMotion = KEYANIMANAGER->findAnimation("player_Olaf", "idle_Right");
-}
-
-void player_Olaf::startAniOlaf(string aniKey)
-{
-	_olafMotion = KEYANIMANAGER->findAnimation("player_Olaf", aniKey);
-	KEYANIMANAGER->start("player_Olaf", aniKey);
-
-}
-
-void player_Olaf::shieldRender(HDC hdc)
-{
-	if (_isShieldUp && _isFloor && !_isLadder)
-		RectangleBrushPen(hdc, _shield, RGB(255, 0, 255), true);
-}
-
-void player_Olaf::initShield()
-{
-	_isShieldUp = false;																//방패들었니?
-	_shield = RectMake(_playerRect.right - 10, _playerRect.top, 10, 70);				//방패렉트생성
 }
 
 void player_Olaf::stateShield()
@@ -1409,6 +1595,13 @@ void player_Olaf::stateShield()
 	}
 }
 
+void player_Olaf::startAniOlaf(string aniKey)
+{
+	_olafMotion = KEYANIMANAGER->findAnimation("player_Olaf", aniKey);
+	KEYANIMANAGER->start("player_Olaf", aniKey);
+
+}
+
 void player_Olaf::pixelLeftWallCollision()
 {
 	for (int i = _proveLeft + 5; i > _proveLeft; --i)
@@ -1420,8 +1613,7 @@ void player_Olaf::pixelLeftWallCollision()
 		int b = GetBValue(color);
 
 		if (r == 0 && g == 255 && b == 255)
-		{
-			_speed = 0.f;								//스피드를 0으로 내려 이동하지 않도록 한다.
+		{										//스피드를 0으로 내려 이동하지 않도록 한다.
 			_isLeftCollision = true;
 		}
 		else
@@ -1443,7 +1635,7 @@ void player_Olaf::pixelRightWallCollision()
 
 		if (r == 0 && g == 255 && b == 255)
 		{
-			_speed = 0.f;									//스피드를 0으로 내려 이동하지 않도록 한다.
+			//스피드를 0으로 내려 이동하지 않도록 한다.
 			_isRightCollision = true;
 		}
 		else
@@ -1535,30 +1727,33 @@ void player_Olaf::playerCollisionLadder()
 
 		if (IntersectRect(&temp, _ladderRc[i], &_playerRect))
 		{
-			_isLadder = true;
-
 			//사다리 맨위에 있을때
 			if (_playerRect.bottom - 5 <= (*_ladderRc[i]).top)
 			{
 				_isLadderTop = true;
 				_isLadderBottom = false;
+				_isLadder = true;
 			}
 			//사다리 밑에 있을때
 			else if (_playerRect.bottom + 5 >= (*_ladderRc[i]).bottom)
 			{
 				_isLadderTop = false;
 				_isLadderBottom = true;
+				_isLadder = true;
 			}
 			//그 외(오르락 내리락 할때)
 			else
 			{
 				if ((*_ladderRc[i]).left)
 				{
-					if(_state != PLAYER_FALL_RIGHT && _state != PLAYER_FALL_LEFT)
+					if (_state != PLAYER_FALL_RIGHT && _state != PLAYER_FALL_LEFT && _state != PLAYER_SHIELD_FALL_RIGHT &&
+						_state != PLAYER_SHIELD_FALL_LEFT && _state != PLAYER_SHIELD_FALL_MOVE_RIGHT &&
+						_state != PLAYER_SHIELD_FALL_MOVE_LEFT)
 						_x = (*_ladderRc[i]).left;
 				}
 				_isLadderTop = false;
 				_isLadderBottom = false;
+				_isLadder = true;
 			}
 		}
 	}
