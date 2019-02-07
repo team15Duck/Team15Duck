@@ -88,5 +88,9 @@ public:
 	void EricAni();
 	void EricAniStart(string key);
 
+	//몬스터와 충돌했을 경우 생명 깎는 함수
+	virtual void takeDamage(int damage) override;
+
+
 };
 

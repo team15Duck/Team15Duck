@@ -205,24 +205,37 @@ void testScene::updateBullet()
 		{
 			blt->update2();
 
-			isCollision = false;
-			for (int i = 0; i < PLAYER_NAME_COUNT; ++i)
+
+			//울라프가 살아있다면 울라프 방패 충돌 처리 먼저
+			if (_pm->getVPlayer()[PLAYER_NAME_OLAF]->getIsAlive())
 			{
-				// 죽어있다면 continue;
-				if(!_pm->getVPlayer()[i]->getIsAlive())
-					continue;
-
-				if (IntersectRect(&temp, &_pm->getVPlayer()[i]->getPlayerRect(), &blt->getRect()))
+				// 방패에 맞음
+				if (IntersectRect(&temp, &_pm->getVPlayer()[PLAYER_NAME_OLAF]->getShieldRect(), &blt->getRect()))
 				{
-					_pm->getVPlayer()[i]->takeDamage(1);
-
-					_iterBullet = _vBullets.erase(_iterBullet);
-
-					SAFE_RELEASE(blt);
-					SAFE_DELETE(blt);
-
 					isCollision = true;
-					break;
+				}
+			}
+
+			if (!isCollision)
+			{
+				for (int i = 0; i < PLAYER_NAME_COUNT; ++i)
+				{
+					// 죽어있다면 continue;
+					if (!_pm->getVPlayer()[i]->getIsAlive())
+						continue;
+
+					if (IntersectRect(&temp, &_pm->getVPlayer()[i]->getPlayerRect(), &blt->getRect()))
+					{
+						_pm->getVPlayer()[i]->takeDamage(1);
+
+						_iterBullet = _vBullets.erase(_iterBullet);
+
+						SAFE_RELEASE(blt);
+						SAFE_DELETE(blt);
+
+						isCollision = true;
+						break;
+					}
 				}
 			}
 

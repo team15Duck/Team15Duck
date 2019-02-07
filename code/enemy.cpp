@@ -18,7 +18,7 @@ HRESULT enemy::init(int num, float posX, float posY, float startX, float endX)
 	_startX = startX;
 	_endX = endX;
 	_fireTimeCount = 0;
-	_fireTimeDelay = 5.0f;
+	_fireTimeDelay = 6.0f;
 	_aniType = "enemy" + to_string(num);
 	enemyAniInit();
 	return S_OK;

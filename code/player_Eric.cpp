@@ -416,6 +416,7 @@ void player_Eric::update()
 
 void player_Eric::render()
 {
+	if (!_isAlive) return;
 	char str[256];
 	SetTextColor(CAMERA->getMemDC(), RGB(255, 255, 255));
 	sprintf_s(str, "speed : %.1f", _speed);
@@ -423,7 +424,7 @@ void player_Eric::render()
 	sprintf_s(str, "state : %d", _state);
 	TextOut(CAMERA->getMemDC(), 400, 50, str, strlen(str));
 
-	Rectangle(CAMERA->getMemDC(), _playerRect, false);
+	//Rectangle(CAMERA->getMemDC(), _playerRect, false);
 	_player->aniRender(CAMERA->getMemDC(), _playerRect.left, _playerRect.top, _EricMotion);
 }
 
@@ -1304,4 +1305,15 @@ void player_Eric::EricAniStart(string key)
 {
 	_EricMotion = KEYANIMANAGER->findAnimation("player_eric", key);
 	KEYANIMANAGER->start("player_eric", key);
+}
+
+void player_Eric::takeDamage(int damage)
+{
+	_lifeCount -= damage;
+	if (_lifeCount <= 0)
+	{
+		_isAlive = false;
+		_mainUI->setEricUIIsAlive(false);
+	}
+	_mainUI->setEricUIHP(_lifeCount);
 }

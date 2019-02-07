@@ -18,7 +18,7 @@ HRESULT enemyManager::init()
 	_vEnemy.push_back(test);
 
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 
 		enemy* test = new enemy;

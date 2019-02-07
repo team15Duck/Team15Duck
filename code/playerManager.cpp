@@ -293,6 +293,7 @@ void playerManager::colArrowEnemy()
 	{
 		for (int j = 0; j < _vArrow.size(); ++j)
 		{
+			if (!_em->getVEnemy()[i]->getIsAlive()) continue;
 			//플레이어의 화살과 적이 충돌하면 적 죽임
 			if (IntersectRect(&colEnemyArrow, &_em->getVEnemy()[i]->getEnemyRc(), &_vArrow[j]->getRect()))
 			{

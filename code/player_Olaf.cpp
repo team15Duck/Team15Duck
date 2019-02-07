@@ -1519,10 +1519,10 @@ void player_Olaf::fall_Shield_KeyLeft()
 
 void player_Olaf::initOlaf()
 {
-	_x = 100;								   //X좌표
+	_x = 50;								   //X좌표
 	_y = 1370;								   //Y좌표
 	_speed = 0.f;							   //스피드
-	_lifeCount = 2;							   //체력
+	_lifeCount = 3;							   //체력
 
 	_isAlive = true;						   //살았니?
 	_isFloor = true;						   //바닥이니?
